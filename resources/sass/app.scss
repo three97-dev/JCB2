@@ -1,0 +1,752 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+@import 'sitemenu';
+@import 'navbar';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/src/index.scss';
+
+html {
+    height: 100%;
+    font-family: Lato;
+}
+
+
+
+#PageContent {
+    margin-top: $navHeight;
+    min-height: calc(100% - #{$navHeight});
+    margin-left: 70px;
+    background: #ebebeb 0% 0% no-repeat padding-box;
+    &.no-margin {
+        margin: 0;
+        min-height: 100vh;
+    }
+}
+
+.page-content-detail {
+    background: transparent url('/img/background.png') 0% 0% no-repeat padding-box;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 20px;
+    min-height: calc(100vh - 70px);
+    .page-header {
+        font: normal normal bold 40px/48px Lato;
+        letter-spacing: 0.27px;
+        color: #363636;
+        padding: 60px 50px;
+        box-shadow: 0px 10px 10px #00000026;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+    .mobile-total-header {
+        display: none;
+    }
+    .page-filter {
+        font: normal normal bold 18px/22px Lato;
+        letter-spacing: 2.57px;
+        padding: 25px 0;
+        color: #6D7A87;
+        .filter-content {
+            display: inline-block;
+            background: #FFFFFF 0% 0% no-repeat padding-box;
+            box-shadow: 0px 10px 10px #00000026;
+            border-radius: 10px;
+            padding: 10px;
+            min-width: 200px;
+            margin-left: 30px;
+        }
+    }
+    .car-content {
+        .car-right-content {
+            height: 590px;
+            border-left: 4px solid gray;
+            margin-top: 10px;
+            .btn-clear {
+                font-size: 18px;
+                font-weight: bold;
+                margin: 10px 0;
+                display: block;
+            }
+            .btn-close-car-detail {
+                display: none;
+            }
+            .car-detail {
+                background: #A3D5F280;
+                border-radius: 10px;
+                border: 1px solid #707070;
+                height: 100%;
+                overflow: hidden;
+                .empty-content {
+                    font: normal normal normal 20px/24px Helvetica Neue;
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
+                    justify-content: center;
+                }
+            }
+        }
+        .title-header {
+            display: flex;
+            display: flex;
+            padding: 0 19px;
+            margin: 15px 0;
+            font: normal normal bold 18px/22px Lato;
+            .title {
+                letter-spacing: 2.57px;
+                color: #3C1642;
+                text-transform: uppercase;
+                // text-align: center;
+                flex: 1;
+            }
+            .action-heart {
+                width: 35px;
+            }
+            .action-go {
+                width: 100px;
+            }
+        } 
+        .car-body {
+            .loading-data {
+                color: $blue;
+                padding: 20px;
+                font-size: 15px;
+                margin-top: 100px;
+            }
+            .car-item {
+                display: flex;
+                background: #FFFFFF 0% 0% no-repeat padding-box;
+                box-shadow: 0px 10px 10px #00000026;
+                border-radius: 10px;
+                margin: 16px 0;
+                padding: 15px;
+                font: normal normal normal 18px/22px Lato;
+                height: 50px;
+                overflow: hidden;
+                &:first-child {
+                    margin-top: 0;
+                }
+                .item-data {
+                    letter-spacing: 2.57px;
+                    color: #6D7A87;
+                    text-transform: capitalize;
+                    flex: 1;
+                    display: flex;
+                }
+                .action-go {
+                    color: $blue;
+                    width: 100px;
+                }
+                .mobile-item {
+                    display: none;
+                }
+                &.selected {
+                    background: #bcd5e3;
+                }
+            }
+            .action-heart {
+                width: 35px;
+                >a {
+                    color: #E4E4E4;
+                    text-decoration: none;
+                }
+            }
+            .pagination {
+                padding:5px;
+                font: normal normal normal 15px/18px Lato;
+                display: flex;
+                justify-content: space-between;
+                color: #AAB2C0;
+                margin-top: 30px;
+                .page-label {
+                    letter-spacing: 0px;
+                    span {
+                        color: black
+                    }
+                }
+                .pages-action {
+                    .btn-page {
+                        padding: 0 5px;
+                        &.active {
+                            color: #D25063;
+                            text-decoration: underline;
+                        }
+                    }
+                }
+            }
+        }
+        .status-active {
+            background: #4ac76b80 0% 0% no-repeat padding-box;
+            box-shadow: 0px 10px 10px #00000029;
+            border: 1px solid #7070701A;
+            border-radius: 10px;
+            font: normal normal normal 14px/17px Lato;
+            width: 170px;
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: -10px;
+            padding: 10px;
+            margin-left: -10px;
+        }
+        .status-won {
+            background: #f7959580 0% 0% no-repeat padding-box;
+            box-shadow: 0px 10px 10px #00000029;
+            border: 1px solid #7070701A;
+            border-radius: 10px;
+            font: normal normal normal 14px/17px Lato;
+            width: 170px;
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: -10px;
+            padding: 10px;
+            margin-left: -10px;
+        }
+        .status-fail {
+            background: #f2cc4f80 0% 0% no-repeat padding-box;
+            box-shadow: 0px 10px 10px #00000029;
+            border: 1px solid #7070701A;
+            border-radius: 10px;
+            font: normal normal normal 14px/17px Lato;
+            width: 170px;
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: -10px;
+            padding: 10px;
+            margin-left: -10px;
+        }
+    }
+}
+
+#AllCarsPage {
+    // display: grid;
+    .page-header {
+        background: transparent url(/img/car-header.png) 0% 0% no-repeat padding-box;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+    .car-detail-popup {
+        background: white;
+        padding:25px;
+        position: relative;
+        min-height: calc(100vh - 110px);
+        .btn-close {
+            color: black;
+            font-size: 25px;
+            position: absolute;
+            top: 25px;
+            right: 25px;
+        }
+        .detail-content {
+            padding: 30px;
+            .car-header {
+                font-size: 40px;
+                font-weight: bold;
+                color: #363636;
+                text-transform: uppercase;
+                display: flex;
+                justify-content: space-between;
+                margin-top: 30px;
+            }
+            .car-fields {
+                padding: 30px 0;
+            }
+            .field-item {
+                padding: 15px 10px;
+                margin-top: 20px;
+                .item-label {
+                    color: #6D7A87;
+                    font-size: 14px;
+                }
+                .item-value {
+                    color: #1A173B;
+                    font-size: 18px;
+                    border:none;
+                    border-bottom: 1px solid #269A8E;
+                    padding: 5px 0;
+                    outline: none;
+                    width:100%;
+                }
+            }
+        }
+        .detail-bottom {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            .btn-like {
+                box-shadow: 0px 10px 10px #00000026;
+                border: 1px solid #6D7A87;
+                border-radius: 10px;
+                width: 140px;
+                height: 60px;
+                color: #E4E4E4;
+                font-size: 25px;
+                &.is_liked {
+                    background: red;
+                    color: white;
+                }
+            }
+            .action-bar {
+                display: flex;
+                input {
+                    background: #FFFFFF 0% 0% no-repeat padding-box;
+                    box-shadow: 0px 10px 10px #00000026;
+                    border: 1px solid #00000026;
+                    flex: 1;
+                    border-radius: 10px;
+                    height: 60px;
+                    padding: 15px;
+                    outline: none;
+                    width: 300px;
+                }
+                ::placeholder {
+                    color: #269A8E;
+                }
+                button {
+                    margin-left: -10px;
+                    padding-left: 50px;
+                    padding-right: 50px;
+                }
+            }
+        }
+        .submit-success {
+            background: transparent url('/img/bid_success_bg.png') 0% 0% no-repeat padding-box;
+            .title {
+                padding: 80px 0 100px;
+                font-size: 40px;
+                color: #363636;
+                font-weight: bold;
+                text-align: center;
+            }
+            .img-div {
+                display: flex;
+                justify-content: center;
+            }
+            .btn-done {
+                margin-right: 300px;
+                width: 200px;
+                height: 60px;
+                margin-top: 130px;
+            }
+        }
+    }
+}
+#BidsPage {
+    .page-header {
+        background: transparent url('/img/bid-header.png') 0% 0% no-repeat padding-box;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+    .car-content {
+        display:flex;
+        .car-right-content {
+            height: 590px;
+            .selcar-content {
+                padding: 20px 0;
+                background:white;
+                height: 100%;
+                .title {
+                    font-size: 20px;
+                    text-align: center;
+                    color: #363636;
+                }
+                .current-offer {
+                    color: #31AEED;
+                    text-align: center;
+                    font-size: 16px;
+                }
+                .status-active, .status-won, .status-fail {
+                    padding: 5px;
+                    margin: auto !important;
+                }
+
+                .selcar-detail {
+                    padding: 15px;
+                    border-top: 1px solid $blue;
+                    margin-top: 45px;
+                    margin-left: 0;
+                    margin-right: 0;
+                    .field-item {
+                        margin: 10px 0 0;
+                        .item-label {
+                            color: #1A173B;
+                            font-size: 18px;
+                        }
+                        .item-value {
+                            color: #269A8E;
+                            font-size: 14px;
+                            border-bottom: 1px solid #269A8E;
+                            padding: 5px 0;
+                        }
+                    }
+                }
+                .action-bar {
+                    display: flex;
+                    padding: 30px;
+                    width: 100%;
+                    input {
+                        background: #FFFFFF 0% 0% no-repeat padding-box;
+                        box-shadow: 0px 10px 10px #00000026;
+                        border: 1px solid #00000026;
+                        flex: 1;
+                        border-radius: 10px;
+                        height: 60px;
+                        padding: 15px;
+                        outline: none;
+                    }
+                    ::placeholder {
+                        color: #269A8E;
+                    }
+                    button {
+                        margin-left: -10px;
+                        padding-left: 50px;
+                        padding-right: 50px;
+                    }
+                }
+            }
+            .submit-content {
+                background: white;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                .title {
+                    font-size: 28px;
+                    width: 400px;
+                    text-align: center;
+                    margin: 30px auto;
+                }
+                .bid-image {
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    img {
+                        height: 100%;
+                        max-height: 260px;
+                    }
+                }
+                .action-bar.text-right {
+                    margin: 30px 10px;
+                    button {
+                        width: 200px;
+                        height: 60px;
+                        color: #B2FF9E;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+}
+#SchedulingPage {
+    .page-header {
+        background: transparent url('/img/scheduling-header.png') 0% 0% no-repeat padding-box;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+    .car-content {
+        display:flex;
+        .car-right-content {
+            .selcar-content {
+                padding: 20px;
+                background:white;
+                height: 100%;
+                .title {
+                    font-size: 28px;
+                    text-align: center;
+                    font-weight: bold;
+                    margin: 5px 0 10px;
+                }
+                .field-item {
+                    margin: 10px 0 0;
+                    .item-label {
+                        color: #1A173B;
+                        font-size: 18px;
+                    }
+                    .item-value {
+                        color: #269A8E;
+                        font-size: 14px;
+                        border:none;
+                        border-bottom: 1px solid #269A8E;
+                        padding: 5px 0;
+                        outline: none;
+                        width:100%;
+                    }
+                }
+                .action-bar {
+                    margin-top: 20px;
+                    text-align: right;
+                    button {
+                        width: 200px;
+                        height: 60px;
+                        color: #B2FF9E;
+                        font-size: 14px;
+                    }
+                }
+                
+            }
+            .submit-content {
+                background: white;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                .title {
+                    font-size: 28px;
+                    text-align: center;
+                    margin: 30px auto;
+                }
+                .bid-image {
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    img {
+                        height: 100%;
+                        max-height: 180px;
+                        max-width: 380px
+                    }
+                }
+                .action-bar.text-right {
+                    margin: 30px 10px;
+                    button {
+                        width: 200px;
+                        height: 60px;
+                        color: #B2FF9E;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+}
+#PaymentsPage {
+    .page-header {
+        background: transparent url('/img/payment-header.png') 0% 0% no-repeat padding-box;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+    .car-content {
+        display:flex;
+        input[type=checkbox] {
+            transform: scale(1.5);
+            margin-right: 5px;
+        }
+        .car-right-content {
+            .selcar-content {
+                padding: 20px;
+                background:white;
+                height: 100%;
+                .title {
+                    font-size: 28px;
+                    text-align: center;
+                    font-weight: bold;
+                    margin: 30px 0 16px;
+                }
+                .field-item {
+                    margin: 10px 0;
+                    .item-label {
+                        color: #1A173B;
+                        font-size: 18px;
+                    }
+                    .item-value {
+                        color: #31aeed;
+                        font-size: 14px;
+                        border:none;
+                        border-bottom: 1px solid #269A8E;
+                        padding: 5px 0;
+                        outline: none;
+                        width:100%;
+                        &.txt-amount {
+                            font-weight: bold;
+                            font-size: 24px;
+                        }
+                    }
+                    ::placeholder {
+                        color: #269A8E;
+                    }
+                }
+                .action-bar {
+                    margin-top: 40px;
+                    text-align: right;
+                    display: flex;
+                    justify-content: space-between;
+                    button {
+                        width: 200px;
+                        height: 60px;
+                        color: #B2FF9E;
+                        font-size: 14px;
+                    }
+                }
+                
+            }
+            .submit-content {
+                background: white;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                .title {
+                    font-size: 28px;
+                    text-align: center;
+                    margin: 30px auto;
+                }
+                .bid-image {
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    img {
+                        max-width: 180px;
+                        max-height: 380px
+                    }
+                }
+                .action-bar.text-right {
+                    margin: 30px 10px;
+                    button {
+                        width: 200px;
+                        height: 60px;
+                        color: #B2FF9E;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@media only screen and (max-width: 992px) {
+    #PageContent {
+        margin-left: 0 !important;
+        margin-top: 70px;
+    }
+    .page-content-detail {
+        padding: 1px !important;
+        padding-bottom: 130px !important;
+        margin-bottom: 150px;
+        background-repeat: repeat;
+        background-size: contain;
+        .mobile-total-header {
+            display: block !important;
+            background: $blue;
+            text-align: center;
+            color: #E4E4E4;
+            font: normal normal normal 14px/18px Lato;
+            padding: 12px;
+            margin: 5px 0;
+        }
+        .page-header {
+            height: 70px;
+            span {
+                display: none;
+            }
+        }
+        .page-filter {
+            display:none;
+        }
+        .car-content {
+            padding: 0 5px;
+            .title-header {
+                display: none;
+            }
+            .car-left-content {
+                padding: 0;
+            }
+        }
+        .car-body {
+            .car-item {
+                display: block !important;
+                height: unset !important;
+                margin-top: 0 !important;
+                margin-bottom: 5px !important;
+                padding: 10px 20px !important;
+                .mobile-item {
+                    display: flex !important;
+                    font-size: 16px;
+                    .item-content {
+                        flex: 1;
+                        >div {
+                            margin: 5px 0 0;
+                        }
+                    }
+                    .action-heart {
+                        display: flex;
+                        /* height: 80px; */
+                        justify-content: center;
+                        align-items: center;
+                        span {
+                            display: table-cell;
+                            vertical-align: middle;
+                        }
+                    }
+                }
+                >:not(.mobile-item) {
+                    display:none !important;
+                }
+            }
+            .pagination {
+                display: block !important;
+                text-align: center;
+                .page-label {
+                    margin: 10px 0;
+                }
+            }
+    
+        }
+        .car-right-content {
+            height: unset !important;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1111;
+            margin: 0 !important;
+            border: none !important;
+            padding: 0;
+            background: white;
+            overflow: auto;
+            .btn-close-car-detail {
+                display: block !important;
+                position: absolute;
+                right: 0;
+                top:0;
+                padding: 10px;
+                font-size: 25px;
+                color: black;
+            }
+            .car-detail {
+                overflow: auto !important;
+                border: none !important;
+                background: white !important;
+            }
+            .action-bar button {
+                width: 140px;
+                padding: 0 !important;
+                color: #B2FF9E;
+                border-radius: 10px;
+            }
+            .submit-content .title {
+                margin: 80px 0 !important;
+            }
+        }
+        .status-active, .status-won, .status-fail {
+            width: 120px !important;
+            height: 20px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    }
+    #SchedulingPage {
+        .car-content .car-right-content .submit-content .title {
+            font-size: 20px !important;
+            margin-top: 80px;
+        }
+    }
+    #PaymentsPage .car-content .car-right-content .selcar-content .action-bar button {
+        margin-top: 100px;
+    }
+}
