@@ -16,10 +16,10 @@ html {
     font-family: Lato;
 }
 
-#bg {
-    background: transparent linear-gradient(119deg, #B7FFBBC0 0%, #d8e9f4c0 100%) 0% 0% no-repeat padding-box;
-    // height: calc(100vh - $navHeight);
-}
+// #bg {
+//     background: transparent linear-gradient(119deg, #B7FFBBC0 0%, #d8e9f4c0 100%) 0% 0% no-repeat padding-box;
+//     // height: calc(100vh - $navHeight);
+// }
 
 #PageContent {
     margin-top: $navHeight;
@@ -56,7 +56,7 @@ html {
     .page-filter {
         font: normal normal bold 18px/22px Lato;
         letter-spacing: 2.57px;
-        padding: 25px 0;
+        padding: 25px 20px;
         color: #6D7A87;
         .filter-content {
             display: inline-block;
@@ -65,10 +65,11 @@ html {
             border-radius: 10px;
             padding: 10px;
             min-width: 200px;
-            margin-left: 30px;
+            margin-left: 16px;
         }
     }
     .car-content {
+        padding: 0 20px;
         .car-right-content {
             height: 590px;
             border-left: 4px solid gray;
@@ -134,6 +135,7 @@ html {
                 font: normal normal normal 18px/22px Lato;
                 height: 50px;
                 overflow: hidden;
+                cursor: pointer;
                 &:first-child {
                     margin-top: 0;
                 }
@@ -226,6 +228,29 @@ html {
             margin-left: -10px;
         }
     }
+    .pagination {
+        padding:5px;
+        font: normal normal normal 15px/18px Lato;
+        display: flex;
+        justify-content: space-between;
+        color: #AAB2C0;
+        margin-top: 30px;
+        .page-label {
+            letter-spacing: 0px;
+            span {
+                color: black
+            }
+        }
+        .pages-action {
+            .btn-page {
+                padding: 0 5px;
+                &.active {
+                    color: #D25063;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
 }
 
 #AllCarsPage {
@@ -239,30 +264,101 @@ html {
         background: white;
         padding:25px;
         position: relative;
-        min-height: calc(100vh - 110px);
+        // min-height: calc(100vh - 110px);
+        box-shadow: 0px 10px 10px #00000026;
         .btn-close {
-            color: black;
-            font-size: 25px;
-            position: absolute;
-            top: 25px;
-            right: 25px;
+            // color: black;
+            // font-size: 25px;
+            // position: absolute;
+            // top: 25px;
+            // right: 25px;
+            color: #6d7a87;
+            font-size: 20px;
+            padding: 5px;
+            text-align: right;
         }
         .detail-content {
-            padding: 30px;
+            padding: 0 84px;
             .car-header {
-                font-size: 40px;
-                font-weight: bold;
-                color: #363636;
-                text-transform: uppercase;
+                // font-size: 40px;
+                // font-weight: bold;
+                // color: #363636;
+                // text-transform: uppercase;
                 display: flex;
                 justify-content: space-between;
-                margin-top: 30px;
+                padding: 0 22px;
+                font: normal normal bold 28px/40px Neuzeit Grotesk;
+                letter-spacing: 0.19px;
+                label {
+                    font: normal normal 300 24px/28px Lato;
+                    color: #25A394;
+                    font-style: italic;
+                }
+                .action-bar {
+                    display: flex;
+                    color: #30ABE8;
+                    input {
+                        // background: #FFFFFF 0% 0% no-repeat padding-box;
+                        // box-shadow: 0px 10px 10px #00000026;
+                        // border: 1px solid #00000026;
+                        // flex: 1;
+                        // border-radius: 10px;
+                        // height: 60px;
+                        // padding: 15px;
+                        // outline: none;
+                        // width: 300px;
+                        outline: none;
+                        box-shadow: 0px 10px 10px #00000026;
+                        border: 1px solid #B9B9B9;
+                        border-radius: 10px;
+                        width: 100%;
+                        font: normal normal bold 28px/32px Lato;
+                        padding: 20px 100px 0px 40px;
+                        color: #30ABE8;
+                    }
+                    ::placeholder {
+                        color: #30ABE8;
+                    }
+                    button {
+                        margin-left: -100px;
+                        // padding-left: 50px;
+                        // padding-right: 50px;
+                        border-radius: 0px 10px 10px 0px;
+                        width: 100px;
+                        font: normal normal bold 14px/17px Lato;
+                        &.status1 {
+                            background-color: #6D7A87;
+                            color: #B2FF9E;
+                        }
+                        &.status0 {
+                            background-color: #B9B9B9;
+                            color: #E4E4E4;
+                        }
+                        &.status2 {
+                            background-color: #30ABE8;
+                            color: #B2FF9E;
+                        }
+                    }
+                    span{
+                        position: absolute;
+                        left: 40px;
+                        bottom: 14px;
+                        font: normal normal bold 28px/32px Lato;
+                    }
+                    .header-label {
+                        position: absolute;
+                        left: 40px;
+                        top: 13px;
+                        color: #6D7A87;
+                        font: normal normal bold 13px/16px Lato;
+                    }
+                }
             }
             .car-fields {
-                padding: 30px 0;
+                padding: 0;
             }
             .field-item {
-                padding: 15px 10px;
+                padding: 15px 22px;
                 margin-top: 20px;
                 .item-label {
                     color: #6D7A87;
@@ -282,61 +378,46 @@ html {
         .detail-bottom {
             display: flex;
             justify-content: space-between;
-            margin-top: 50px;
+            // margin-top: 50px;
+            position: absolute;
+            top: 20px;
+            width: calc(100% - 50px);
             .btn-like {
-                box-shadow: 0px 10px 10px #00000026;
-                border: 1px solid #6D7A87;
-                border-radius: 10px;
-                width: 140px;
-                height: 60px;
+                // box-shadow: 0px 10px 10px #00000026;
+                // border: 1px solid #6D7A87;
+                // border-radius: 10px;
+                // width: 140px;
+                // height: 60px;
+                // color: #E4E4E4;
+                font-size: 20px;
+                padding: 5px;
+                box-shadow: unset;
                 color: #E4E4E4;
-                font-size: 25px;
                 &.is_liked {
-                    background: red;
-                    color: white;
-                }
-            }
-            .action-bar {
-                display: flex;
-                input {
-                    background: #FFFFFF 0% 0% no-repeat padding-box;
-                    box-shadow: 0px 10px 10px #00000026;
-                    border: 1px solid #00000026;
-                    flex: 1;
-                    border-radius: 10px;
-                    height: 60px;
-                    padding: 15px;
-                    outline: none;
-                    width: 300px;
-                }
-                ::placeholder {
-                    color: #269A8E;
-                }
-                button {
-                    margin-left: -10px;
-                    padding-left: 50px;
-                    padding-right: 50px;
+                    // background: red;
+                    // color: white;
+                    color: $red;
                 }
             }
         }
         .submit-success {
             background: transparent url('/img/bid_success_bg.png') 0% 0% no-repeat padding-box;
             .title {
-                padding: 80px 0 100px;
-                font-size: 40px;
+                padding: 40px 0 40px;
                 color: #363636;
-                font-weight: bold;
                 text-align: center;
+                font: normal normal bold 28px/34px Lato;
             }
             .img-div {
                 display: flex;
                 justify-content: center;
             }
             .btn-done {
-                margin-right: 300px;
+                // margin-right: 300px;
                 width: 200px;
                 height: 60px;
-                margin-top: 130px;
+                margin-top: 70px;
+                margin-bottom: 40px;
             }
         }
     }

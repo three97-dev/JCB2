@@ -10,6 +10,7 @@
   z-index: 1000;
   height: calc(100% - 100px);
   width: 70px;
+  background: #c9fcce;
   box-shadow: 0px 10px 10px #00000029;
   display: flex;
   overflow: hidden;
@@ -14809,10 +14810,6 @@ html {
   font-family: Lato;
 }
 
-#bg {
-  background: transparent linear-gradient(119deg, #B7FFBBC0 0%, #d8e9f4c0 100%) 0% 0% no-repeat padding-box;
-}
-
 #PageContent {
   margin-top: 100px;
   min-height: calc(100% - 100px);
@@ -14854,7 +14851,7 @@ html {
 .page-content-detail .page-filter {
   font: normal normal bold 18px/22px Lato;
   letter-spacing: 2.57px;
-  padding: 25px 0;
+  padding: 25px 20px;
   color: #6D7A87;
 }
 
@@ -14865,7 +14862,11 @@ html {
   border-radius: 10px;
   padding: 10px;
   min-width: 200px;
-  margin-left: 30px;
+  margin-left: 16px;
+}
+
+.page-content-detail .car-content {
+  padding: 0 20px;
 }
 
 .page-content-detail .car-content .car-right-content {
@@ -14941,6 +14942,7 @@ html {
   font: normal normal normal 18px/22px Lato;
   height: 50px;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .page-content-detail .car-content .car-body .car-item:first-child {
@@ -15045,6 +15047,32 @@ html {
   margin-left: -10px;
 }
 
+.page-content-detail .pagination {
+  padding: 5px;
+  font: normal normal normal 15px/18px Lato;
+  display: flex;
+  justify-content: space-between;
+  color: #AAB2C0;
+  margin-top: 30px;
+}
+
+.page-content-detail .pagination .page-label {
+  letter-spacing: 0px;
+}
+
+.page-content-detail .pagination .page-label span {
+  color: black;
+}
+
+.page-content-detail .pagination .pages-action .btn-page {
+  padding: 0 5px;
+}
+
+.page-content-detail .pagination .pages-action .btn-page.active {
+  color: #D25063;
+  text-decoration: underline;
+}
+
 #AllCarsPage .page-header {
   background: transparent url(/img/car-header.png) 0% 0% no-repeat padding-box;
   background-repeat: no-repeat;
@@ -15055,37 +15083,105 @@ html {
   background: white;
   padding: 25px;
   position: relative;
-  min-height: calc(100vh - 110px);
+  box-shadow: 0px 10px 10px #00000026;
 }
 
 #AllCarsPage .car-detail-popup .btn-close {
-  color: black;
-  font-size: 25px;
-  position: absolute;
-  top: 25px;
-  right: 25px;
+  color: #6d7a87;
+  font-size: 20px;
+  padding: 5px;
+  text-align: right;
 }
 
 #AllCarsPage .car-detail-popup .detail-content {
-  padding: 30px;
+  padding: 0 84px;
 }
 
 #AllCarsPage .car-detail-popup .detail-content .car-header {
-  font-size: 40px;
-  font-weight: bold;
-  color: #363636;
-  text-transform: uppercase;
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
+  padding: 0 22px;
+  font: normal normal bold 28px/40px Neuzeit Grotesk;
+  letter-spacing: 0.19px;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header label {
+  font: normal normal 300 24px/28px Lato;
+  color: #25A394;
+  font-style: italic;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar {
+  display: flex;
+  color: #30ABE8;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar input {
+  outline: none;
+  box-shadow: 0px 10px 10px #00000026;
+  border: 1px solid #B9B9B9;
+  border-radius: 10px;
+  width: 100%;
+  font: normal normal bold 28px/32px Lato;
+  padding: 20px 100px 0px 40px;
+  color: #30ABE8;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar ::-moz-placeholder {
+  color: #30ABE8;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar :-ms-input-placeholder {
+  color: #30ABE8;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar ::placeholder {
+  color: #30ABE8;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar button {
+  margin-left: -100px;
+  border-radius: 0px 10px 10px 0px;
+  width: 100px;
+  font: normal normal bold 14px/17px Lato;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar button.status1 {
+  background-color: #6D7A87;
+  color: #B2FF9E;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar button.status0 {
+  background-color: #B9B9B9;
+  color: #E4E4E4;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar button.status2 {
+  background-color: #30ABE8;
+  color: #B2FF9E;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar span {
+  position: absolute;
+  left: 40px;
+  bottom: 14px;
+  font: normal normal bold 28px/32px Lato;
+}
+
+#AllCarsPage .car-detail-popup .detail-content .car-header .action-bar .header-label {
+  position: absolute;
+  left: 40px;
+  top: 13px;
+  color: #6D7A87;
+  font: normal normal bold 13px/16px Lato;
 }
 
 #AllCarsPage .car-detail-popup .detail-content .car-fields {
-  padding: 30px 0;
+  padding: 0;
 }
 
 #AllCarsPage .car-detail-popup .detail-content .field-item {
-  padding: 15px 10px;
+  padding: 15px 22px;
   margin-top: 20px;
 }
 
@@ -15107,56 +15203,20 @@ html {
 #AllCarsPage .car-detail-popup .detail-bottom {
   display: flex;
   justify-content: space-between;
-  margin-top: 50px;
+  position: absolute;
+  top: 20px;
+  width: calc(100% - 50px);
 }
 
 #AllCarsPage .car-detail-popup .detail-bottom .btn-like {
-  box-shadow: 0px 10px 10px #00000026;
-  border: 1px solid #6D7A87;
-  border-radius: 10px;
-  width: 140px;
-  height: 60px;
+  font-size: 20px;
+  padding: 5px;
+  box-shadow: unset;
   color: #E4E4E4;
-  font-size: 25px;
 }
 
 #AllCarsPage .car-detail-popup .detail-bottom .btn-like.is_liked {
-  background: red;
-  color: white;
-}
-
-#AllCarsPage .car-detail-popup .detail-bottom .action-bar {
-  display: flex;
-}
-
-#AllCarsPage .car-detail-popup .detail-bottom .action-bar input {
-  background: #FFFFFF 0% 0% no-repeat padding-box;
-  box-shadow: 0px 10px 10px #00000026;
-  border: 1px solid #00000026;
-  flex: 1;
-  border-radius: 10px;
-  height: 60px;
-  padding: 15px;
-  outline: none;
-  width: 300px;
-}
-
-#AllCarsPage .car-detail-popup .detail-bottom .action-bar ::-moz-placeholder {
-  color: #269A8E;
-}
-
-#AllCarsPage .car-detail-popup .detail-bottom .action-bar :-ms-input-placeholder {
-  color: #269A8E;
-}
-
-#AllCarsPage .car-detail-popup .detail-bottom .action-bar ::placeholder {
-  color: #269A8E;
-}
-
-#AllCarsPage .car-detail-popup .detail-bottom .action-bar button {
-  margin-left: -10px;
-  padding-left: 50px;
-  padding-right: 50px;
+  color: #e3342f;
 }
 
 #AllCarsPage .car-detail-popup .submit-success {
@@ -15164,11 +15224,10 @@ html {
 }
 
 #AllCarsPage .car-detail-popup .submit-success .title {
-  padding: 80px 0 100px;
-  font-size: 40px;
+  padding: 40px 0 40px;
   color: #363636;
-  font-weight: bold;
   text-align: center;
+  font: normal normal bold 28px/34px Lato;
 }
 
 #AllCarsPage .car-detail-popup .submit-success .img-div {
@@ -15177,10 +15236,10 @@ html {
 }
 
 #AllCarsPage .car-detail-popup .submit-success .btn-done {
-  margin-right: 300px;
   width: 200px;
   height: 60px;
-  margin-top: 130px;
+  margin-top: 70px;
+  margin-bottom: 40px;
 }
 
 #BidsPage .page-header {

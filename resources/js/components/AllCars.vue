@@ -1,186 +1,139 @@
 <template>
     <div id="AllCarsPage" class="page-content-detail">
-        <template v-if="!sel_car">
-        <div class="page-header">
-            <span>All Cars</span>
-        </div>
-        <div class="page-filter">
-            <span class="filter-label">Filters:</span>            
-            <div class="filter-content" v-if="filter_string != ''">
-                <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
-                {{filter_string}}
+        <template>
+            <div class="page-header">
+                <span>All Cars</span>
             </div>
-        </div>
-
-        <div class="mobile-total-header">
-            {{total}} RESULTS
-        </div>
-
-        <div class="car-content">
-            <div class="title-header">
-                <div class="action-heart"></div>
-                <div class="title">Year</div>
-                <div class="title">Make</div>
-                <div class="title">Model</div>
-                <div class="title">Zip Code</div>
-                <div class="title">City</div>
-                <div class="title">Runs/Drivers</div>
-                <div class="title text-center">Mileage</div>
-                <div class="title text-center">Current Offer</div>
-                <div class="action-go"></div>
+            <div class="page-filter">
+                <span class="filter-label">Filters:</span>            
+                <div class="filter-content" v-if="filter_string != ''">
+                    <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
+                    {{filter_string}}
+                </div>
             </div>
-            <div class="car-body">
-                <div class="car-item" v-for="car in cars" :key="car.index">
-                    <div class="action-heart">
-                        <a href="javascript:;" class="mif-heart" v-bind:class="{'text-danger': car.is_liked}"  v-on:click="likeCar(car)"></a>
-                    </div>
-                    <div class="item-data">{{ car.Year }}</div>
-                    <div class="item-data">{{ car.Make }}</div>
-                    <div class="item-data">{{ car.Model }}</div>
-                    <div class="item-data">{{ car.Zip_Code }}</div>
-                    <div class="item-data">{{ car.City }}</div>
-                    <div class="item-data">{{ car.Does_the_Vehicle_Run_and_Drive }}</div>
-                    <div class="item-data text-center">{{ car.Miles }}</div>
-                    <div class="item-data text-center">{{ car.Buyers_Quote }}</div>
-                    <div class="text-center action-go">
-                        <a href="javascript:;" v-on:click="showDetail(car)">
-                            <span class="mif-arrow-right"></span>
-                        </a>
-                    </div>
-                    <div class="mobile-item item-data" v-on:click="showDetail(car)">
-                        <div class="item-content">
-                            <div class="font-weight-bold">{{car.Reference_Number}} &nbsp;&nbsp;{{car.Year}} {{car.Make}} {{car.Model}}</div>
-                            <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
-                            <div class="text-blue">{{car.Buyers_Quote}}</div>
-                        </div>
+
+            <div class="mobile-total-header">
+                {{total}} RESULTS
+            </div>
+
+            <div class="car-content" v-if="!sel_car">
+                <div class="title-header">
+                    <div class="action-heart"></div>
+                    <div class="title">Year</div>
+                    <div class="title">Make</div>
+                    <div class="title">Model</div>
+                    <div class="title">Zip Code</div>
+                    <div class="title">City</div>
+                    <div class="title">Runs/Drivers</div>
+                    <div class="title">Mileage</div>
+                    <div class="title">Current Offer</div>
+                    <!-- <div class="action-go"></div> -->
+                </div>
+                <div class="car-body">
+                    <div class="car-item" v-for="car in cars" :key="car.index" @click="showDetail(car)">
                         <div class="action-heart">
-                            <a href="javascript:;">
-                                <span class="mif-heart"  v-bind:class="{'text-danger': car.is_liked}"></span>
+                            <a href="javascript:;" class="mif-heart" v-bind:class="{'text-danger': car.is_liked}"  v-on:click="likeCar(car)"></a>
+                        </div>
+                        <div class="item-data">{{ car.Year }}</div>
+                        <div class="item-data">{{ car.Make }}</div>
+                        <div class="item-data">{{ car.Model }}</div>
+                        <div class="item-data">{{ car.Zip_Code }}</div>
+                        <div class="item-data">{{ car.City }}</div>
+                        <div class="item-data">{{ car.Does_the_Vehicle_Run_and_Drive }}</div>
+                        <div class="item-data text-center">{{ car.Miles }}</div>
+                        <div class="item-data text-center">{{ car.Buyers_Quote }}</div>
+                        <!-- <div class="text-center action-go">
+                            <a href="javascript:;" v-on:click="showDetail(car)">
+                                <span class="mif-arrow-right"></span>
                             </a>
+                        </div> -->
+                        <div class="mobile-item item-data" v-on:click="showDetail(car)">
+                            <div class="item-content">
+                                <div class="font-weight-bold">{{car.Reference_Number}} &nbsp;&nbsp;{{car.Year}} {{car.Make}} {{car.Model}}</div>
+                                <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
+                                <div class="text-blue">{{car.Buyers_Quote}}</div>
+                            </div>
+                            <div class="action-heart">
+                                <a href="javascript:;">
+                                    <span class="mif-heart"  v-bind:class="{'text-danger': car.is_liked}"></span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="pagination">
-                    <div class="page-label">
-                        Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
-                    </div>
-                    <div class="pages-action">
-                        Page: 
-                        <template v-for="one of valid_pages">
-                            <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
-                        </template>
-                        <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page-1)">&lt; Prev</a>
-                        <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page+1)">Next &gt;</a>
-                    </div>
+                    
+                    
                 </div>
-                
             </div>
-        </div>
+            <template v-if="sel_car">
+                <div class="car-detail-popup">
+                    <template v-if="!submit_bid">
+                        <div class="detail-bottom">
+                            <button class="btn btn-default btn-like" v-bind:class="{'is_liked': sel_car.is_liked}" v-on:click="likeCar(sel_car)" >
+                                <span class="mif-heart"></span>
+                            </button>
+                            <a href="javascript:;" class="btn-close" v-on:click="sel_car = null"><span class="mif-cross-light"></span></a>
+                        </div>
+                        <div class="detail-content">
+                            <div class="row car-fields">
+                                <div class="car-header col-md-3">
+                                    <div class="car-title">
+                                        {{sel_car.Year}} {{sel_car.Make}} {{sel_car.Model}}
+                                        <br>
+                                        <label>{{sel_car.City}} - {{sel_car.Miles | milesValidate}}</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="car-header col-md-3 ">
+                                    <div class="action-bar">
+                                        <div class="header-label">{{bid_submit_button_string.caption}}</div>
+                                        <span>$</span>
+                                        <input ref="bid_input" type="number" @change="changeStatus" placeholder="Click to type a bid price" v-model="bid_price">
+                                        <button class="btn" :class="'status'+bid_status" @click="submitBid()">{{bid_submit_button_string.btn_str}}</button>
+                                    </div>
+                                </div>
+                                <div class="field-item col-md-3" v-for="(detail_field, i) in detail_fields" :key="i">
+                                    <div class="item-label">{{detail_field.field}}</div>
+                                    <div type="text" class="item-value">{{ sel_car[detail_field.key] | replaceIfEmpty }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </template>
+                    <template v-if="submit_bid">
+                        <div class="submit-success">
+                            <div class="title">YOUR BID OF <span class="text-blue">{{submit_bid | toCurrency}}
+                            <br>
+                            </span>WAS SUBMITTED!</div>
+                            <div class="img-div">
+                                <img src="/img/bid_success.png" alt="">
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-primary btn-done" v-on:click="sel_car=null">DONE</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <div class="pagination">
+                <div class="page-label">
+                    Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
+                </div>
+                <div class="pages-action">
+                    Page: 
+                    <template v-for="one of valid_pages">
+                        <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
+                    </template>
+                    <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page-1)">&lt; Prev</a>
+                    <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page+1)">Next &gt;</a>
+                </div>
+            </div>
         </template>
 
-        <template v-if="sel_car">
-        <div class="car-detail-popup">
-            <template v-if="!submit_bid">
-                <div class="text-right">
-                    <a href="javascript:;" class="btn-close" v-on:click="sel_car = null"><span class="mif-cross-light"></span></a>
-                </div>
-            
-                <div class="detail-content">
-                    <div class="car-header">
-                        <div class="car-title">{{sel_car.Year}} {{sel_car.Make}} {{sel_car.Model}}</div>
-                        <div class="header-label text-blue">CURRENT OFFER</div>
-                    </div>
-                    <div class="row car-fields">
-                        <div class="field-item col-md-3">
-                            <div class="item-label">ZIP</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Zip_Code}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">CITY</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.City}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">RUNS/DRIVES</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Does_the_Vehicle_Run_and_Drive}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">MILEAGE</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Miles}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">TITLE</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Do_they_have_a_Title}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">AIRBAGS DEPLOYED</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Airbags_Deployed}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">DAMAGE</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Is_There_Any_Body_Damage_Broken_Glass_2}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">DAMAGE DESCRIPTION</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Is_there_any_Body_Damage_Broken_Glass}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">BROKEN GLASS</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Is_There_Any_Broken_Glass_Windows_etc}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">WHEELS MOUNTED</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Are_all_the_tires_mounted}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">MISSING WHEELS</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Which_tires_are_missing}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">TIRES INFLATED</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Are_All_the_Tires_Inflated}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">FLAT TIRES</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Which_ones_are_flat}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">FIRE/FLOOD/HAIL</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Fire_or_Flood_Damage}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">MISSING PARTS</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.Any_Missing_Body_Panels_Interior_or_Engine_Parts}}</div>
-                        </div>
-                        <div class="field-item col-md-3">
-                            <div class="item-label">MECHANICAL ISSUES</div>
-                            <div type="text" class="item-value">&nbsp;{{sel_car.What_Kind_of_Mechanical_Issues_Are_There}}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="detail-bottom col-md-8 offset-md-2">
-                    <button class="btn btn-default btn-like" v-bind:class="{'is_liked': sel_car.is_liked}" v-on:click="likeCar(sel_car)" >
-                        <span class="mif-heart"></span>
-                    </button>
-                    <div class="action-bar">
-                        <input type="number" placeholder="Click to type a bid price" v-model="bid_price">
-                        <button class="btn btn-primary" v-on:click="submitBid()">MAKE AN OFFER</button>
-                    </div>
-                </div>
-            </template>
-            <template v-if="submit_bid">
-                <div class="submit-success">
-                    <div class="title">YOUR BID OF $ <span class="text-blue">{{submit_bid}}</span> HAS BEEN SUBMITTED!</div>
-                    <div class="img-div">
-                        <img src="/img/bid_success.png" alt="">
-                    </div>
-                    <div class="text-right">
-                        <button class="btn btn-primary btn-done" v-on:click="sel_car=null">DONE</button>
-                    </div>
-                </div>
-            </template>
-        </div>
-        </template>
+        
     </div>
 </template>
 
@@ -193,7 +146,7 @@ var commonService = new CommonService();
             return {
                 cars: [],
                 page: 1,
-                records_per_page: 10,
+                records_per_page: 8,
                 total: '-',
                 valid_pages: [],
                 filter_param: {},
@@ -201,7 +154,27 @@ var commonService = new CommonService();
                 filter_string: '',
                 sel_car: null,
                 bid_price: '',
+                bid_status: 1,
                 submit_bid: '',
+                detail_fields: [
+                    {field: "Zip", key: "Zip_Code"},
+                    {field: "City", key: "City"},
+                    {field: "Runs/Drives", key: "Does_the_Vehicle_Run_and_Drive"},
+                    {field: "Mileage", key: "Miles"},
+                    {field: "Title", key: "Do_they_have_a_Title"},
+                    {field: "Airbags Deployed", key: "Airbags_Deployed"},
+                    {field: "Damage", key: "Is_There_Any_Body_Damage_Broken_Glass_2"},
+                    {field: "Damage Description", key: "Is_there_any_Body_Damage_Broken_Glass"},
+                    {field: "Broken Glass", key: "Is_There_Any_Broken_Glass_Windows_etc"},
+                    {field: "Wheels Mounted", key: "Are_all_the_tires_mounted"},
+                    {field: "Missing Wheels", key: "Which_tires_are_missing"},
+                    {field: "Tires Inflated", key: "Are_All_the_Tires_Inflated"},
+                    {field: "Flat Tires", key: "Which_ones_are_flat"},
+                    {field: "Fire/Flood/Hail", key: "Fire_or_Flood_Damage"},
+                    {field: "Missing Parts", key: "Any_Missing_Body_Panels_Interior_or_Engine_Parts"},
+                    {field: "Mechanical Issues", key: "What_Kind_of_Mechanical_Issues_Are_There"},
+                ],
+                bid_submit_button_string: {}
             }
         },
         created() {
@@ -227,6 +200,49 @@ var commonService = new CommonService();
         mounted() {
             console.log('mounted');
             this.refreshPage(1);
+        },
+        computed: {
+            
+        },
+        filters: {
+            replaceIfEmpty: function(value) {
+                var emptyPlaceHolderStr = "-- None --";
+                if(value == "" || value == undefined) return emptyPlaceHolderStr;
+                var flag = false;
+                if(value.charAt(0) == "[") {
+                    var ini_str = "";
+                    var arr = JSON.parse(value);
+                    arr.map(val=> {
+                        if(typeof val === "object"){
+                            for(var prop in val) {
+                                if (val.hasOwnProperty(prop)) {
+                                    ini_str += val.prop;
+                                }
+                            }
+                        }
+                        else {
+                            ini_str += val; 
+                        }
+                    })
+                    if(ini_str == "") return emptyPlaceHolderStr;
+                    else return ini_str;
+                }
+                return value;
+
+            },
+            milesValidate: function(value) {
+                if(value == "Unable to Verify")
+                    return value;
+                else
+                    return value + " Miles";
+            },
+            toCurrency: function(value) {
+                var formatter = new Intl.NumberFormat("en-US", {
+                    style: 'currency',
+                    currency: "USD"
+                });
+                return formatter.format(value);
+            }
         },
         methods: {
             refreshPage(page) {
@@ -302,11 +318,35 @@ var commonService = new CommonService();
             },
             showDetail(car) {
                 this.sel_car = car;
-                this.bid_price = '';
+                this.bid_price = parseFloat(car.Buyers_Quote).toFixed(2);
                 this.submit_bid = false;
+                this.changeStatus();
+            },
+            changeStatus() {
+                var caption, btn_str;
+                if(parseFloat(this.bid_price).toFixed(2) > parseFloat(this.sel_car.Buyers_Quote).toFixed(2)) {
+                    this.bid_status = 2;
+                    caption = "Your Offer";
+                    btn_str = "SUBMIT";
+                }
+                else if(parseFloat(this.bid_price).toFixed(2) == parseFloat(this.sel_car.Buyers_Quote).toFixed(2)) {
+                    this.bid_status = 1;
+                    caption = "Current Offer";
+                    btn_str = "BID";
+                }
+                else {
+                    this.bid_status = 0;
+                    caption = "Your Offer";
+                    btn_str = "TOO LOW";
+                }
+                
+                this.bid_submit_button_string = {caption: caption, btn_str: btn_str};
             },
             submitBid() {
                 if (!this.bid_price) return alert('Please type the bid price');
+                if(this.bid_status == 0) return;
+                else if(this.bid_status == 1) { this.$refs.bid_input.focus(); return; }
+
                 const thiz = this;
                 let loader = this.$loading.show();
                 setTimeout(() => {
