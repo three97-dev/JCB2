@@ -16,7 +16,10 @@ html {
     font-family: Lato;
 }
 
-
+#bg {
+    background: transparent linear-gradient(119deg, #B7FFBBC0 0%, #d8e9f4c0 100%) 0% 0% no-repeat padding-box;
+    // height: calc(100vh - $navHeight);
+}
 
 #PageContent {
     margin-top: $navHeight;

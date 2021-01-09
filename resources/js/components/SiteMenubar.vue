@@ -75,36 +75,7 @@
                 <label for="" class="filter-label">{{filter_labels.Fire_or_Flood_Damage}}</label>
                 <select name="" id="" v-model="car_filter.Fire_or_Flood_Damage">
                     <option value="">Select options you would accept</option>
-                    <option value="Engine Damage">Engine Damage</option>
-                    <option value="Exterior Burn">Exterior Burn</option>
-                    <option value="Flood">Flood</option>
-                    <option value="Fresh Water">Fresh Water</option>
-                    <option value="Front & Rear">Front & Rear</option>
-                    <option value="Front End">Front End</option>
-                    <option value="Hail">Hail</option>
-                    <option value="Interior Burn">Interior Burn</option>
-                    <option value="Left & Right Side">Left & Right Side</option>
-                    <option value="Left Front">Left Front</option>
-                    <option value="Left Rear">Left Rear</option>
-                    <option value="Left Side">Left Side</option>
-                    <option value="Mechanical">Mechanical</option>
-                    <option value="None">None</option>
-                    <option value="Rear">Rear</option>
-                    <option value="Repossession">Repossession</option>
-                    <option value="Right Front">Right Front</option>
-                    <option value="Right Rear">Right Rear</option>
-                    <option value="Right Side">Right Side</option>
-                    <option value="Rollover">Rollover</option>
-                    <option value="Roof">Roof</option>
-                    <option value="Saltwater">Saltwater</option>
-                    <option value="Storm Damage">Storm Damage</option>
-                    <option value="Stripped">Stripped</option>
-                    <option value="Suspension">Suspension</option>
-                    <option value="Theft">Theft</option>
-                    <option value="Total Burn">Total Burn</option>
-                    <option value="Transmission Damage">Transmission Damage</option>
-                    <option value="Undercarriage">Undercarriage</option>
-                    <option value="Unknown">Unknown</option>
+                    <option v-for="(type, i) in damage_types" :key="i" :value="type">{{type}}</option>
                 </select>
             </div>
 
@@ -301,7 +272,10 @@ var commonService = new CommonService();
                     Year: 'Year',
                     Make: 'Make',
                     Model: 'Model',
-                }
+                },
+                damage_types: [
+                    "Engine Damage", "Exterior Burn", "Flood", "Fresh Water", "Front & Rear", "Front End", "Hail", "Interior Burn", "Left & Right Side", "Left Front", "Left Rear", "Left Side", "Mechanical", "None", "Rear", "Repossession", "Right Front", "Right Rear", "Right Side", "Rollover", "Roof", "Saltwater", "Storm Damage", "Stripped", "Suspension", "Theft", "Total Burn", "Transmission Damage", "Undercarriage", "Unknown"
+                ]
             }
         },
         watch: {
@@ -390,13 +364,13 @@ var commonService = new CommonService();
             },
             openCarsFilter() {
                 this.open_cars_filter = !this.open_cars_filter;
-                this.checkPopupOpen();
+                
                 if (this.open_cars_filter) {
                     this.open_filter_save_step = false;
                     this.open_saved_filter = false;
                 }
             },
-            checkPopupOpen(flag) {
+            checkPopupOpen() {
                 this.$emit('checkPopupOpen', this.openPopup);
             },
             openSaveStep() {
@@ -404,6 +378,7 @@ var commonService = new CommonService();
                 if (Object.keys(params).length == 0) return alert('Search parameters are empty.');
                 this.open_filter_save_step = true;
                 this.save_filter_title = '';
+                
             },
             saveSearch() {
                 var title = this.save_filter_title;
@@ -425,6 +400,7 @@ var commonService = new CommonService();
                         alert('Api request error');
                     }
                 });
+                
             },
             openSavedFilter() {
                 this.open_saved_filter = !this.open_saved_filter;
@@ -452,10 +428,12 @@ var commonService = new CommonService();
                         }
                     });
                 }
+                
             },
             editFilter(filter) {
                 this.car_filter = filter.filter;
                 this.openCarsFilter();
+                
             },
             deleteFilter(filter) {
                 if (!confirm("Are you sure to delete the search?")) return;
@@ -477,11 +455,13 @@ var commonService = new CommonService();
                         alert('Api request error');
                     }
                 });
+                
             },
             applySavedFilter(filter) {
                 this.car_filter = filter.filter;
                 this.open_saved_filter = false;
                 this.applyCarsFilter();
+                
             },
             applyCarsFilter() {
                 const params = this.get_filter_param(this.car_filter);
@@ -489,42 +469,50 @@ var commonService = new CommonService();
                 
                 EventBus.$emit('update-car-filter', params);
                 this.open_cars_filter = false;
+                
             },
             applyLikeFilter() {
                 this.filter_like = !this.filter_like;
                 this.open_cars_filter = false;
                 this.open_saved_filter = false;
                 EventBus.$emit('update-car-filter-like', this.filter_like);
+                
             },
             // bids
             openBidsFilter() {
                 this.open_bids_filter = !this.open_bids_filter;
+                
             },
             applyBidsFilter() {
                 this.open_bids_filter = false;
                 const params = this.get_filter_param(this.bid_filter);
                 params['filter_string'] = this.getFilterString(params);
                 EventBus.$emit('update-bid-filter', params);
+                
             },
             // scheduling
             openSchedulingsFilter() {
                 this.open_schedulings_filter = !this.open_schedulings_filter;
+                
             },
             applySchedulingsFilter() {
                 this.open_schedulings_filter = false;
                 const params = this.get_filter_param(this.schedulings_filter);
                 params['filter_string'] = this.getFilterString(params);
                 EventBus.$emit('update-schedulings-filter', params);
+                
             },
             // payments
             openPaymentsFilter() {
                 this.open_payments_filter = !this.open_payments_filter;
+                
             },
             applyPaymentsFilter() {
                 this.open_payments_filter = false;
                 const params = this.get_filter_param(this.payment_filter);
                 params['filter_string'] = this.getFilterString(params);
                 EventBus.$emit('update-payments-filter', params);
+                
             },
         }
     }

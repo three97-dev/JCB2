@@ -1,11 +1,14 @@
 <template>
-<div id="jcbApp">
-    <site-navbar v-if="authenticated"></site-navbar>
-    <site-menubar v-if="authenticated" @checkPopupOpen="checkPopupStatus"></site-menubar>
-    <div id="PageContent" v-bind:class="{'no-margin' : !authenticated, 'popup-opened': popupStatus}">
-        <router-view></router-view>
+<div id="bg">
+    <div id="jcbApp">
+        <site-navbar v-if="authenticated"></site-navbar>
+        <site-menubar v-if="authenticated" @checkPopupOpen="checkPopupStatus"></site-menubar>
+        <div id="PageContent" v-bind:class="{'no-margin' : !authenticated, 'popup-opened': popupStatus}">
+            <router-view></router-view>
+        </div>
     </div>
 </div>
+
 </template>
 
 <script>
@@ -42,9 +45,7 @@
         },
         methods: {
             checkPopupStatus(flag) {
-                // window.document.querySelector('#SiteMenubar').classList.contains('open-popup')
                 this.popupStatus = flag;
-                console.log(flag);
             }
         }
 

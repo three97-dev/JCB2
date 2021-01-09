@@ -193,7 +193,7 @@ var commonService = new CommonService();
             return {
                 cars: [],
                 page: 1,
-                records_per_page: 8,
+                records_per_page: 10,
                 total: '-',
                 valid_pages: [],
                 filter_param: {},
