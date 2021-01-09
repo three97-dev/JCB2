@@ -4,13 +4,16 @@
     top:0;
     width: 100%;
     z-index: 1;
+    // border-bottom: 1px solid $gray;
     .navbar {
-        background-color: $green;
+        background: transparent linear-gradient(119deg, #B7FFBBC0 0%, #d8e9f4c0 100%) 0% 0% no-repeat padding-box;
+        // opacity: 0.75;
+        // D0D9FFC0 -- original gradient end value
         padding: 0;
     }
     .navbar-collapse {
         justify-content: space-between;
-        height: 70px;
+        height: $navHeight;
     }
     .navbar-userinfo {
         display: flex;
@@ -21,7 +24,7 @@
             border-radius: 50%;
         }
         .navbar-username {
-            font: normal normal bold 24px/34px Lato;
+            font: normal normal bold 28px/40px Neuzeit Grotesk;
             letter-spacing: 0.19px;
             color: #363636;
             align-items: center;
@@ -30,24 +33,43 @@
     }
     .navbar-nav {
         position: absolute;
-        height: 100%;
-        width: 100%;
-        justify-content: center;
+        // justify-content: center;
+        // height: 100%;
+        padding: 5px 0;
+        // width: 100%;
+        width: calc(100% - 470px);
+        left: 470px;
         .nav-link {
-            height: $navHeight;
-            font: normal normal bold 24px/34px Lato;
+            // height: $navHeight;
+            font: normal normal 300 28px/40px Neuzeit Grotesk;
             letter-spacing: 0.19px;
             color: #363636;
-            padding-left: 50px;
-            padding-right: 50px;
+            padding-left: 40px;
+            padding-right: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             &.active {
-                background: #31AEED 0% 0% no-repeat padding-box;
-                color: #FFFFFF;
+                // background: #31AEED 0% 0% no-repeat padding-box;
+                // color: #FFFFFF;
+                font: normal normal bold 28px/40px Neuzeit Grotesk;
+                letter-spacing: 0.19px;
+                color: #363636;
+                border: 2px solid #707070;
+                border-radius: 25px;
             }
         }
+    }
+    .navbar-notification {
+        margin-right: 20px;
+        background: #FFFFFF 0% 0% no-repeat padding-box;
+        box-shadow: 0px 10px 10px #00000029;
+        font-size: 29px;
+        width: 60px;
+        height: 60px;
+        text-align: center;
+        border-radius: 50%;
+        padding: 9px;
     }
     .navbar-action {
         button {

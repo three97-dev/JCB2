@@ -26,13 +26,13 @@ use com\zoho\crm\api\query\BodyWrapper;
 use com\zoho\crm\api\users\UsersOperations;
 use com\zoho\crm\api\users\GetUsersParam;
 use com\zoho\crm\api\users\GetUsersHeader;
-
 use DB;
 use App\Models\Car;
 use App\Models\User;
 use App\Models\Location;
 
 class ZohoSerivce {
+       private $response = null;
     public function __construct() {
         $refreshToken = "1000.577706c2a1c3d4f0de396be1248e845a.fcd0d7deccaa518a82af1d66f6e824bc";
 
@@ -45,19 +45,11 @@ class ZohoSerivce {
         $sdkConfig = (new SDKConfigBuilder())->setAutoRefreshFields($autoRefreshFields)->setPickListValidation($pickListValidation)->build();
         $resourcePath = base_path();
         
-        Initializer::initialize($user, $environment, $token, $tokenstore, $sdkConfig, $resourcePath, null, null);
-        $oAuthClient = ZohoOAuth::getClientInstance(); 
-        echo "<pre>"; print_r($oAuthClient); echo "</pre>";
+       $this->response = Initializer::initialize($user, $environment, $token, $tokenstore, $sdkConfig, $resourcePath, null, null);
+ 
     }
 
     public function getAccount($email) {
-        $configuration =array("client_id"=env('ZOHO_CLIENT_ID'),"client_secret"=> env('ZOHO_CLIENT_SECRET'),"redirect_uri"=>{redirect_url},"currentUserEmail"=>{user_email_id});
-        ZCRMRestClient::initialize($configuration);
-        $oAuthClient = ZohoOAuth::getClientInstance(); 
-        $refreshToken = "paste_the_refresh_token_here"; 
-        $userIdentifier = "provide_user_identifier_like_email_here"; 
-        $oAuthClient->generateAccessTokenFromRefreshToken($refreshToken,$userIdentifier);
-
         $moduleAPIName = "Accounts";
         $recordOperations = new RecordOperations();
         $paramInstance = new ParameterMap();
@@ -74,7 +66,8 @@ class ZohoSerivce {
 
     
     public function Placebids($payload) {
-        echo       $token = new OAuthToken(env('ZOHO_CLIENT_ID'), env('ZOHO_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
+         echo "<pre>"; print_r($this->response); echo "</pre>";
+      //  echo $token = new OAuthToken(env('ZOHO_CLIENT_ID'), env('ZOHO_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
 		/*$moduleAPIName = "Cars";
 		$recordId =$payload['id'];
 		$recordOperations = new RecordOperations();

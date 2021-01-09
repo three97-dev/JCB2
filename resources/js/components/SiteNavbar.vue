@@ -13,6 +13,7 @@
                 <router-link to="/payments" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'payments'}">Payment</router-link>
                 <router-link to="/reports" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'reports'}">Reports</router-link>
             </div>
+            <div class="navbar-notification"><span class="mif-bell"></span></div>
         </div>
         <div class="navbar-mobile d-lg-none w-100">
             <div class="navbar-mobile-content">

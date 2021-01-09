@@ -1,15 +1,15 @@
 <template>
-<div id="SiteMenubar"  v-bind:class="{'open-popup': open_cars_filter || open_saved_filter || open_bids_filter || open_schedulings_filter || open_payments_filter }">
+<div id="SiteMenubar"  v-bind:class="{'open-popup': openPopup }">
     <div class="site-menubar-body">
         <ul class="site-menu" v-if="$route.name=='home'">
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openCarsFilter()"><span class="mif-filter" v-bind:class="{'text-danger': open_cars_filter}"></span></a>                
+                <a href="javascript:;" v-on:click="openCarsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_cars_filter}"></span></a>                
             </li>
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="applyLikeFilter()"> <span class="mif-heart"  v-bind:class="{'text-danger': filter_like}"></span> </a>
+                <a href="javascript:;" v-on:click="applyLikeFilter()"> <span class="mif-heart"  v-bind:class="{'text-selected': filter_like}"></span> </a>
             </li>
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openSavedFilter()" > <span class="mif-floppy-disk" v-bind:class="{'text-danger': open_saved_filter}"></span> </a>
+                <a href="javascript:;" v-on:click="openSavedFilter()" > <span class="mif-floppy-disk" v-bind:class="{'text-selected': open_saved_filter}"></span> </a>
             </li>
         </ul>
         <ul class="site-menu" v-if="$route.name=='bids'">
@@ -33,13 +33,13 @@
             <span class="mif-cross-light"></span>
         </a>
         <div class="all-cars-filter" v-if="open_cars_filter && !open_filter_save_step">
-            <div class="filter-item">
+            <div class="filter-item miles-input">
                 <label for="" class="filter-label">{{filter_labels.distance}}</label>
-                <input type="number" placeholder="Type number of miles" v-model="car_filter.distance">
+                <input type="number" class="" placeholder="Type number of miles" v-model="car_filter.distance">
             </div>
-            <div class="filter-item">
+            <div class="filter-item miles-input">
                 <label for="" class="filter-label">{{filter_labels.Miles}}</label>
-                <input type="number" placeholder="Type number of maximum miles"  v-model="car_filter.Miles">
+                <input type="number" class="" placeholder="Type number of maximum miles"  v-model="car_filter.Miles">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Does_the_Vehicle_Run_and_Drive}}</label>
@@ -109,8 +109,8 @@
             </div>
 
             <div class="filter-buttons">
-                <button class="btn btn-light" v-on:click="openSaveStep()">SAVE SEARCH</button>
-                <button class="btn btn-primary" v-on:click="applyCarsFilter()">APPLY</button>
+                <button class="btn btn-save" v-on:click="openSaveStep()">SAVE SEARCH</button>
+                <button class="btn btn-apply" v-on:click="applyCarsFilter()">APPLY</button>
             </div>
         </div>
         <div class="filter-save-step" v-if="open_cars_filter && open_filter_save_step">
@@ -334,6 +334,11 @@ var commonService = new CommonService();
                 thiz.applyPaymentsFilter();
             })
         },
+        computed: {
+            openPopup() {
+                return this.open_cars_filter || this.open_saved_filter || this.open_bids_filter || this.open_schedulings_filter || this.open_payments_filter;
+            }
+        },
         methods: {
             resetFitlerParams() {
                 this.car_filter =  {
@@ -385,10 +390,14 @@ var commonService = new CommonService();
             },
             openCarsFilter() {
                 this.open_cars_filter = !this.open_cars_filter;
+                this.checkPopupOpen();
                 if (this.open_cars_filter) {
                     this.open_filter_save_step = false;
                     this.open_saved_filter = false;
                 }
+            },
+            checkPopupOpen(flag) {
+                this.$emit('checkPopupOpen', this.openPopup);
             },
             openSaveStep() {
                 const params = this.get_filter_param(this.car_filter);

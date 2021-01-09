@@ -5,14 +5,18 @@
     z-index: 1000;
     height: calc(100% - #{$navHeight});
     width: 70px;
-    background: #F7F5FF;
+    // opacity: 0.75;
+    // background: #F7F5FF;
+    background: #c9fcce;
     box-shadow: 0px 10px 10px #00000029;
     display: flex;
     overflow: hidden;
-    border-right: 1px solid $gray;
+    // border-right: 0.5px solid #bfecc2;
+    border-top: 0.5px solid #bfecc2;
     .site-menubar-body {
         padding-top: 50px;
         width: 70px;
+        box-shadow: 0px 10px 10px #00000029;
     }
     .site-menu {
         margin: 0;
@@ -24,7 +28,8 @@
             align-items: center;
             justify-content: center;
             a {
-                color: $blue;
+                // color: $blue;
+                color: #6d7a87;
                 font-size: 30px;
             }
         }
@@ -33,12 +38,13 @@
         width: 470px;
         .site-menubar-filter {
             display: block !important;
+            box-shadow: inset 0 0 3px #000000;
         }
     }
     .site-menubar-filter {
         display: none;
         width: 400px;
-        background-color: #fafaea;
+        background-color: #e4e4e4;
         overflow: auto;
         .btn-close-filter {
             display:none;
@@ -46,18 +52,24 @@
         }
         // .all-cars-filter {
             .filter-item {
-                padding: 10px;
+                padding: 20px;
                 margin-top: 15px;
                 label.filter-label {
-                    display: block;
-                    font-size: 20px;
+                    // display: block;
+                    // font-size: 20px;
+                    text-align: left;
+                    font: normal normal normal 18px/22px Lato;
+                    letter-spacing: 0.12px;
+                    color: #1A173B;
+                    opacity: 1;
                 }
                 input, select {
                     width: 100%;
-                    padding: 5px;
+                    padding: 5px 5px 12px 0;
                 }
                 .btn-action-bar {
                     display: flex;
+                    margin-top: 10px;
                     .btn-action {
                         flex: 1;
                         &:first-of-type {
@@ -73,18 +85,19 @@
                         }
                         &.btn-primary {
                             background: #E6F1EE 0% 0% no-repeat padding-box;
-                            color:#269A8E;
-                            border-color: #269A8E;
+                            color:#25A394;
+                            border-color: #25A394;
                         }
                     }
                 }
             }
             .filter-buttons {
                 display: flex;
-                    margin: 45px 0 0;
+                    margin: 20px 0 0;
+                    padding: 10px;
                 .btn {
                     flex: 1;
-                    margin: 5px;
+                    margin: 10px;
                     padding: 10px 0;
                 }
             }
@@ -124,8 +137,9 @@
             padding: 20px;
             .filter-item {
                 margin: 20px 0;
-                border-top: 1px solid #269A8E;
-                border-bottom: 1px solid #269A8E;
+                // #269A8E
+                border-top: 1px solid #25A394;
+                border-bottom: 1px solid #25A394;
                 padding: 15px 0 5px;
                 .content {
                     display: flex;
@@ -143,7 +157,7 @@
                 .filter-detail {
                     font: normal normal normal 14px/17px Lato;
                     letter-spacing: 0px;
-                    color: #269A8E;
+                    color: #25A394;
                 }
                 .btn {
                     width: 80px;
@@ -156,11 +170,35 @@
         color: #A0AABB;
         border: 1px solid #CCCFD4;
     }
+    .btn-save {    
+        font: normal normal 300 14px/17px Lato;
+        letter-spacing: 0px;
+        color: #3C1642;
+        opacity: 1;
+        background: #FFFFFF 0% 0% no-repeat padding-box;
+        box-shadow: 0px 10px 10px #00000026;
+        border: 1px solid #6D7A87;
+        border-radius: 10px;
+        padding: 22px 0 !important;
+    }
+    .btn-apply {    
+        background: #31AEED 0% 0% no-repeat padding-box;
+        box-shadow: 0px 10px 10px #00000026;
+        border: 1px solid #1DD3B0;
+        border-radius: 10px;
+        opacity: 1;
+        font: normal normal bold 14px/17px Lato;
+        letter-spacing: 0px;
+        color: #B2FF9E;
+        padding: 22px 0 !important;
+    }
     input {
         background: none;
         border: none;
-        border-bottom: 1px solid #269A8E;
+        border-bottom: 1px solid #25A394;
         outline: none;
+        font: normal normal bold 14px/17px Lato;
+        letter-spacing: 0px;
 
         //remove number arrow
         &::-webkit-outer-spin-button,
@@ -173,16 +211,29 @@
         }
     }
     ::placeholder {
-        color: #269A8E;
+        color: #25A394;
         opacity: 1;
         font: italic normal normal 14px/17px Lato;
     }
     select {
         background: none;
         border: none;
-        border-bottom: 1px solid #269A8E;
+        border-bottom: 1px solid #25A394;
         outline: none;
-        color: #269A8E;
+        color: #25A394;
+    }
+    .miles-input {
+        position: relative;
+    }
+    .miles-input:after {
+        position: absolute;
+        bottom: 32px;
+        right: 20px;
+        content: "Miles";
+        text-align: right;
+        font: normal normal normal 14px/17px Lato;
+        letter-spacing: 0px;
+        color: #1A173B;
     }
 }
 
@@ -218,7 +269,7 @@
         }
         .site-menubar-filter {
             position: fixed;
-            top: 70px;
+            top: $navHeight;
             width: 100vw;
             left: 0;
             bottom: 0;

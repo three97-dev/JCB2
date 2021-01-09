@@ -235,21 +235,6 @@ var commonService = new CommonService();
                 if (!this.bid_price) return alert('Please type the bid price');
                 const thiz = this;
                 let loader = this.$loading.show();
-             this.error = '';
-                this.axios
-                .post(`/api/placebid`, {
-                        username: this.username, 
-                        password: this.password
-                    })
-                    .then(response => {
-                        loader.hide();
-                        var res = response.data;
-                        if (res.error) return this.error = "Username or Password is invalid";
-
-                        commonService.save_login(res.data);
-                        this.$router.push('/');
-                });
-
                 setTimeout(() => {
                     loader.hide();
                     this.sel_car.submit_bid = this.bid_price;

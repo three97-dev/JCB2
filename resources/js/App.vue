@@ -1,8 +1,8 @@
 <template>
 <div id="jcbApp">
     <site-navbar v-if="authenticated"></site-navbar>
-    <site-menubar v-if="authenticated"></site-menubar>
-    <div id="PageContent" v-bind:class="{'no-margin' : !authenticated}">
+    <site-menubar v-if="authenticated" @checkPopupOpen="checkPopupStatus"></site-menubar>
+    <div id="PageContent" v-bind:class="{'no-margin' : !authenticated, 'popup-opened': popupStatus}">
         <router-view></router-view>
     </div>
 </div>
@@ -18,6 +18,8 @@
         data() {
             return {
                 authenticated: false,
+                loaded: false,
+                popupStatus: false,
                 commonService
             };
         },
@@ -32,9 +34,19 @@
         },
         mounted() {
             this.authenticated = commonService.is_authenticated();
+            this.loaded = true;
         },
         created() {
             this.authenticated = commonService.is_authenticated();
+            
+        },
+        methods: {
+            checkPopupStatus(flag) {
+                // window.document.querySelector('#SiteMenubar').classList.contains('open-popup')
+                this.popupStatus = flag;
+                console.log(flag);
+            }
         }
+
     }
 </script>
