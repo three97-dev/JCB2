@@ -89,7 +89,7 @@
                                     <div class="col-md-3">
                                     </div>
                                     <div class="car-header col-md-3 ">
-                                        <div class="action-bar">
+                                        <div class="action-bar margin-ignore">
                                             <div class="header-label">{{bid_submit_button_string.caption}}</div>
                                             <span>$</span>
                                             <input ref="bid_input" type="number" @keyup="changeStatus" @change="changeStatus" placeholder="" v-model="bid_price">

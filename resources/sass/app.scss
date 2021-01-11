@@ -1164,6 +1164,9 @@ body {
     border: 0;
     box-shadow: unset;
 }
+.margin-ignore {
+    margin: unset;
+}
 
 // scrollbar 
 ::-webkit-scrollbar {
