@@ -14,17 +14,17 @@
         </ul>
         <ul class="site-menu" v-if="$route.name=='bids'">
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openBidsFilter()"><span class="mif-filter" v-bind:class="{'text-danger': open_cars_filter}"></span></a>                
+                <a href="javascript:;" v-on:click="openBidsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_bids_filter}"></span></a>                
             </li>
         </ul>
         <ul class="site-menu" v-if="$route.name=='schedulings'">
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openSchedulingsFilter()"><span class="mif-filter" v-bind:class="{'text-danger': open_cars_filter}"></span></a>                
+                <a href="javascript:;" v-on:click="openSchedulingsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_schedulings_filter}"></span></a>                
             </li>
         </ul>
         <ul class="site-menu" v-if="$route.name=='payments'">
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openPaymentsFilter()"><span class="mif-filter" v-bind:class="{'text-danger': open_payments_filter}"></span></a>                
+                <a href="javascript:;" v-on:click="openPaymentsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_payments_filter}"></span></a>                
             </li>
         </ul>
     </div>

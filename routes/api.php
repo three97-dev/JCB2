@@ -31,6 +31,7 @@ Route::get('test',    'UserController@forgotPassword');
 
 Route::get('sync-user-info',    'UserController@syncUserInfo');
 Route::post('login',            'UserController@login');
+Route::get('logout',            'UserController@logout');
 Route::post('forgot-password',  'UserController@forgotPassword');
 Route::post('temp-password',    'UserController@checkTempPassword');
 Route::post('reset-password',   'UserController@resetPassword');

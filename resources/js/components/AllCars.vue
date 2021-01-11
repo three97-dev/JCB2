@@ -36,7 +36,7 @@
                         <!-- <div class="action-go"></div> -->
                     </div>
                     <div class="car-body">
-                        <div class="car-item" v-for="car in cars" :key="car.index" @click="showDetail(car)">
+                        <div class="car-item" v-for="car in cars" :key="car.index" @click="showDetail(car, $event)">
                             <div class="action-heart">
                                 <a href="javascript:;" class="mif-heart" v-bind:class="{'text-danger': car.is_liked}"  v-on:click="likeCar(car)"></a>
                             </div>
@@ -323,7 +323,9 @@ var commonService = new CommonService();
             resetFilter() {
                 EventBus.$emit('reset-car-filter');
             },
-            showDetail(car) {
+            showDetail(car, $evt) {
+                if($evt.toElement.className.includes('mif-heart')) return;
+                
                 this.sel_car = car;
                 this.bid_price = parseFloat(car.Buyers_Quote).toFixed(2);
                 this.submit_bid = false;

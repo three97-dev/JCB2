@@ -322,7 +322,7 @@ class CarController extends Controller
         
         $total = $query->count();
         $cars = $query->skip($page * $records_per_page)->take($records_per_page)->get();
-        return ['total' => $total,  'data' => $cars, "user" => Auth::user()];
+        return ['total' => $total,  'data' => $cars];
     }
 
     public function like(Request $request, $id) {

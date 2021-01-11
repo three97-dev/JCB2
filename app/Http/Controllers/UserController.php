@@ -168,4 +168,9 @@ class UserController extends Controller
         return ['success' => true];
     }
 
+    public function logout(Request $request) {
+        Auth::logout();
+        return redirect('/login');
+    }
+
 }
