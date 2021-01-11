@@ -1,14 +1,19 @@
 <template>
     <div id="AllCarsPage" class="page-content-detail">
         <template>
-            <div class="page-header">
-                <span>All Cars</span>
+            <div class="page-content-block-wrapper">
+                <div class="page-header">
+                    <span>All Cars</span>
+                </div>
             </div>
-            <div class="page-filter">
-                <span class="filter-label">Filters:</span>            
-                <div class="filter-content" v-if="filter_string != ''">
-                    <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
-                    {{filter_string}}
+            
+            <div class="page-content-block-wrapper">
+                <div class="page-filter">
+                    <span class="filter-label">Filters:</span>            
+                    <div class="filter-content" v-if="filter_string != ''">
+                        <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
+                        {{filter_string}}
+                    </div>
                 </div>
             </div>
 
@@ -16,124 +21,126 @@
                 {{total}} RESULTS
             </div>
 
-            <div class="car-content" v-if="!sel_car">
-                <div class="title-header">
-                    <div class="action-heart"></div>
-                    <div class="title">Year</div>
-                    <div class="title">Make</div>
-                    <div class="title">Model</div>
-                    <div class="title">Zip Code</div>
-                    <div class="title">City</div>
-                    <div class="title">Runs/Drivers</div>
-                    <div class="title">Mileage</div>
-                    <div class="title">Current Offer</div>
-                    <!-- <div class="action-go"></div> -->
-                </div>
-                <div class="car-body">
-                    <div class="car-item" v-for="car in cars" :key="car.index" @click="showDetail(car)">
-                        <div class="action-heart">
-                            <a href="javascript:;" class="mif-heart" v-bind:class="{'text-danger': car.is_liked}"  v-on:click="likeCar(car)"></a>
-                        </div>
-                        <div class="item-data">{{ car.Year }}</div>
-                        <div class="item-data">{{ car.Make }}</div>
-                        <div class="item-data">{{ car.Model }}</div>
-                        <div class="item-data">{{ car.Zip_Code }}</div>
-                        <div class="item-data">{{ car.City }}</div>
-                        <div class="item-data">{{ car.Does_the_Vehicle_Run_and_Drive }}</div>
-                        <div class="item-data text-center">{{ car.Miles }}</div>
-                        <div class="item-data text-center">{{ car.Buyers_Quote }}</div>
-                        <!-- <div class="text-center action-go">
-                            <a href="javascript:;" v-on:click="showDetail(car)">
-                                <span class="mif-arrow-right"></span>
-                            </a>
-                        </div> -->
-                        <div class="mobile-item item-data" v-on:click="showDetail(car)">
-                            <div class="item-content">
-                                <div class="font-weight-bold">{{car.Reference_Number}} &nbsp;&nbsp;{{car.Year}} {{car.Make}} {{car.Model}}</div>
-                                <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
-                                <div class="text-blue">{{car.Buyers_Quote}}</div>
-                            </div>
+            <div class="page-content-block-wrapper">
+                <div class="car-content" v-if="!sel_car">
+                    <div class="title-header">
+                        <div class="action-heart"></div>
+                        <div class="title">Year</div>
+                        <div class="title">Make</div>
+                        <div class="title">Model</div>
+                        <div class="title">City</div>
+                        <div class="title">Runs/Drivers</div>
+                        <div class="title">Closing Date</div>
+                        <div class="title">Mileage</div>
+                        <div class="title">Current Offer</div>
+                        <!-- <div class="action-go"></div> -->
+                    </div>
+                    <div class="car-body">
+                        <div class="car-item" v-for="car in cars" :key="car.index" @click="showDetail(car)">
                             <div class="action-heart">
-                                <a href="javascript:;">
-                                    <span class="mif-heart"  v-bind:class="{'text-danger': car.is_liked}"></span>
+                                <a href="javascript:;" class="mif-heart" v-bind:class="{'text-danger': car.is_liked}"  v-on:click="likeCar(car)"></a>
+                            </div>
+                            <div class="item-data">{{ car.Year }}</div>
+                            <div class="item-data">{{ car.Make }}</div>
+                            <div class="item-data">{{ car.Model }}</div>
+                            <div class="item-data">{{ car.City }}</div>
+                            <div class="item-data">{{ car.Does_the_Vehicle_Run_and_Drive }}</div>
+                            <div class="item-data">{{ car.Closing_Date }}</div>
+                            <div class="item-data text-center">{{ car.Miles }}</div>
+                            <div class="item-data text-center">{{ car.Buyers_Quote }}</div>
+                            <!-- <div class="text-center action-go">
+                                <a href="javascript:;" v-on:click="showDetail(car)">
+                                    <span class="mif-arrow-right"></span>
                                 </a>
+                            </div> -->
+                            <div class="mobile-item item-data" v-on:click="showDetail(car)">
+                                <div class="item-content">
+                                    <div class="font-weight-bold">{{car.Reference_Number}} &nbsp;&nbsp;{{car.Year}} {{car.Make}} {{car.Model}}</div>
+                                    <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
+                                    <div class="text-blue">{{car.Buyers_Quote}}</div>
+                                </div>
+                                <div class="action-heart">
+                                    <a href="javascript:;">
+                                        <span class="mif-heart"  v-bind:class="{'text-danger': car.is_liked}"></span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    
-                    
                 </div>
+                <template v-if="sel_car">
+                    <div class="car-content car-detail-popup">
+                        <template v-if="!submit_bid">
+                            <div class="detail-bottom">
+                                <button class="btn btn-default btn-like" v-bind:class="{'is_liked': sel_car.is_liked}" v-on:click="likeCar(sel_car)" >
+                                    <span class="mif-heart"></span>
+                                </button>
+                                <a href="javascript:;" class="btn-close" v-on:click="sel_car = null"><span class="mif-cross-light"></span></a>
+                            </div>
+                            <div class="detail-content">
+                                <div class="row car-fields">
+                                    <div class="car-header col-md-6">
+                                        <div class="car-title">
+                                            {{sel_car.Year}} {{sel_car.Make}} {{sel_car.Model}}
+                                            <br>
+                                            <label>{{sel_car.City}} - {{sel_car.Miles | milesValidate}}</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                    </div>
+                                    <div class="car-header col-md-3 ">
+                                        <div class="action-bar">
+                                            <div class="header-label">{{bid_submit_button_string.caption}}</div>
+                                            <span>$</span>
+                                            <input ref="bid_input" type="number" @keyup="changeStatus" @change="changeStatus" placeholder="" v-model="bid_price">
+                                            <button class="btn" :class="'status'+bid_status" @click="submitBid()">{{bid_submit_button_string.btn_str}}</button>
+                                        </div>
+                                    </div>
+                                    <div class="field-item col-md-3" v-for="(detail_field, i) in detail_fields" :key="i">
+                                        <div class="item-label">{{detail_field.field}}</div>
+                                        <div type="text" class="item-value">{{ sel_car[detail_field.key] | replaceIfEmpty }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </template>
+                        <template v-if="submit_bid">
+                            <div class="submit-success">
+                                <div class="title">YOUR BID OF <span class="text-blue">{{submit_bid | toCurrency}}
+                                <br>
+                                </span>WAS SUBMITTED!</div>
+                                <div class="img-div">
+                                    <img src="/img/bid_success.png" alt="">
+                                </div>
+                                <div class="text-center btn-div">
+                                    <button class="btn btn-primary btn-done" v-on:click="sel_car=null">DONE</button>
+                                </div>
+                                <div class="detail-bottom">
+                                    <div>
+                                        <a href="javascript:;" class="btn-close" v-on:click="sel_car = null"><span class="mif-cross-light"></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
             </div>
-            <template v-if="sel_car">
-                <div class="car-detail-popup">
-                    <template v-if="!submit_bid">
-                        <div class="detail-bottom">
-                            <button class="btn btn-default btn-like" v-bind:class="{'is_liked': sel_car.is_liked}" v-on:click="likeCar(sel_car)" >
-                                <span class="mif-heart"></span>
-                            </button>
-                            <a href="javascript:;" class="btn-close" v-on:click="sel_car = null"><span class="mif-cross-light"></span></a>
-                        </div>
-                        <div class="detail-content">
-                            <div class="row car-fields">
-                                <div class="car-header col-md-3">
-                                    <div class="car-title">
-                                        {{sel_car.Year}} {{sel_car.Make}} {{sel_car.Model}}
-                                        <br>
-                                        <label>{{sel_car.City}} - {{sel_car.Miles | milesValidate}}</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                </div>
-                                <div class="col-md-3">
-                                </div>
-                                <div class="car-header col-md-3 ">
-                                    <div class="action-bar">
-                                        <div class="header-label">{{bid_submit_button_string.caption}}</div>
-                                        <span>$</span>
-                                        <input ref="bid_input" type="number" @change="changeStatus" placeholder="Click to type a bid price" v-model="bid_price">
-                                        <button class="btn" :class="'status'+bid_status" @click="submitBid()">{{bid_submit_button_string.btn_str}}</button>
-                                    </div>
-                                </div>
-                                <div class="field-item col-md-3" v-for="(detail_field, i) in detail_fields" :key="i">
-                                    <div class="item-label">{{detail_field.field}}</div>
-                                    <div type="text" class="item-value">{{ sel_car[detail_field.key] | replaceIfEmpty }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </template>
-                    <template v-if="submit_bid">
-                        <div class="submit-success">
-                            <div class="title">YOUR BID OF <span class="text-blue">{{submit_bid | toCurrency}}
-                            <br>
-                            </span>WAS SUBMITTED!</div>
-                            <div class="img-div">
-                                <img src="/img/bid_success.png" alt="">
-                            </div>
-                            <div class="text-center">
-                                <button class="btn btn-primary btn-done" v-on:click="sel_car=null">DONE</button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </template>
-            <div class="pagination">
-                <div class="page-label">
-                    Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
-                </div>
-                <div class="pages-action">
-                    Page: 
-                    <template v-for="one of valid_pages">
-                        <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
-                    </template>
-                    <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page-1)">&lt; Prev</a>
-                    <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page+1)">Next &gt;</a>
+            <div class="page-content-block-wrapper">
+                <div class="pagination">
+                    <div class="page-label">
+                        Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
+                    </div>
+                    <div class="pages-action">
+                        Page: 
+                        <template v-for="one of valid_pages">
+                            <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
+                        </template>
+                        <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page-1)">&lt; Prev</a>
+                        <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page+1)">Next &gt;</a>
+                    </div>
                 </div>
             </div>
         </template>
-
-        
     </div>
 </template>
 
@@ -324,12 +331,12 @@ var commonService = new CommonService();
             },
             changeStatus() {
                 var caption, btn_str;
-                if(parseFloat(this.bid_price).toFixed(2) > parseFloat(this.sel_car.Buyers_Quote).toFixed(2)) {
+                if(parseFloat(this.bid_price) > parseFloat(this.sel_car.Buyers_Quote)) {
                     this.bid_status = 2;
                     caption = "Your Offer";
                     btn_str = "SUBMIT";
                 }
-                else if(parseFloat(this.bid_price).toFixed(2) == parseFloat(this.sel_car.Buyers_Quote).toFixed(2)) {
+                else if(parseFloat(this.bid_price) == parseFloat(this.sel_car.Buyers_Quote)) {
                     this.bid_status = 1;
                     caption = "Current Offer";
                     btn_str = "BID";
