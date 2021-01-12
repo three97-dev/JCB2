@@ -18,7 +18,7 @@ use App\Models\Company;
 class CarController extends Controller
 {
     function __construct() {
-        
+
     }
 
     public function test() {
@@ -37,21 +37,21 @@ class CarController extends Controller
     // public function index(Request $request)
     // {
 
-    //     $page = ($request->page ?: 1) - 1; 
+    //     $page = ($request->page ?: 1) - 1;
     //     $records_per_page = $request->records_per_page ?: 8;
     //     $select = [
-    //         'index', 
-    //         'Year', 
-    //         'Make', 
-    //         'Model', 
-    //         'City', 
-    //         'Does_the_Vehicle_Run_and_Drive', 
-    //         'Miles', 
-    //         'Buyers_Quote', 
-    //         'Zip_Code', 
+    //         'index',
+    //         'Year',
+    //         'Make',
+    //         'Model',
+    //         'City',
+    //         'Does_the_Vehicle_Run_and_Drive',
+    //         'Miles',
+    //         'Buyers_Quote',
+    //         'Zip_Code',
     //         'Reference_Number',
-    //         'Closing_Date', 
-    //         'Stage', 
+    //         'Closing_Date',
+    //         'Stage',
     //     ];
     //     // $quey = null;
     //     if ($request->type == 'like') {
@@ -101,7 +101,7 @@ class CarController extends Controller
     //             if ($request->status && $request->status == 'Won') {
     //                 $query = $query->where('Stage', 'Deal Made');
     //             } elseif ($request->status && $request->status == 'Active') {
-    //                 $query = $query->where('Stage', 'Given Quote');                
+    //                 $query = $query->where('Stage', 'Given Quote');
     //             }
     //         } elseif ($request->page_type == 'schedulings') {
     //             $select[] = 'Scheduled_Time';
@@ -172,7 +172,7 @@ class CarController extends Controller
     //         // var_dump($lng_min);
     //         // var_dump($lng_max);
     //     }
-        
+
     //     $total = $query->count();
     //     $cars = $query->skip($page * $records_per_page)->take($records_per_page)->get();
     //     return ['total' => $total,  'data' => $cars];
@@ -182,21 +182,21 @@ class CarController extends Controller
     public function index(Request $request)
     {
 
-        $page = ($request->page ?: 1) - 1; 
+        $page = ($request->page ?: 1) - 1;
         $records_per_page = $request->records_per_page ?: 8;
         $select = [
-            'index', 
-            'Year', 
-            'Make', 
-            'Model', 
-            'City', 
-            'Does_the_Vehicle_Run_and_Drive', 
-            'Miles', 
-            'Buyers_Quote', 
-            'Zip_Code', 
+            'index',
+            'Year',
+            'Make',
+            'Model',
+            'City',
+            'Does_the_Vehicle_Run_and_Drive',
+            'Miles',
+            'Buyers_Quote',
+            'Zip_Code',
             'Reference_Number',
-            'Closing_Date', 
-            'Stage', 
+            'Closing_Date',
+            'Stage',
         ];
         // $quey = null;
         if ($request->type == 'like') {
@@ -247,7 +247,7 @@ class CarController extends Controller
                 if ($request->status && $request->status == 'Won') {
                     $query = $query->where('Stage', 'Deal Made');
                 } elseif ($request->status && $request->status == 'Active') {
-                    $query = $query->where('Stage', 'Given Quote');                
+                    $query = $query->where('Stage', 'Given Quote');
                 }
             } elseif ($request->page_type == 'schedulings') {
                 $select[] = 'Scheduled_Time';
@@ -319,10 +319,10 @@ class CarController extends Controller
             // var_dump($lng_min);
             // var_dump($lng_max);
         }
-        
+
         $total = $query->count();
         $cars = $query->skip($page * $records_per_page)->take($records_per_page)->get();
-        return ['total' => $total,  'data' => $cars];
+        return ['total' => $total,  'data' => $cars, 'user'=> Auth::user()];
     }
 
     public function like(Request $request, $id) {
@@ -330,6 +330,9 @@ class CarController extends Controller
         if(!$car) return 'invalid car';
 
         $link =  LikeBind::where('car_index', $id)->first();
+
+        $zohoService = new ZohoSerivce();
+        $deal = $zohoService->getDealInfo($id);
 
         if ($request->like) {
             if (!$link) {
@@ -344,18 +347,39 @@ class CarController extends Controller
                 $link->delete();
             }
         }
+        // $resp =$zohoService->bid($id, "250");
+        return $deal->getKeyValue('Tow_Company')->getKeyValue('name');
         return 'success';
     }
-    
-    
-    public function placebid(Request $request) {
-        $zohoService = new ZohoSerivce();
-        // $res = $zohoService->refreshCarLocations();
-        // $account = $zohoService->getAccount('luistowingllc@gmail.com');
-        $deals = $zohoService->getRecords('Cars', 1, 100);
-        echo "<pre>"; print_r($deals); echo "</pre>";
 
+
+    public function bid(Request $request, $id) {
+        $car = Car::where('index', $id)->first();
+        if(!$car) return 'invalid car';
+
+        $price = $request->price;
+        $user_id = Auth::user()->zoho_index;
+        $user_name = Auth::user()->name;
+        $user_email = Auth::user()->email;
+        $now = new \DateTime();
+
+        // update local DB
+        $car->Buyers_Quote = $price;
+        $car->Modified_By_id = $user_id;
+        $car->Modified_By_name = $user_name;
+        $car->Modified_By_email = $user_email;
+        $car->Tow_Company_id = $user_id;
+        $car->Tow_Company_name = $user_name;
+        $car->Modified_Time = $now->format('Y-m-d H:i:s');
+        $car->save();
+
+        $zohoService = new ZohoSerivce();
+        $deal = $zohoService->updateDealInfo($id, $price, $user_id, $user_name, $user_email, $now);
+
+        // $resp =$zohoService->bid($id, "250");
+        // return $deal->getKeyValue('Modified');
         return 'success';
+
     }
 
     public function setSchedule(Request $request, $id) {
@@ -365,6 +389,11 @@ class CarController extends Controller
         $car->Scheduled_Time = $request->Scheduled_Time;
         $car->Scheduled_Notes = $request->Scheduled_Notes;
         $car->save();
+        $zohoService = new ZohoSerivce();
+        // $res = $zohoService->refreshCarLocations();
+        // $account = $zohoService->getAccount('luistowingllc@gmail.com');
+        $deals = $zohoService->getRecords('Deals', 1, 100);
+        return json_encode(array('res' => $deals));
     }
 
     public function saveFilter(Request $request) {
@@ -398,17 +427,17 @@ class CarController extends Controller
             $zip_codes = [];
 
             echo time().'---------'.$page . '<br/>';
-            
+
             $records = $zohoService->getRecords('Deals', $page++, $length);
-            
+
 
             if (!is_array($records)) {
                 echo "end: resulte is invalid: not array";
                 break;
-            } 
+            }
 
             echo time().'--------- get '.count($records).' records from zoho <br/>';
-            
+
             $save_array = [];
             $break_time = false;
 
@@ -438,7 +467,7 @@ class CarController extends Controller
             }
 
             $zohoService->refreshCarLocationFromDB();
-            
+
             //save bulk cars
             if ($bulk_insert_mode) {
                 // check bulk existing index on db;
@@ -460,18 +489,18 @@ class CarController extends Controller
                 }
                 Car::insert($bulk_valid_cars);
             }
-            
+
             if ($break_time) break;
             echo time().'--------- save records to db <br/>';
 
             if ($records < $length) {
                 echo "end: count less than 200";
                 break;
-            } 
+            }
 
             if ($page > $end_page) break;
         }
-        
+
     }
 
     public function refreshCarLocation() {

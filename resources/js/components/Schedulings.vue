@@ -293,6 +293,7 @@ var commonService = new CommonService();
                 this.axios
                     .post(`/api/car/schedules/` + this.sel_car.index, {Scheduled_Time: this.pickup_date.id, Scheduled_Notes: this.schedule_note}, commonService.get_api_header())
                     .then(response => {
+                        console.log(response)
                         loader.hide();
                         this.submit_pickup = true;
                         this.sel_car.Scheduled_Time = this.pickup_date.id;

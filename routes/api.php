@@ -41,11 +41,11 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::group(['prefix' => 'car'], function () {
         Route::post('like/{id}',    'CarController@like');
         Route::post('schedules/{id}', 'CarController@setSchedule');
-        Route::post('placebids', 'CarController@placebid');
-    }); 
+        Route::post('bid/{id}', 'CarController@bid');
+    });
     Route::group(['prefix' => 'filters'], function (){
         Route::post('',         'CarController@saveFilter');
         Route::get('',          'CarController@getFilters');
-        Route::delete('{id}',   'CarController@deleteFilter');    
+        Route::delete('{id}',   'CarController@deleteFilter');
     });
 });
