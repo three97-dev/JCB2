@@ -19,10 +19,13 @@ use com\zoho\crm\api\record\GetRecordsHeader;
 use com\zoho\crm\api\record\GetRecordsParam;
 use com\zoho\crm\api\record\ResponseWrapper;
 use com\zoho\crm\api\record\Deals;
+use com\zoho\crm\api\record\Record;
 use com\zoho\crm\api\record\SearchRecordsParam;
 use com\zoho\crm\api\Param;
 use com\zoho\crm\api\query\QueryOperations;
 use com\zoho\crm\api\query\BodyWrapper;
+use com\zoho\crm\api\record\BodyWrapper as RecordBodyWrapper;
+use com\zoho\crm\api\record\Field;
 use com\zoho\crm\api\users\UsersOperations;
 use com\zoho\crm\api\users\GetUsersParam;
 use com\zoho\crm\api\users\GetUsersHeader;
@@ -44,9 +47,9 @@ class ZohoSerivce {
         $pickListValidation = false;
         $sdkConfig = (new SDKConfigBuilder())->setAutoRefreshFields($autoRefreshFields)->setPickListValidation($pickListValidation)->build();
         $resourcePath = base_path();
-        
+
        $this->response = Initializer::initialize($user, $environment, $token, $tokenstore, $sdkConfig, $resourcePath, null, null);
- 
+
     }
 
     public function getAccount($email) {
@@ -64,7 +67,83 @@ class ZohoSerivce {
         return $records[0];
     }
 
-    
+    public function getDealInfo($car_id) {
+        $moduleAPIName = "Deals";
+        $recordOperations = new RecordOperations();
+        $paramInstance = new ParameterMap();
+        $paramInstance->add(SearchRecordsParam::criteria(), "(id:equals:".$car_id.")");
+
+        $response = $recordOperations->searchRecords($moduleAPIName,$paramInstance);
+        $responseHandler = $response->getObject();
+        if (!$responseHandler) return null;
+        $records = $responseHandler->getData();
+        return $records[0];
+    }
+
+    public function bid($car_id, $price) {
+        $moduleAPIName = "Deals";
+
+        $recordId =$car_id;
+
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+
+        $record1 = new Record();
+        $record1->setId($recordId);
+        // $field = new Field("id, Buyers_Quote");
+        $record1->addKeyValue('Buyers_Quote', $price);
+        // $record1->addFieldValue(new Field("Buyers_Quote"), $price);
+        // $record1 = array('Buyers_Quote'=>$price);
+        // array_push($records, $record1);
+        $records[] = $record1;
+
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+
+        $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+        return $resp;
+    }
+
+    public function updateDealInfo($car_id, $price, $user_id, $user_name, $user_email, $modified_time) {
+        $moduleAPIName = "Deals";
+
+        $recordId =$car_id;
+
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+
+        $record1 = new Record();
+        $record1->setId($recordId);
+        // $field = new Field("id, Buyers_Quote");
+        $record1->addKeyValue('Buyers_Quote', $price);
+
+        $user_record = new Record();
+        $user_record->addKeyValue('id', $user_id);
+        $user_record->addKeyValue('name', $user_name);
+        $user_record->addKeyValue('email', $user_email);
+        $record1->addKeyValue('Modified_By', $user_record);
+        $record1->addKeyValue('Modified_Time', $modified_time);
+        $Tow_company = new Record();
+        $Tow_company->addKeyValue('id', $user_id);
+        $Tow_company->addKeyValue('name', $user_name);
+        $record1->addKeyValue('Tow_Company', $Tow_company);
+        // $record1->addFieldValue(new Field("Buyers_Quote"), $price);
+        // $record1 = array('Buyers_Quote'=>$price);
+        // array_push($records, $record1);
+        $records[] = $record1;
+
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+
+        $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+        return $resp;
+    }
+
+
     public function Placebids($payload) {
          echo "<pre>"; print_r($this->response); echo "</pre>";
       //  echo $token = new OAuthToken(env('ZOHO_CLIENT_ID'), env('ZOHO_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
@@ -82,7 +161,7 @@ class ZohoSerivce {
         $request->setData($records);
         $response = $recordOperations->updateRecord( $recordId, $moduleAPIName,$request);
         dd( $response); */
-        
+
     }
 
     public function refreshUserData() {
@@ -94,7 +173,7 @@ class ZohoSerivce {
                 $user = new User();
                 $user->password = 'no_set';
             }
-            
+
             $user->zoho_index = $record->getKeyValue('id');
             $name = $email;
             if ($record->getName()) {
@@ -111,7 +190,7 @@ class ZohoSerivce {
 
     public function getAllUsers() {
         $usersOperations = new UsersOperations();
-        $paramInstance = new ParameterMap();		
+        $paramInstance = new ParameterMap();
         $paramInstance->add(GetUsersParam::type(), "ActiveUsers");
         $headerInstance = new HeaderMap();
         $response = $usersOperations->getUsers($paramInstance, $headerInstance);
@@ -138,24 +217,24 @@ class ZohoSerivce {
         try {
             $page = 0;
             $limit = 200;
-            
+
             $queryOperations = new QueryOperations();
             $bodyWrapper = new BodyWrapper();
             $records = [];
             while(true) {
                 $selectQuery = $query . ' limit '. $page. ',' . $limit;
-                
+
                 $bodyWrapper->setSelectQuery($selectQuery);
                 $response = $queryOperations->getRecords($bodyWrapper);
                 $responseHandler = $response->getObject();
                 $tmp_records = $responseHandler->getData();
                 if (!is_array($tmp_records)) break;
-                
+
                 $records = array_merge($records, $tmp_records);
-                
+
                 if (count($tmp_records) < $limit) break;
                 $page ++;
-                
+
 
                 echo '<br/>' . time().'-------' . $query.'-----------------' . count($records);die;
                 if ($page == 15) break;
@@ -176,6 +255,7 @@ class ZohoSerivce {
         $paramInstance->add(GetRecordsParam::sortBy(), 'Created_Time');
         $headerInstance = new HeaderMap();
         $moduleAPIName = "Deals";
+        $moduleAPIName = $module;
         $response = $recordOperations->getRecords($moduleAPIName, $paramInstance, $headerInstance);
         $responseHandler = $response->getObject();
         $records = $responseHandler->getData();
@@ -367,7 +447,7 @@ class ZohoSerivce {
         $car->Are_All_the_Tires_Inflated        =  $record->getKeyValue('Are_All_the_Tires_Inflated') ? $record->getKeyValue('Are_All_the_Tires_Inflated')->getValue(): null;
         $car->Location        =  $record->getKeyValue('Location') ? $record->getKeyValue('Location')->getValue() : null;
         $car->Zoho_Books_Invoice_Number        =  $record->getKeyValue('Zoho_Books_Invoice_Number');
-        
+
 
 
         foreach ($car->toArray() as $key => $value) {
@@ -396,9 +476,9 @@ class ZohoSerivce {
                     ->take($records_per_page)
                     // ->toSql();var_dump($zip_codes);die;
                     ->pluck('cars.Zip_Code')->toArray();
-            
+
             echo '------ end query time '. time() . '<br/>';
-            
+
             $valid_codes = [];
             $insert_query = [];
             foreach ($zip_codes as $code) {
@@ -424,7 +504,7 @@ class ZohoSerivce {
                 }
             }
             echo '------ save locations '. count($zip_codes) . '<br/>';
-            
+
             if (count($zip_codes ) == 0) break;
         }
     }
@@ -466,7 +546,7 @@ class ZohoSerivce {
                 echo time(). ' - save cars <br/>';
             }
             echo 'save locations: '. count($cars) . '<br/>';
-            
+
             if (count($cars) < $records_per_page) break;
         }
     }
@@ -487,5 +567,5 @@ class ZohoSerivce {
         return null;
     }
 
-    
+
 }

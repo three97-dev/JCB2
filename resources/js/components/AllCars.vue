@@ -6,10 +6,10 @@
                     <span>All Cars</span>
                 </div>
             </div>
-            
+
             <div class="page-content-block-wrapper">
                 <div class="page-filter">
-                    <span class="filter-label">Filters:</span>            
+                    <span class="filter-label">Filters:</span>
                     <div class="filter-content" v-if="filter_string != ''">
                         <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
                         {{filter_string}}
@@ -102,22 +102,22 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </template>
                         <template v-if="submit_bid">
                             <div class="submit-success">
-                                <div class="title">YOUR BID OF <span class="text-blue">{{submit_bid | toCurrency}}
+                                <div class="title">YOUR BID OF <span class="text-blue">{{bid_price | toCurrency}}
                                 <br>
                                 </span>WAS SUBMITTED!</div>
                                 <div class="img-div">
                                     <img src="/img/bid_success.png" alt="">
                                 </div>
                                 <div class="text-center btn-div">
-                                    <button class="btn btn-primary btn-done" v-on:click="sel_car=null">DONE</button>
+                                    <button class="btn btn-primary btn-done" v-on:click="refreshPage(page)">DONE</button>
                                 </div>
                                 <div class="detail-bottom">
                                     <div>
-                                        <a href="javascript:;" class="btn-close" v-on:click="sel_car = null"><span class="mif-cross-light"></span></a>
+                                        <a href="javascript:;" class="btn-close" v-on:click="refreshPage(page)"><span class="mif-cross-light"></span></a>
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        Page: 
+                        Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -209,7 +209,7 @@ var commonService = new CommonService();
             this.refreshPage(1);
         },
         computed: {
-            
+
         },
         filters: {
             replaceIfEmpty: function(value) {
@@ -228,7 +228,7 @@ var commonService = new CommonService();
                             }
                         }
                         else {
-                            ini_str += val; 
+                            ini_str += val;
                         }
                     })
                     if(ini_str == "") return emptyPlaceHolderStr;
@@ -257,12 +257,12 @@ var commonService = new CommonService();
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
                 this.page = page;
                 this.sel_car = null;
-                
+
                 this.cars = [];
                 for (let index = 0; index < this.records_per_page; index++) {
                     this.cars.push({index})
                 }
-                
+
                 let url = '/api/cars?page_type=cars&page=' + this.page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
@@ -325,7 +325,7 @@ var commonService = new CommonService();
             },
             showDetail(car, $evt) {
                 if($evt.toElement.className.includes('mif-heart')) return;
-                
+
                 this.sel_car = car;
                 this.bid_price = parseFloat(car.Buyers_Quote).toFixed(2);
                 this.submit_bid = false;
@@ -348,7 +348,7 @@ var commonService = new CommonService();
                     caption = "Your Offer";
                     btn_str = "TOO LOW";
                 }
-                
+
                 this.bid_submit_button_string = {caption: caption, btn_str: btn_str};
             },
             submitBid() {
@@ -356,14 +356,34 @@ var commonService = new CommonService();
                 if(this.bid_status == 0) return;
                 else if(this.bid_status == 1) { this.$refs.bid_input.focus(); return; }
 
-                const thiz = this;
                 let loader = this.$loading.show();
-                setTimeout(() => {
+                const thiz = this;
+                this.axios
+                    .post(`/api/car/bid/${this.sel_car.index}`, { price: this.bid_price }, commonService.get_api_header())
+                    .then(response => {
+                        if(response.data != "success") {
+                            alert("No such car");
+                            this.sel_car = null;
+                        }
+                        loader.hide();
+                        this.submit_bid = true;
+                        // this.sel_car = {...this.sel_car, Buyers_Quote: this.bid_price};
+                        // console.log(this.sel_car);
+                        // this.cars.map(car=> {
+                        //     if(car.index == this.sel_car.index) car = {...car, Buyers_Quote: this.bid_price};
+                        // });
+                }).catch((error) => {
                     loader.hide();
-                    this.submit_bid = this.bid_price;
-                    this.sel_car = {...this.sel_car};
-                }, 1000);
+                    var status = error.response.status;
+                    if (status == 401) {
+                        commonService.logout();
+                        this.$router.push('login');
+                    } else {
+                        alert('Api request error');
+                    }
+                });
             }
+
         }
     }
 </script>
