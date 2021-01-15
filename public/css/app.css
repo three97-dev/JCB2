@@ -407,6 +407,7 @@
   position: absolute;
   padding: 5px 0;
   width: 100%;
+  z-index: -1;
 }
 
 #SiteNavbar .navbar-nav .nav-wrapper {
