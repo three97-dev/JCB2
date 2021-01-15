@@ -77,6 +77,7 @@ export default {
     },
     methods: {
         logout() {
+            console.log("logout")
             let loader = this.$loading.show();
             this.axios
                 .get(`/api/logout`)

@@ -43,11 +43,11 @@ class ZohoSerivce {
     private $response = null;
 
     public function __construct() {
-        $refreshToken = '1000.452f24cdbcd5b2e04595e2da14426dd6.df92c6f75e160ebefc128bac124cf802';
+        $refreshToken = '1000.c91ad5b3e6c00e231e0d14fe09205651.e3f7e537ab1379420db70069dc7aff7f';
 
         $user = new UserSignature(env('ZOHO_CURRENT_USER_EMAIL'));
         $environment = USDataCenter::PRODUCTION();
-        $token = new OAuthToken(env('ZOHO_CRM_CLIENT_ID'), env('ZOHO_CRM_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
+        $token = new OAuthToken(env('ZOHO_CLIENT_ID'), env('ZOHO_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
         $tokenstore = new FileStore(storage_path('zoho/token.key'));
         $autoRefreshFields = false;
         $pickListValidation = false;
