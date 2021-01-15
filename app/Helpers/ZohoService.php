@@ -43,7 +43,7 @@ class ZohoSerivce {
     private $response = null;
 
     public function __construct() {
-        $refreshToken = '1000.27399a12b34fdfc4f2052298edb23dee.84c6e1e3dc72981d59080a2745f6ceca';
+        $refreshToken = '1000.6fb64f3dde34e163ccc4e4d197379839.a693c406d1bef2ae92fd70936c55021c';
 
         $user = new UserSignature(env('ZOHO_CURRENT_USER_EMAIL'));
         $environment = USDataCenter::PRODUCTION();

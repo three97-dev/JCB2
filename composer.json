@@ -14,8 +14,6 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
-        "stripe/stripe-php": "^7.67",
-        "webleit/zohobooksapi": "^4.4",
         "zohocrm/php-sdk": "3.0.0"
     },
     "require-dev": {
