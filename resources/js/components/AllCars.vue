@@ -189,6 +189,7 @@ var commonService = new CommonService();
             EventBus.$on('update-car-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
+                thiz.filter_like = thiz.filter_param['filter_like'];
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
             });
@@ -327,18 +328,19 @@ var commonService = new CommonService();
                 if($evt.toElement.className.includes('mif-heart')) return;
 
                 this.sel_car = car;
-                this.bid_price = parseFloat(car.Buyers_Quote).toFixed(2);
+                this.bid_price = (car.Buyers_Quote)? parseFloat(car.Buyers_Quote).toFixed(2) : '0';
                 this.submit_bid = false;
                 this.changeStatus();
             },
             changeStatus() {
                 var caption, btn_str;
-                if(parseFloat(this.bid_price) > parseFloat(this.sel_car.Buyers_Quote)) {
+                var post_price = this.sel_car.Buyers_Quote? parseFloat(this.sel_car.Buyers_Quote): 0;
+                if(parseFloat(this.bid_price) > post_price) {
                     this.bid_status = 2;
                     caption = "Your Offer";
                     btn_str = "SUBMIT";
                 }
-                else if(parseFloat(this.bid_price) == parseFloat(this.sel_car.Buyers_Quote)) {
+                else if(parseFloat(this.bid_price) == post_price) {
                     this.bid_status = 1;
                     caption = "Current Offer";
                     btn_str = "BID";
@@ -358,6 +360,7 @@ var commonService = new CommonService();
 
                 let loader = this.$loading.show();
                 const thiz = this;
+
                 this.axios
                     .post(`/api/car/bid/${this.sel_car.index}`, { price: this.bid_price }, commonService.get_api_header())
                     .then(response => {

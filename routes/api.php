@@ -42,10 +42,15 @@ Route::group(['middleware' => 'auth:api'], function() {
         Route::post('like/{id}',    'CarController@like');
         Route::post('schedules/{id}', 'CarController@setSchedule');
         Route::post('bid/{id}', 'CarController@bid');
+        Route::post('pick/{id}', 'CarController@pick');
+        Route::post('pay', 'CarController@pay');
     });
     Route::group(['prefix' => 'filters'], function (){
         Route::post('',         'CarController@saveFilter');
         Route::get('',          'CarController@getFilters');
         Route::delete('{id}',   'CarController@deleteFilter');
     });
+
+    Route::get('stripe', 'StripePaymentController@stripe');
+    Route::post('stripe', 'StripePaymentController@stripePost')->name('stripe.post');
 });

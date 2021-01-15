@@ -19,6 +19,7 @@ use com\zoho\crm\api\record\GetRecordsHeader;
 use com\zoho\crm\api\record\GetRecordsParam;
 use com\zoho\crm\api\record\ResponseWrapper;
 use com\zoho\crm\api\record\Deals;
+use com\zoho\crm\api\record\Leads;
 use com\zoho\crm\api\record\Record;
 use com\zoho\crm\api\record\SearchRecordsParam;
 use com\zoho\crm\api\Param;
@@ -33,22 +34,27 @@ use DB;
 use App\Models\Car;
 use App\Models\User;
 use App\Models\Location;
+use Illuminate\Support\Facades\Http;
+
+use com\zoho\crm\api\modules\ModulesOperations;
+use com\zoho\crm\api\modules\GetModulesHeader;
 
 class ZohoSerivce {
-       private $response = null;
+    private $response = null;
+
     public function __construct() {
-        $refreshToken = "1000.577706c2a1c3d4f0de396be1248e845a.fcd0d7deccaa518a82af1d66f6e824bc";
+        $refreshToken = '1000.452f24cdbcd5b2e04595e2da14426dd6.df92c6f75e160ebefc128bac124cf802';
 
         $user = new UserSignature(env('ZOHO_CURRENT_USER_EMAIL'));
         $environment = USDataCenter::PRODUCTION();
-        $token = new OAuthToken(env('ZOHO_CLIENT_ID'), env('ZOHO_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
+        $token = new OAuthToken(env('ZOHO_CRM_CLIENT_ID'), env('ZOHO_CRM_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
         $tokenstore = new FileStore(storage_path('zoho/token.key'));
         $autoRefreshFields = false;
         $pickListValidation = false;
         $sdkConfig = (new SDKConfigBuilder())->setAutoRefreshFields($autoRefreshFields)->setPickListValidation($pickListValidation)->build();
         $resourcePath = base_path();
 
-       $this->response = Initializer::initialize($user, $environment, $token, $tokenstore, $sdkConfig, $resourcePath, null, null);
+        $this->response = Initializer::initialize($user, $environment, $token, $tokenstore, $sdkConfig, $resourcePath, null, null);
 
     }
 
@@ -80,6 +86,18 @@ class ZohoSerivce {
         return $records[0];
     }
 
+    public function getAllModules() {
+
+        $moduleOperations = new ModulesOperations();
+        $headerInstance = new HeaderMap();
+        $datetime = date_create("2020-07-15T17:58:47+05:30")->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+        $headerInstance->add(GetModulesHeader::IfModifiedSince(), $datetime);
+        //Call getModules method that takes headerInstance as parameters
+        $response = $moduleOperations->getModules($headerInstance);
+
+        return $response;
+    }
+
     public function bid($car_id, $price) {
         $moduleAPIName = "Deals";
 
@@ -106,7 +124,7 @@ class ZohoSerivce {
         return $resp;
     }
 
-    public function updateDealInfo($car_id, $price, $user_id, $user_name, $user_email, $modified_time) {
+    public function updateDealInfo($car_id, $price, $user_id, $user_name) {
         $moduleAPIName = "Deals";
 
         $recordId =$car_id;
@@ -117,22 +135,87 @@ class ZohoSerivce {
 
         $record1 = new Record();
         $record1->setId($recordId);
-        // $field = new Field("id, Buyers_Quote");
         $record1->addKeyValue('Buyers_Quote', $price);
 
-        $user_record = new Record();
-        $user_record->addKeyValue('id', $user_id);
-        $user_record->addKeyValue('name', $user_name);
-        $user_record->addKeyValue('email', $user_email);
-        $record1->addKeyValue('Modified_By', $user_record);
-        $record1->addKeyValue('Modified_Time', $modified_time);
         $Tow_company = new Record();
         $Tow_company->addKeyValue('id', $user_id);
         $Tow_company->addKeyValue('name', $user_name);
         $record1->addKeyValue('Tow_Company', $Tow_company);
-        // $record1->addFieldValue(new Field("Buyers_Quote"), $price);
-        // $record1 = array('Buyers_Quote'=>$price);
-        // array_push($records, $record1);
+        $records[] = $record1;
+
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+
+        $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+        return $resp;
+    }
+
+    public function pay4Car($car_arr) {
+        $moduleAPIName = "Deals";
+
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+        foreach($car_arr as $car) {
+            $recordId =$car["index"];
+            $record1 = new Record();
+            $record1->setId($recordId);
+            $record1->addKeyValue('Paid', true);
+            $records[] = $record1;
+        }
+
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+
+        $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+        return $resp;
+    }
+
+    public function scheduleTime($car_id, $scheduleTime, $pickup = false) {
+        $moduleAPIName = "Deals";
+        $recordId =$car_id;
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+        $record1 = new Record();
+        $record1->setId($recordId);
+        $record1->addKeyValue('Scheduled_Time', $scheduleTime);
+        if($pickup) $record1->addKeyValue('State', "Picked Up");
+        $records[] = $record1;
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+
+        $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+        return $resp;
+    }
+
+
+    public function updateInvoice($id, $subject, $user) {
+
+        $moduleAPIName = "Invoices";
+
+        $recordId =$id;
+
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+
+        $record1 = new Record();
+        $record1->setId($recordId);
+        // $field = new Field("id, Buyers_Quote");
+        $record1->addKeyValue('Subject', $subject);
+        $account = new Record();
+        $account->addKeyValue('id', $user->id);
+        $account->addKeyValue('name', $user->name);
+        $record1->addKeyValue('Account', $account);
+        $record1->addKeyValue('Product_Name', "Car");
+        $record1->addKeyValue('Quantity', 1);
+        $record1->addKeyValue('Unit_Price', 100);
+        $record1->addKeyValue('List_Price', 100);
+
         $records[] = $record1;
 
         $body->setData($records);
@@ -144,24 +227,61 @@ class ZohoSerivce {
     }
 
 
-    public function Placebids($payload) {
-         echo "<pre>"; print_r($this->response); echo "</pre>";
-      //  echo $token = new OAuthToken(env('ZOHO_CLIENT_ID'), env('ZOHO_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
-		/*$moduleAPIName = "Cars";
-		$recordId =$payload['id'];
-		$recordOperations = new RecordOperations();
-        $request = new BodyWrapper();
-        $records = array();
-        $recordClass = 'com\zoho\crm\api\record\Record';
-        $record1 = new $recordClass();
-        $field = new Field("");
-        $fileDetails = array();
-        $record1->addKeyValue("Buyers_Quote", $payload['price']);
-        array_push($records, $record1);
-        $request->setData($records);
-        $response = $recordOperations->updateRecord( $recordId, $moduleAPIName,$request);
-        dd( $response); */
 
+    public function createInvoices($id, $subject, $user) {
+
+        $moduleAPIName = "Invoices";
+        $now = new \DateTime();
+        $today = $now->format("d/m/Y");
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+
+        $record1 = new Record();
+        $record1->addKeyValue('Subject', $subject);
+        // $record1->addKeyValue('Billing_City', '');
+        // $record1->addKeyValue('Billing_Code', '');
+        // $record1->addKeyValue('Billing_Country', '');
+        // $record1->addKeyValue('Billing_State', '');
+        // $record1->addKeyValue('Billing_Street', '');
+        // $record1->addKeyValue('Contact_Name', 'Devv');
+        // // $record1->addKeyValue('Created_By', '');
+        // $record1->addKeyValue('Description', '');
+        // $record1->addKeyValue('Due_Date', '');
+        // $record1->addKeyValue('Excise_Duty', '');
+        // $record1->addKeyValue('Invoice_Date', '');
+        // $record1->addKeyValue('Owner', '');
+        // // $record1->addKeyValue('Modified_By', '');
+        // $record1->addKeyValue('Purchase_Order', '');
+        // $record1->addKeyValue('Sales_Commission', '');
+        // $record1->addKeyValue('Sales_Order', '');
+        // $record1->addKeyValue('Shipping_City', '');
+        // $record1->addKeyValue('Shipping_Code', '');
+        // $record1->addKeyValue('Shipping_Country', '');
+        // $record1->addKeyValue('Shipping_State', '');
+        // $record1->addKeyValue('Shipping_Street', '');
+        // $record1->addKeyValue('Status', '');
+        // $record1->addKeyValue('Term_and_Conditions', '');
+
+        $account = new Record();
+        $account->addKeyValue('id', $user->id);
+        $account->addKeyValue('name', $user->name);
+        $record1->addKeyValue('Account', $account);
+        $product = new Record();
+        $product->addKeyValue('name', "Junk Car");
+        $record1->addKeyValue('Account', $product);
+        $record1->addKeyValue('Quantity', 1);
+        $record1->addKeyValue('Unit_Price', 100);
+        $record1->addKeyValue('List_Price', 100);
+
+        $records[] = $record1;
+
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+
+        $resp = $recordOperations->createRecords($moduleAPIName, $body);
+        return $resp;
     }
 
     public function refreshUserData() {
@@ -254,7 +374,6 @@ class ZohoSerivce {
         $paramInstance->add(GetRecordsParam::perPage(), $length);
         $paramInstance->add(GetRecordsParam::sortBy(), 'Created_Time');
         $headerInstance = new HeaderMap();
-        $moduleAPIName = "Deals";
         $moduleAPIName = $module;
         $response = $recordOperations->getRecords($moduleAPIName, $paramInstance, $headerInstance);
         $responseHandler = $response->getObject();

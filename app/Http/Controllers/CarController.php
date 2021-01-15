@@ -12,13 +12,38 @@ use App\Models\Car;
 use App\Models\LikeBind;
 use App\Models\Filter;
 use App\Models\Company;
+use GuzzleHttp\Client;
+use Psr\Cache;
 
 
 
 class CarController extends Controller
 {
+    private $ZohoBooksAccessToken;
     function __construct() {
+        if (!isset($this->ZohoBooksAccessToken)) {
+            $AccessToken = $this->getZohoBooksAccessToken();
+            if ($AccessToken !== false) $this->ZohoBooksAccessToken = $AccessToken;
+        }
+    }
 
+    private function getZohoBooksAccessToken()
+    {
+        try {
+            $Request = (new Client())->post('https://accounts.zoho.com/oauth/v2/token', [
+                'form_params' => [
+                    'client_id' => env('ZOHO_CLIENT_ID'),
+                    'client_secret' => env('ZOHO_CLIENT_SECRET'),
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => env('ZOHO_REFRESH_TOKEN')
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            return sprintf('Zoho-oauthtoken %s', $Response['access_token']) ?? false;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     public function test() {
@@ -235,6 +260,8 @@ class CarController extends Controller
 
                 $query = Car::leftJoin('like_binds', 'cars.id', '=', 'like_binds.car_id')
                             ->where('Stage', $stage)
+                            ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
+                            ->whereNotNull('Buyers_Quote')
                             ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
             } elseif ($request->page_type == 'bids') {
                 $query = Car::where(function($sub_query) {
@@ -259,7 +286,8 @@ class CarController extends Controller
                                 return $sub_query;
                             });
 
-                // $query = $query->where('Tow_Company_id', Auth::user()->zoho_index);
+                $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
+                                ->whereNotNull('Buyers_Quote');
 
                 if ($request->status == 'Unscheduled') {
                     $query = $query->where('Stage', 'Deal Made')->whereNull('Scheduled_Time');
@@ -277,7 +305,8 @@ class CarController extends Controller
                     return $sub_query;
                 });
 
-                // $query = $query->where('Tow_Company_id', Auth::user()->zoho_index);
+                $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
+                                ->whereNotNull('Buyers_Quote');
 
                 if ($request->status == 'Paid') {
                     $query = $query->where('Stage', 'Paid');
@@ -325,6 +354,118 @@ class CarController extends Controller
         return ['total' => $total,  'data' => $cars, 'user'=> Auth::user()];
     }
 
+
+    private function createInvoice($Data)
+    {
+        try {
+            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'invoices?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
+                'json' => $Data,
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            return json_decode($JSON, true);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $er = $e->getResponse()->getBody()->getContents();
+            print_r(json_decode($er));
+            return false;
+        }
+    }
+
+    private function getItem($Id)
+    {
+        try {
+            $Request = (new Client())->get(env('ZOHO_BOOKS_API_URI').'items', [
+                'query' => [
+                    'cf_crm_car_id' => $Id,
+                    'per_page' => 1,
+                    'organization_id' => env('ZOHO_ORGANIZATION_ID')
+                ],
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            $Item = $Response['items'][0] ?? false;
+            if (!$Item) return false;
+            if (!isset($Item['cf_crm_car_id'])) return false;
+            if ($Item['cf_crm_car_id'] != $Id) return false;
+            return $Item;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return false;
+        }
+    }
+    private function createItem($Data)
+    {
+        try {
+            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'items', [
+                'json' => $Data,
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            if ($Request->getStatusCode() != 201) return false;
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            return $Response['item'] ?? false;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            print_r($e->getResponse()->getBody()->getContents());
+            return false;
+        }
+    }
+    private function getZohoBooksCustomer($Id)
+    {
+        try {
+            $Request = (new Client())->get(env('ZOHO_BOOKS_API_URI').'contacts', [
+                'query' => [
+                    'cf_zoho_crm_id' => $Id,
+                    'per_page' => 1,
+                    'organization_id' => env('ZOHO_ORGANIZATION_ID')
+                ],
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            $Customer = $Response['contacts'][0] ?? false;
+            if (!$Customer) return false;
+            if ($Customer['cf_zoho_crm_id'] != $Id) return false;
+            return $Customer;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return false;
+        }
+    }
+    private function createZohoBooksCustomer($Name, $Email, $Id)
+    {
+        try {
+            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'contacts?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
+                'json' => [
+                    'contact_name' => $Name,
+                    'email' => $Email,
+                    'custom_fields' => [
+                        [
+                            'label' => 'Zoho CRM ID',
+                            'value' => $Id
+                        ]
+                    ]
+                ],
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            if ($Request->getStatusCode() != 201) return false;
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            return $Response['contact'] ?? false;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            print_r($e->getResponse()->getBody()->getContents());
+
+            return false;
+        }
+    }
     public function like(Request $request, $id) {
         $car = Car::where('index',$id)->first();
         if(!$car) return 'invalid car';
@@ -332,8 +473,10 @@ class CarController extends Controller
         $link =  LikeBind::where('car_index', $id)->first();
 
         $zohoService = new ZohoSerivce();
-        $deal = $zohoService->getDealInfo($id);
-
+        // $zohoService->updateInvoice('1061914000238914058', 'Book and crm test', Auth::user());
+        // return 'success';
+        $deals = $zohoService->getRecords('Deals', 1, 5);
+        return $deals[0]->getKeyValue('id');
         if ($request->like) {
             if (!$link) {
                 $link = new LikeBind();
@@ -341,14 +484,16 @@ class CarController extends Controller
                 $link->car_index = $car->index;
                 $link->car_id = $car->id;
                 $link->save();
+
+            } else {
+                if ($link) {
+                    $link->delete();
+                }
             }
-        } else {
-            if ($link) {
-                $link->delete();
-            }
+
         }
-        // $resp =$zohoService->bid($id, "250");
-        return $deal->getKeyValue('Tow_Company')->getKeyValue('name');
+        // return $deals[0]->getKeyValue('Closing_Date');
+        // $zohoService->createInvoices('1061914000238437019', "first Create Test", Auth::user());
         return 'success';
     }
 
@@ -376,8 +521,6 @@ class CarController extends Controller
         $zohoService = new ZohoSerivce();
         $deal = $zohoService->updateDealInfo($id, $price, $user_id, $user_name, $user_email, $now);
 
-        // $resp =$zohoService->bid($id, "250");
-        // return $deal->getKeyValue('Modified');
         return 'success';
 
     }
@@ -390,11 +533,108 @@ class CarController extends Controller
         $car->Scheduled_Notes = $request->Scheduled_Notes;
         $car->save();
         $zohoService = new ZohoSerivce();
-        // $res = $zohoService->refreshCarLocations();
-        // $account = $zohoService->getAccount('luistowingllc@gmail.com');
-        $deals = $zohoService->getRecords('Deals', 1, 100);
-        return json_encode(array('res' => $deals));
+        $now = new \DateTime($request->Scheduled_Time);
+        $schedule = $zohoService->scheduleTime($id, $now);
+
+        return json_encode(array('res' => $car));
     }
+
+    public function pick(Request $request, $id) {
+        $car = Car::where('index', $id)->first();
+        if (!$car) return ['error' => 'invalid car'];
+
+        $car->Scheduled_Time = $request->Scheduled_Time;
+        $car->Stage = "Picked Up";
+        $car->save();
+        $zohoService = new ZohoSerivce();
+        $now = new \DateTime($request->Scheduled_Time);
+        $pick = $zohoService->scheduleTime($id, $now, true);
+
+        return json_encode(array('res' => $car));
+    }
+
+    public function pay(Request $request) {
+        $arr = $request->cars;
+        $zohoService = new ZohoSerivce();
+
+        $now = new \DateTime($request->Scheduled_Time);
+        foreach($arr as $car_id) {
+            $car = Car::where('index', $car_id)->first();
+            if($car) {
+                $car->Stage = "Paid";
+                $car->save();
+            }
+        }
+
+        // change in crm deals
+        $deals = $zohoService->pay4Car($arr);
+
+        // create books invoice
+
+        $InvoiceItems = [];
+        $InvoiceTotal = 0;
+        foreach ($request->cars as $car) {
+            $Car = $this->getItem($car['index']);
+            if (!$Car) {
+                $Car = $this->createItem([
+                    'name' => sprintf('%s %s %s', $car['Year'], $car['Make'], $car['Model']),
+                    'rate' => $car['Buyers_Quote'],
+                    'custom_fields' => [
+                        [
+                            'label' => 'CRM Car ID',
+                            'value' => $car['index']
+                        ],
+                        [
+                            'label' => 'Car Ref#',
+                            'value' => $car['Reference_Number']
+                        ]
+                    ]
+                ]);
+                if (!$Car) {
+                    echo 'Error creating car';
+                    exit;
+                }
+            }
+            $InvoiceItems[] = [
+                'item_id' => $Car['item_id']
+            ];
+            $InvoiceTotal += $Car['rate'];
+        }
+        $User = Auth::user();
+        $ContactId = $User->zoho_index;
+        $BooksCustomer = $this->getZohoBooksCustomer($ContactId);
+        if (!$BooksCustomer) {
+            $BooksCustomer = $this->createZohoBooksCustomer($User->name, $User->email, $User->zoho_index);
+            if (!$BooksCustomer) {
+                echo 'Error creating customer';
+                exit;
+            }
+        }
+        $Invoice = $this->createInvoice([
+            'customer_id' => $BooksCustomer['contact_id'],
+            'line_items' => $InvoiceItems,
+            'custom_fields' => [
+                [
+                    'label' => 'Amount Owed to Junk Car Boys:',
+                    'value' => $InvoiceTotal
+                ]
+            ],
+            'payment_options' => [
+               'payment_gateways' => [
+                   [
+                        'gateway_name' => 'stripe'
+                   ]
+               ]
+            ]
+        ]);
+
+        // var_dump($BooksCustomer);
+        // var_dump($Invoice);
+
+
+        return json_encode(array('res' => "success"));
+    }
+
 
     public function saveFilter(Request $request) {
         $params = $request->input();
