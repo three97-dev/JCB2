@@ -8,7 +8,7 @@
 
         <div class="page-content-block-wrapper">
             <div class="page-filter">
-                <span class="filter-label">Filters:</span>            
+                <span class="filter-label">Filters:</span>
                 <div class="filter-content" v-if="filter_string != ''">
                     <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
                     {{filter_string}}
@@ -59,8 +59,8 @@
                             </div>
                         </div>
 
-                        
-                        
+
+
                     </div>
                 </div>
                 <div class="car-right-content col-md-4" v-if="!is_mobile_view || (is_mobile_view && sel_car)">
@@ -107,7 +107,7 @@
                                         <div class="item-value">{{pickup_date ? pickup_date.date.toLocaleDateString() : 'MM / DD / YYYY'}}&nbsp;</div>
                                     </div>
                                     <div class="col-md-12 field-item">
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -134,7 +134,7 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        Page: 
+                        Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -146,7 +146,7 @@
                     <div class="page-label">
                         <span>{{ cars | unscheduledAmount }} </span> Unscheduled Cars
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -217,12 +217,12 @@ var commonService = new CommonService();
                 if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
                 this.page = page;
-                
+
                 this.cars = [];
                 for (let index = 0; index < this.records_per_page; index++) {
                     this.cars.push({index})
                 }
-                
+
                 let url = '/api/cars?page_type=schedulings&page=' + this.page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
@@ -232,7 +232,7 @@ var commonService = new CommonService();
                 if (this.filter_like) {
                     url += '&type=like';
                 }
-                
+
                 let loader = this.$loading.show();
 
 
@@ -261,7 +261,7 @@ var commonService = new CommonService();
                         alert('Api request error');
                     }
                 });
-                
+
                 this.sel_car = null;
             },
             resetFilter() {
@@ -273,22 +273,22 @@ var commonService = new CommonService();
                     this.sel_car = car;
                     this.submit_pickup = false;
                     this.pickup_date = null;
+                    this.editable = false;
                     this.date_range = this.calendar_enabled_data;
                     if (this.sel_car.Scheduled_Time) {
                         let date = new Date(this.sel_car.Scheduled_Time);
-                        this.pickup_date = { 
+                        this.pickup_date = {
                             id: this.sel_car.Scheduled_Time,
                             date,
                         }
                         this.date_range = this.calendar_disabled_data;
-                    } 
+                    }
                     this.schedule_note = this.sel_car.Scheduled_Notes;
                 }, 100);
             },
             submitSchedule() {
                 if (!this.pickup_date) return alert('Please select a schedule date');
                 console.log(this.sel_car);
-                const thiz = this;
                 let loader = this.$loading.show();
                 this.axios
                     .post(`/api/car/schedules/` + this.sel_car.index, {Scheduled_Time: this.pickup_date.id, Scheduled_Notes: this.schedule_note}, commonService.get_api_header())
@@ -309,11 +309,30 @@ var commonService = new CommonService();
                         alert('Api request error');
                     }
                 });
-                
+
             },
             submitPickedUp() {
-                if(this.editable) this.submitSchedule();
-                else return;
+                let loader = this.$loading.show();
+                this.axios
+                    .post(`/api/car/pick/` + this.sel_car.index, {Scheduled_Time: this.pickup_date.id}, commonService.get_api_header())
+                    .then(response => {
+                        console.log(response)
+                        loader.hide();
+                        this.submit_pickup = true;
+                        this.sel_car.Scheduled_Time = this.pickup_date.id;
+                        this.sel_car.Scheduled_Notes = this.schedule_note;
+                        this.sel_car.Stage = "Picked Up";
+                        this.sel_car = {...this.sel_car};
+                }).catch((error) => {
+                    loader.hide();
+                    var status = error.response.status;
+                    if (status == 401) {
+                        commonService.logout();
+                        this.$router.push('login');
+                    } else {
+                        alert('Api request error');
+                    }
+                });
             },
             onDayClick(day) {
                 if(!this.sel_car.Scheduled_Time || this.editable)

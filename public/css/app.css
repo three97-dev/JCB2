@@ -390,13 +390,29 @@
   color: #363636;
   align-items: center;
   display: flex;
+  cursor: pointer;
+}
+
+#SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu {
+  position: absolute;
+  top: 101px;
+  left: 71px;
+  width: calc(100vw - 71px);
+  height: calc(100vh - 101px);
+  display: none;
+  background: #fff;
 }
 
 #SiteNavbar .navbar-nav {
   position: absolute;
   padding: 5px 0;
-  width: calc(100% - 470px);
-  left: 470px;
+  width: 100%;
+  z-index: -1;
+}
+
+#SiteNavbar .navbar-nav .nav-wrapper {
+  text-align: center;
+  margin: auto;
 }
 
 #SiteNavbar .navbar-nav .nav-link {
@@ -408,6 +424,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  float: left;
 }
 
 #SiteNavbar .navbar-nav .nav-link.active {
@@ -15868,6 +15885,10 @@ body {
   font-size: 14px;
 }
 
+#PaymentsPage .selected {
+  background: #A3D5F280;
+}
+
 @media only screen and (max-width: 992px) {
   #PageContent {
     margin-left: 0 !important;
@@ -16103,6 +16124,10 @@ body {
 
 .margin-ignore {
   margin: unset;
+}
+
+.showEle {
+  display: inline-block !important;
 }
 
 ::-webkit-scrollbar {

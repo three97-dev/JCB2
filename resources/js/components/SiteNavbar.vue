@@ -4,21 +4,27 @@
         <div class="collapse navbar-collapse">
             <div class="navbar-userinfo">
                 <img v-bind:src="avatar" alt="logo">
-                <div class="navbar-username">{{username}}</div>
+                <div class="navbar-username" @click="logout">
+                    {{username}} <span class="mif-arrow-drop-down"></span>
+
+                </div>
+
             </div>
             <div class="navbar-nav">
+                <div class="nav-wrapper">
                 <router-link to="/" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'home'}">All Cars</router-link>
                 <router-link to="/bids" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'bids'}">Bids</router-link>
                 <router-link to="/schedulings" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'schedulings'}">Scheduling</router-link>
                 <router-link to="/payments" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'payments'}">Payment</router-link>
                 <router-link to="/reports" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'reports'}">Reports</router-link>
+                </div>
             </div>
-            <div class="navbar-notification" @click="logout"><span class="mif-bell"></span></div>
+            <div class="navbar-notification"><span class="mif-bell"></span></div>
         </div>
         <div class="navbar-mobile d-lg-none w-100">
             <div class="navbar-mobile-content">
                 <img class="user-avatar" v-bind:src="avatar" alt="logo">
-                
+
                 <div class="nav-mobile-title" v-if="$route.name=='home'">All Cars</div>
                 <div class="nav-mobile-title" v-if="$route.name=='bids'">Your Bids</div>
                 <div class="nav-mobile-title" v-if="$route.name=='schedulings'">Scheduling</div>
@@ -53,13 +59,15 @@ const commonService = new CommonService();
 export default {
     data() {
         return {
-            username: '', 
-            avatar : '/img/avatar.png'
+            username: '',
+            avatar : '/img/avatar.png',
+            showActions: false
         };
     },
     mounted() {
         this.username = commonService.get_auth_name();
         this.avatar = commonService.get_auth_avatar();
+        this.showActions = false;
     },
     watch: {
         $route (to_route, from_route) {
@@ -69,6 +77,7 @@ export default {
     },
     methods: {
         logout() {
+            console.log("logout")
             let loader = this.$loading.show();
             this.axios
                 .get(`/api/logout`)
@@ -76,6 +85,9 @@ export default {
                     loader.hide();
                     this.$router.push('/logout');
                 });
+        },
+        showDropdown(flag) {
+            this.showActions = !this.showActions;
         }
     }
 }

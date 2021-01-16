@@ -8,7 +8,7 @@
 
         <div class="page-content-block-wrapper">
             <div class="page-filter">
-                <span class="filter-label">Filters:</span>            
+                <span class="filter-label">Filters:</span>
                 <div class="filter-content" v-if="filter_string != ''">
                     <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
                     {{filter_string}}
@@ -35,7 +35,7 @@
                     <div class="car-body">
                         <div class="car-item" v-for="car in cars" :key="car.index" v-bind:class="{'selected': car.is_checked == true}">
                             <div class="item-data">
-                                <input type="checkbox" style="margin-top: 4px;" v-model="car.is_checked" v-on:change="checkAll()">&nbsp;
+                                <input type="checkbox" style="margin-top: 4px;" v-model="car.is_checked" v-on:change="checkAll()" :disabled="car.Stage == 'Paid'">&nbsp;
                                 <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
                                 <div v-if="car.Stage=='Deal Made'" class="status-won"> Unpaid </div>
                                 <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
@@ -44,7 +44,7 @@
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
                             <div class="item-data text-center">{{ car.Buyers_Quote }}</div>
-                            
+
                             <div class="mobile-item item-data"  v-on:click="showDetail(car)">
                                 <div class="item-content">
                                     <div class="font-weight-bold">{{car.Reference_Number}} &nbsp;&nbsp;{{car.Year}} {{car.Make}} {{car.Model}}</div>
@@ -59,8 +59,8 @@
                             </div>
                         </div>
 
-                        
-                        
+
+
                     </div>
                 </div>
                 <div class="car-right-content col-md-4" v-if="!is_mobile_view || (is_mobile_view && sel_car)">
@@ -85,7 +85,7 @@
                                 <div class="text-center">
                                     WAS SUBMITTED
                                 </div>
-                                
+
                             </div>
                             <div class="bid-image"><img src="/img/payment-success.png" alt=""></div>
                             <div class="action-bar text-right">
@@ -135,7 +135,7 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        Page: 
+                        Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -147,7 +147,7 @@
                     <div class="page-label">
                         <span>{{ count }} </span> Vehicles Selected for Payment
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -185,10 +185,10 @@ var commonService = new CommonService();
                 var arr = val.split('-');
                 return arr.reverse().join('/');
             }
-            
+
         },
         computed: {
-            
+
         },
         created() {
             const thiz = this;
@@ -218,7 +218,7 @@ var commonService = new CommonService();
             },
             checkAll(force = false) {
                 if (force) {
-                    this.cars.forEach(one => one.is_checked = this.checked_all)
+                    this.cars.forEach(one => {if(one.Stage != "Paid") one.is_checked = this.checked_all})
                 } else {
                     this.checked_all = this.cars.length == this.cars.filter(one => one.is_checked).length;
                     if(this.cars.filter(one => one.is_checked).length) this.showDetail();
@@ -229,17 +229,18 @@ var commonService = new CommonService();
                     if(car.is_checked) amount += parseFloat(car.Buyers_Quote || 0);
                 })
                 this.calculateTotal = this.toCurrency(amount);
+                this.submit_payment = false;
             },
             refreshPage(page) {
                  if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
                 this.page = page;
-                
+
                 this.cars = [];
                 for (let index = 0; index < this.records_per_page; index++) {
                     this.cars.push({index})
                 }
-                
+
                 let url = '/api/cars?page_type=payments&page=' + this.page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
@@ -278,6 +279,7 @@ var commonService = new CommonService();
                 });
 
                 this.sel_car = null;
+                this.initialize();
             },
             resetFilter() {
                 EventBus.$emit('reset-payment-filter');
@@ -287,22 +289,49 @@ var commonService = new CommonService();
                 setTimeout(() => {
                     this.sel_car = car;
                     this.submit_payment = false;
-                    this.pay_info = {};                    
+                    this.initialize();
                 }, 200);
             },
+            initialize() {
+                this.pay_info = {card_name: "", card_no: "", cvc: "", exp: ""};
+            },
             submitPayment() {
-                if (!this.pay_info.card_no) return alert('Please input the card number');
+                if (this.pay_info.card_no.length < 16) return alert('Please check the card number');
                 if (!this.pay_info.card_name) return alert('Please input the cardholder name');
-                if (!this.pay_info.exp) return alert('Please input the card expiry');
-                if (!this.pay_info.cvc) return alert('Please input card cvc number');
+                if (this.pay_info.exp < 4) return alert('Please check the card expiry');
+                if (this.pay_info.cvc < 3) return alert('Please check card cvc number');
 
+                var arr = [];
+                this.cars.map(car => {
+                    if(car.is_checked) arr.push(car);
+                })
+                console.log(this.pay_info);
                 const thiz = this;
                 let loader = this.$loading.show();
-                setTimeout(() => {
+
+                this.axios
+                    .post(`/api/car/pay`, {pay_info: this.pay_info, cars: arr}, commonService.get_api_header())
+                    .then(response => {
+                        console.log(response)
+                        loader.hide();
+                        this.submit_payment = true;
+                        this.cars.map(car => {
+                            if(car.is_checked) {
+                                car.Stage = "Paid";
+                                car.is_checked = false;
+                            }
+                        })
+                }).catch((error) => {
                     loader.hide();
-                    this.submit_payment = true;
-                    this.sel_car = {...this.sel_car};
-                }, 1000);
+                    var status = error.response.status;
+                    if (status == 401) {
+                        commonService.logout();
+                        this.$router.push('login');
+                    } else {
+                        alert('Api request error');
+                    }
+                });
+
             },
             actionAfterPay() {
                 console.log('dd');
@@ -312,7 +341,7 @@ var commonService = new CommonService();
                 this.checked_all = false;
                 this.submit_payment = false;
                 this.count = 0;
-                this.refreshPage(1);
+                // this.refreshPage(1);
             }
         }
     }

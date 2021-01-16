@@ -152,7 +152,7 @@ body {
             .action-go {
                 width: 100px;
             }
-        } 
+        }
         .car-body {
             .loading-data {
                 color: $blue;
@@ -723,7 +723,7 @@ body {
                     color: #6D7A87;
                     font: normal normal bold 28px/32px Lato;
                 }
-                
+
                 .selcar-detail{
                     height: calc(100% - 107px);
                     .calendar-wrapper {
@@ -785,9 +785,9 @@ body {
                 .action-bar {
                     margin-top: 20px;
                     text-align: right;
-                    
+
                 }
-                
+
             }
             .submit-content {
                 background: white;
@@ -921,7 +921,7 @@ body {
                         font-size: 14px;
                     }
                 }
-                
+
             }
             .submit-content {
                 background: white;
@@ -955,6 +955,9 @@ body {
                 }
             }
         }
+    }
+    .selected {
+        background: #A3D5F280;
     }
 }
 
@@ -1035,7 +1038,7 @@ body {
                     margin: 10px 0;
                 }
             }
-    
+
         }
         .car-right-content {
             height: unset !important;
@@ -1168,7 +1171,11 @@ body {
     margin: unset;
 }
 
-// scrollbar 
+.showEle {
+    display: inline-block !important;
+}
+
+// scrollbar
 ::-webkit-scrollbar {
   width: 10px;
 }

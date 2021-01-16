@@ -30,6 +30,16 @@
             color: #363636;
             align-items: center;
             display: flex;
+            cursor: pointer;
+            .dropdown-action-menu {
+                position: absolute;
+                top: $navHeight + 1;
+                left: 71px;
+                width: calc(100vw - 71px);
+                height: calc(100vh - #{$navHeight + 1});
+                display: none;
+                background: #fff;
+            }
         }
     }
     .navbar-nav {
@@ -38,8 +48,14 @@
         // height: 100%;
         padding: 5px 0;
         // width: 100%;
-        width: calc(100% - 470px);
-        left: 470px;
+        // width: calc(100% - 470px);
+        width: 100%;
+        // left: 470px;
+        z-index: -1;
+        .nav-wrapper{
+            text-align: center;
+            margin: auto;
+        }
         .nav-link {
             // height: $navHeight;
             font: normal normal 300 28px/40px Neuzeit Grotesk;
@@ -50,6 +66,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            float: left;
             &.active {
                 // background: #31AEED 0% 0% no-repeat padding-box;
                 // color: #FFFFFF;
