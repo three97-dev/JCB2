@@ -18,6 +18,7 @@
     }
     .navbar-userinfo {
         display: flex;
+        z-index: 1;
         img {
             margin: 0 20px;
             width: 50px;
@@ -88,6 +89,7 @@
         text-align: center;
         border-radius: 50%;
         padding: 9px;
+        z-index: 1;
     }
     .navbar-action {
         button {
@@ -157,5 +159,7 @@
             }
         }
     }
-
+    .display-flex {
+        display: flex;
+    }
 }
