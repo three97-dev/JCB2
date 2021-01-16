@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Http;
 
 use com\zoho\crm\api\modules\ModulesOperations;
 use com\zoho\crm\api\modules\GetModulesHeader;
+use com\zoho\crm\api\util\Choice;
 
 class ZohoSerivce {
     private $response = null;
@@ -135,7 +136,7 @@ class ZohoSerivce {
 
         $record1 = new Record();
         $record1->setId($recordId);
-        $record1->addKeyValue('Buyers_Quote', $price);
+        $record1->addKeyValue('Buyers_Quote', floatval($price));
 
         $Tow_company = new Record();
         $Tow_company->addKeyValue('id', $user_id);
@@ -182,13 +183,14 @@ class ZohoSerivce {
         $record1 = new Record();
         $record1->setId($recordId);
         $record1->addKeyValue('Scheduled_Time', $scheduleTime);
-        if($pickup) $record1->addKeyValue('State', "Picked Up");
+        if($pickup) $record1->addKeyValue('Stage', new Choice("Picked Up"));
         $records[] = $record1;
         $body->setData($records);
         $trigger = array("approval", "workflow", "blueprint");
         $body->setTrigger($trigger);
-
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+
+
         return $resp;
     }
 

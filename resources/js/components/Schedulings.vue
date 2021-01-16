@@ -93,7 +93,7 @@
                                 </div>
                                 <div class="w-100 schedule-content" v-if="sel_car.Stage=='Deal Made' && !sel_car.Scheduled_Time">
                                     <div class="col-md-6 field-item">
-                                        <div class="item-label">Pick-Up Date</div>
+                                        <div class="item-label">Scheduled Pick-up Date</div>
                                         <div class="item-value">{{pickup_date ? pickup_date.date.toLocaleDateString() : 'MM / DD / YYYY'}}&nbsp;</div>
                                     </div>
                                     <div class="col-md-12 field-item">

@@ -577,7 +577,7 @@ class CarController extends Controller
             $Car = $this->getItem($car['index']);
             if (!$Car) {
                 $Car = $this->createItem([
-                    'name' => sprintf('%s %s %s', $car['Year'], $car['Make'], $car['Model']),
+                    'name' => '#'.implode(" ", array($car['Reference_Number'], $car['Year'], $car['Make'], $car['Model'])),
                     'rate' => $car['Buyers_Quote'],
                     'custom_fields' => [
                         [

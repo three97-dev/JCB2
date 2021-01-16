@@ -40,9 +40,9 @@ class UserController extends Controller
         $user->resetToken();
 
         Auth::login($user);
-        // $res = $this->refreshAccountInfo($user);
+        $res = $this->refreshAccountInfo($user);
 
-        return ['success' => true, 'data' => $user, 'res'=> Auth::user()] ;
+        return ['success' => true, 'data' => $user, 'res'=> $res] ;
     }
 
     private function refreshCompanyData() {
