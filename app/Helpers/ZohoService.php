@@ -39,14 +39,21 @@ use Illuminate\Support\Facades\Http;
 use com\zoho\crm\api\modules\ModulesOperations;
 use com\zoho\crm\api\modules\GetModulesHeader;
 use com\zoho\crm\api\util\Choice;
+use com\zoho\crm\api\bulkread\BulkReadOperations;
+use com\zoho\crm\api\bulkread\RequestWrapper;
+use com\zoho\crm\api\bulkread\CallBack;
+use com\zoho\crm\api\bulkread\Query;
+use com\zoho\crm\api\bulkread\Criteria;
+use com\zoho\crm\api\customviews\CustomViewsOperations;
+use com\zoho\crm\api\query\APIException;
 
 class ZohoSerivce {
     private $response = null;
+    private $ZOHO_CURRENT_USER_EMAIL="developer@junkcarboys.com";
 
     public function __construct() {
-        $refreshToken = '1000.6fb64f3dde34e163ccc4e4d197379839.a693c406d1bef2ae92fd70936c55021c';
-
-        $user = new UserSignature(env('ZOHO_CURRENT_USER_EMAIL'));
+        $refreshToken = '1000.8493b9cfec0def159defa19499caa175.032c7bb825fd86e905a8f54d25b4a020';
+        $user = new UserSignature($this->ZOHO_CURRENT_USER_EMAIL);
         $environment = USDataCenter::PRODUCTION();
         $token = new OAuthToken(env('ZOHO_CRM_CLIENT_ID'), env('ZOHO_CRM_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
         $tokenstore = new FileStore(storage_path('zoho/token.key'));
@@ -57,6 +64,89 @@ class ZohoSerivce {
 
         $this->response = Initializer::initialize($user, $environment, $token, $tokenstore, $sdkConfig, $resourcePath, null, null);
 
+    }
+
+    // public function queryTest($moduleAPIName) {
+
+    //     $customViewsOperations = new CustomViewsOperations($moduleAPIName);
+    //     //Call getCustomView method that takes customViewId as parameter
+    //     $response = $customViewsOperations->getCustomViews();
+    //     $res = $response->getObject();
+    //     $records = get_object_vars($res);
+
+
+    //     $cvid4AllCars = '1061914000000012669';
+    //     $bulkReadOperations = new BulkReadOperations();
+    //     //Get instance of RequestWrapper Class that will contain the request body
+    //     $requestWrapper = new RequestWrapper();
+
+    //     //Get instance of Query Class
+    //     $query = new Query();
+    //     //Specifies the API Name of the module to be read.
+    //     $query->setModule($moduleAPIName);
+    //     //Specifies the unique ID of the custom view whose records you want to export.
+    //     $query->setCvid($cvid4AllCars);
+    //     // List of Field API Names
+    //     $fieldAPINames = array();
+    //     array_push($fieldAPINames, "Last_Name");
+    //     //Specifies the API Name of the fields to be fetched.
+    //     $query->setFields($fieldAPINames);
+    //     //To set page value, By default value is 1.
+    //     $query->setPage(1);
+    //     //Get instance of Criteria Class
+    //     $criteria = new Criteria();
+    //     // To set API name of a field.
+    //     $criteria->setAPIName("Stage");
+    //     $criteria->setComparator(new Choice('equal'));
+    //     $criteria->setValue(new Choice('Given Quote'));
+    //     //To filter the records to be exported.
+    //     $query->setCriteria($criteria);
+    //     //To set query JSON object.
+    //     $requestWrapper->setQuery($query);
+    //     //Specify the value for this key as "ics" to export all records in the Events module as an ICS file.
+    //     // $requestWrapper->setFileType(new Choice("ics"));
+    //     //Call createBulkReadJob method that takes RequestWrapper instance as parameter
+    //     try{
+    //         $response = $bulkReadOperations->createBulkReadJob($requestWrapper);
+    //         $res = $response->getObject();
+    //         $records = $res->getData();
+    //     } catch(\com\zoho\crm\api\bulkread\APIException $e) {
+    //         print_r($e->getCode());
+    //     }
+    //     exit;
+
+    //     return $records;
+    // }
+
+    public function getQueryResult($query) {
+        $queryOperations = new QueryOperations();
+        //Get instance of BodyWrapper Class that will contain the request body
+        $bodyWrapper = new BodyWrapper();
+        $bodyWrapper->setSelectQuery($query);
+        $response = $queryOperations->getRecords($bodyWrapper);
+        // print_r($response);exit;
+        try {
+            $responseHandler = $response->getObject();
+        }  catch(\Exception $e) {
+            return null;
+        }
+        // if ($responseHandler instanceof APIException) var_dump($responseHandler);
+        return $responseHandler->getData();
+
+    }
+
+    public function getRecords($module = 'Deals', $page, $length) {
+        $recordOperations = new RecordOperations();
+        $paramInstance = new ParameterMap();
+        $paramInstance->add(GetRecordsParam::page(), $page);
+        $paramInstance->add(GetRecordsParam::perPage(), $length);
+        $paramInstance->add(GetRecordsParam::sortBy(), 'Created_Time');
+        $headerInstance = new HeaderMap();
+        $moduleAPIName = $module;
+        $response = $recordOperations->getRecords($moduleAPIName, $paramInstance, $headerInstance);
+        $responseHandler = $response->getObject();
+        $records = $responseHandler->getData();
+        return $records;
     }
 
     public function getAccount($email) {
@@ -124,6 +214,8 @@ class ZohoSerivce {
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
         return $resp;
     }
+
+
 
     public function updateDealInfo($car_id, $price, $user_id, $user_name) {
         $moduleAPIName = "Deals";
@@ -228,64 +320,6 @@ class ZohoSerivce {
         return $resp;
     }
 
-
-
-    public function createInvoices($id, $subject, $user) {
-
-        $moduleAPIName = "Invoices";
-        $now = new \DateTime();
-        $today = $now->format("d/m/Y");
-        $recordOperations = new RecordOperations();
-        $body = new RecordBodyWrapper();
-        $records = array();
-
-        $record1 = new Record();
-        $record1->addKeyValue('Subject', $subject);
-        // $record1->addKeyValue('Billing_City', '');
-        // $record1->addKeyValue('Billing_Code', '');
-        // $record1->addKeyValue('Billing_Country', '');
-        // $record1->addKeyValue('Billing_State', '');
-        // $record1->addKeyValue('Billing_Street', '');
-        // $record1->addKeyValue('Contact_Name', 'Devv');
-        // // $record1->addKeyValue('Created_By', '');
-        // $record1->addKeyValue('Description', '');
-        // $record1->addKeyValue('Due_Date', '');
-        // $record1->addKeyValue('Excise_Duty', '');
-        // $record1->addKeyValue('Invoice_Date', '');
-        // $record1->addKeyValue('Owner', '');
-        // // $record1->addKeyValue('Modified_By', '');
-        // $record1->addKeyValue('Purchase_Order', '');
-        // $record1->addKeyValue('Sales_Commission', '');
-        // $record1->addKeyValue('Sales_Order', '');
-        // $record1->addKeyValue('Shipping_City', '');
-        // $record1->addKeyValue('Shipping_Code', '');
-        // $record1->addKeyValue('Shipping_Country', '');
-        // $record1->addKeyValue('Shipping_State', '');
-        // $record1->addKeyValue('Shipping_Street', '');
-        // $record1->addKeyValue('Status', '');
-        // $record1->addKeyValue('Term_and_Conditions', '');
-
-        $account = new Record();
-        $account->addKeyValue('id', $user->id);
-        $account->addKeyValue('name', $user->name);
-        $record1->addKeyValue('Account', $account);
-        $product = new Record();
-        $product->addKeyValue('name', "Junk Car");
-        $record1->addKeyValue('Account', $product);
-        $record1->addKeyValue('Quantity', 1);
-        $record1->addKeyValue('Unit_Price', 100);
-        $record1->addKeyValue('List_Price', 100);
-
-        $records[] = $record1;
-
-        $body->setData($records);
-        $trigger = array("approval", "workflow", "blueprint");
-        $body->setTrigger($trigger);
-
-        $resp = $recordOperations->createRecords($moduleAPIName, $body);
-        return $resp;
-    }
-
     public function refreshUserData() {
         $records = $this->getAllUsers();
         foreach ($records as $record) {
@@ -337,7 +371,7 @@ class ZohoSerivce {
 
     public function searchRecords1($query) {
         try {
-            $page = 0;
+            $page = 1;
             $limit = 200;
 
             $queryOperations = new QueryOperations();
@@ -369,19 +403,7 @@ class ZohoSerivce {
         return $records;
     }
 
-    public function getRecords($module = 'Deals', $page, $length) {
-        $recordOperations = new RecordOperations();
-        $paramInstance = new ParameterMap();
-        $paramInstance->add(GetRecordsParam::page(), $page);
-        $paramInstance->add(GetRecordsParam::perPage(), $length);
-        $paramInstance->add(GetRecordsParam::sortBy(), 'Created_Time');
-        $headerInstance = new HeaderMap();
-        $moduleAPIName = $module;
-        $response = $recordOperations->getRecords($moduleAPIName, $paramInstance, $headerInstance);
-        $responseHandler = $response->getObject();
-        $records = $responseHandler->getData();
-        return $records;
-    }
+
 
     public function saveCarToMysql($record) {
         $car = new  Car();
