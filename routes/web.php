@@ -46,6 +46,7 @@ Route::get('zoho_oauth2callback', function () {
     return 1;
 });
 Route::get('test','CarController@test');
+Route::post('sync','CarController@sync');
 
 Route::get('/refreshCarData', 'CarController@refreshCarData');
 Route::get('/refreshCarLocation', 'CarController@refreshCarLocation');
