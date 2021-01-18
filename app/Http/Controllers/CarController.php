@@ -53,7 +53,15 @@ class CarController extends Controller
     }
 
     public function sync(Request $request) {
-        print_r($request->id);
+        $id = $request->id;
+        $price = $request->price;
+        $tow_company = $request->tow_company;
+        $stage = $request->stage;
+        $car = Car::where('Reference_Number', $id)->first();
+        if(!$car) return null;
+        $car->Buyers_Quote = $price;
+        $car->save();
+        return $car;
     }
 
     public function index(Request $request)
