@@ -378,8 +378,12 @@
   z-index: 1;
 }
 
-#SiteNavbar .navbar-userinfo img {
-  margin: 0 20px;
+#SiteNavbar .navbar-userinfo .logo-wrapper {
+  margin-left: 10px;
+  padding: 5px;
+}
+
+#SiteNavbar .navbar-userinfo .logo-wrapper img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -15016,7 +15020,7 @@ body {
 }
 
 .page-content-detail .car-content .car-body .car-item .item-data {
-  letter-spacing: 2.57px;
+  letter-spacing: 1.57px;
   color: #6D7A87;
   text-transform: capitalize;
   flex: 1;
@@ -16175,5 +16179,14 @@ body {
 ::-webkit-scrollbar-thumb {
   background: transparent;
   border-radius: 4px;
+}
+
+.stripe-elements-div {
+  margin-top: 0.5rem;
+  border-bottom: 1.5px solid #269A8E;
+}
+
+.stripe-elements-error-message-div {
+  color: #FF1744;
 }
 
