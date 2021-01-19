@@ -52,5 +52,5 @@ Route::group(['middleware' => 'auth:api'], function() {
     });
 
     Route::get('stripe', 'StripePaymentController@stripe');
-    Route::post('stripe', 'StripePaymentController@stripePost')->name('stripe.post');
+    Route::post('/payments/stripe/intent', 'StripePaymentController@createIntent')->name('stripe.post');
 });

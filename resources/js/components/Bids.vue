@@ -8,7 +8,7 @@
 
         <div class="page-content-block-wrapper">
             <div class="page-filter">
-                <span class="filter-label">Filters:</span>            
+                <span class="filter-label">Filters:</span>
                 <div class="filter-content" v-if="filter_string != ''">
                     <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
                     {{filter_string}}
@@ -33,7 +33,7 @@
                         <!-- <div class="action-go"></div> -->
                     </div>
                     <div class="car-body">
-                        <div class="car-item" v-for="car in cars" :key="car.index" v-bind:class="{'selected': sel_car && car.index == sel_car.index}" @click="showDetail(car)">
+                        <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': sel_car && car.id == sel_car.id}" @click="showDetail(car)">
                             <div class="item-data">
                                 <div v-if="car.Stage=='Given Quote'" class="status-active"> Active </div>
                                 <div v-if="car.Stage=='Deal Made'" class="status-won"> Won </div>
@@ -66,7 +66,7 @@
                             <span class="mif-cancel"></span> Clear
                         </a>
                     </div>
-                    
+
                     <div class="car-detail">
                         <div class="empty-content" v-if="!sel_car">
                             Click a list item to view details
@@ -146,7 +146,7 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        Page: 
+                        Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -158,7 +158,7 @@
                     <div class="page-label" v-if="sel_car">
                         <span>Ref#  {{ sel_car.Reference_Number }} </span> Selected
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -220,12 +220,12 @@ var commonService = new CommonService();
                  if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
                 this.page = page;
-                
+
                 this.cars = [];
                 for (let index = 0; index < this.records_per_page; index++) {
                     this.cars.push({index})
                 }
-                
+
                 let url = '/api/cars?page_type=bids&page=' + this.page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
