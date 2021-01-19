@@ -118,22 +118,7 @@ class ZohoSerivce {
     //     return $records;
     // }
 
-    public function getQueryResult($query) {
-        $queryOperations = new QueryOperations();
-        //Get instance of BodyWrapper Class that will contain the request body
-        $bodyWrapper = new BodyWrapper();
-        $bodyWrapper->setSelectQuery($query);
-        $response = $queryOperations->getRecords($bodyWrapper);
-        // print_r($response);exit;
-        try {
-            $responseHandler = $response->getObject();
-        }  catch(\Exception $e) {
-            return null;
-        }
-        // if ($responseHandler instanceof APIException) var_dump($responseHandler);
-        return $responseHandler->getData();
 
-    }
 
     public function getRecords($module = 'Deals', $page, $length) {
         $recordOperations = new RecordOperations();
@@ -251,10 +236,10 @@ class ZohoSerivce {
         $body = new RecordBodyWrapper();
         $records = array();
         foreach($car_arr as $car) {
-            $recordId =$car["index"];
+            $recordId =$car["id"];
             $record1 = new Record();
             $record1->setId($recordId);
-            $record1->addKeyValue('Paid', true);
+            $record1->addKeyValue('Stage', new Choice("Paid"));
             $records[] = $record1;
         }
 

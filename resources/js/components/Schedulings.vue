@@ -31,7 +31,7 @@
                         <div class="title">Distance</div>
                     </div>
                     <div class="car-body">
-                        <div class="car-item" v-for="car in cars" :key="car.index" v-bind:class="{'selected': sel_car && car.index == sel_car.index}" @click="showDetail(car)">
+                        <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': sel_car && car.id == sel_car.id}" @click="showDetail(car)">
                             <div class="item-data">
                                 <div v-if="car.Stage=='Deal Made' && !car.Scheduled_Time" class="status-active uppercase">Unscheduled </div>
                                 <div v-if="car.Stage=='Deal Made' && car.Scheduled_Time" class="status-won uppercase">Scheduled </div>
@@ -291,7 +291,7 @@ var commonService = new CommonService();
                 console.log(this.sel_car);
                 let loader = this.$loading.show();
                 this.axios
-                    .post(`/api/car/schedules/` + this.sel_car.index, {Scheduled_Time: this.pickup_date.id, Scheduled_Notes: this.schedule_note}, commonService.get_api_header())
+                    .post(`/api/car/schedules/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id}, commonService.get_api_header())
                     .then(response => {
                         console.log(response)
                         loader.hide();
@@ -314,7 +314,7 @@ var commonService = new CommonService();
             submitPickedUp() {
                 let loader = this.$loading.show();
                 this.axios
-                    .post(`/api/car/pick/` + this.sel_car.index, {Scheduled_Time: this.pickup_date.id}, commonService.get_api_header())
+                    .post(`/api/car/pick/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id}, commonService.get_api_header())
                     .then(response => {
                         console.log(response)
                         loader.hide();
@@ -343,7 +343,7 @@ var commonService = new CommonService();
                 this.date_range = this.calendar_enabled_data;
             },
             gotoPay() {
-                alert("Coming Soon!");
+                this.$router.push('/payments?id='+this.sel_car.id);
             }
         }
     }

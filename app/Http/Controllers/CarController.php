@@ -11,9 +11,12 @@ use App\Models\User;
 use App\Models\Car;
 use App\Models\LikeBind;
 use App\Models\Filter;
+use App\Models\Location;
 use App\Models\Company;
 use GuzzleHttp\Client;
+use LikeBinds;
 use Psr\Cache;
+
 
 
 
@@ -64,14 +67,166 @@ class CarController extends Controller
         return $car;
     }
 
+    // public function index(Request $request)
+    // {
+    //     // return json_encode(['res' => $this->test()]);
+
+    //     $page = ($request->page ?: 1) - 1;
+    //     $records_per_page = $request->records_per_page ?: 8;
+    //     $select = [
+    //         'index',
+    //         'Year',
+    //         'Make',
+    //         'Model',
+    //         'City',
+    //         'Does_the_Vehicle_Run_and_Drive',
+    //         'Miles',
+    //         'Buyers_Quote',
+    //         'Zip_Code',
+    //         'Reference_Number',
+    //         'Closing_Date',
+    //         'Stage',
+    //     ];
+    //     // $quey = null;
+    //     if ($request->type == 'like') {
+    //         $query = LikeBind::where('user_id', Auth::user()->id)->leftJoin('cars', 'car_id', '=', 'cars.id');
+    //         $select[] = 'like_binds.id as is_liked';
+    //         $select[] = 'Airbags_Deployed';
+    //         $select[] = 'Is_There_Any_Body_Damage_Broken_Glass_2';
+    //         $select[] = 'Is_there_any_Body_Damage_Broken_Glass';
+    //         $select[] = 'Is_There_Any_Broken_Glass_Windows_etc';
+    //         $select[] = 'Are_all_the_tires_mounted';
+    //         $select[] = 'Which_tires_are_missing';
+    //         $select[] = 'Are_All_the_Tires_Inflated';
+    //         $select[] = 'Which_ones_are_flat';
+    //         $select[] = 'Fire_or_Flood_Damage';
+    //         $select[] = 'Any_Missing_Body_Panels_Interior_or_Engine_Parts';
+    //         $select[] = 'What_Kind_of_Mechanical_Issues_Are_There';
+    //     } else {
+    //         if (!$request->page_type) $request->page_type = 'cars';
+
+    //         if ($request->page_type == 'cars') {
+    //             $stage = 'Given Quote';
+    //             $duration = -30;
+    //             $select[] = 'like_binds.id as is_liked';
+    //             $select[] = 'Airbags_Deployed';
+    //             $select[] = 'Is_There_Any_Body_Damage_Broken_Glass_2';
+    //             $select[] = 'Is_there_any_Body_Damage_Broken_Glass';
+    //             $select[] = 'Is_There_Any_Broken_Glass_Windows_etc';
+    //             $select[] = 'Are_all_the_tires_mounted';
+    //             $select[] = 'Which_tires_are_missing';
+    //             $select[] = 'Are_All_the_Tires_Inflated';
+    //             $select[] = 'Which_ones_are_flat';
+    //             $select[] = 'Fire_or_Flood_Damage';
+    //             $select[] = 'What_Kind_of_Mechanical_Issues_Are_There';
+    //             $select[] = 'Scheduled_Time';
+    //             $select[] = 'Scheduled_Notes';
+
+    //             $query = Car::leftJoin('like_binds', 'cars.id', '=', 'like_binds.car_id')
+    //                         ->where('Stage', $stage)
+    //                         ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
+    //                         ->whereNotNull('Buyers_Quote')
+    //                         ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
+    //         } elseif ($request->page_type == 'bids') {
+    //             $query = Car::where(function($sub_query) {
+    //                 $sub_query->where('Stage', 'Given Quote')->
+    //                             orwhere('Stage', 'Deal Made');
+    //             });
+
+    //             $query = $query->where('Tow_Company_id', Auth::user()->zoho_index);
+
+    //             if ($request->status && $request->status == 'Won') {
+    //                 $query = $query->where('Stage', 'Deal Made');
+    //             } elseif ($request->status && $request->status == 'Active') {
+    //                 $query = $query->where('Stage', 'Given Quote');
+    //             }
+    //         } elseif ($request->page_type == 'schedulings') {
+    //             $select[] = 'Scheduled_Time';
+    //             $select[] = 'Scheduled_Notes';
+
+    //             $query = Car::where(function($sub_query) {
+    //                             $sub_query->where('Stage', 'Picked Up');
+    //                             $sub_query->orwhere('Stage', 'Deal Made');
+    //                             return $sub_query;
+    //                         });
+
+    //             $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
+    //                             ->whereNotNull('Buyers_Quote');
+
+    //             if ($request->status == 'Unscheduled') {
+    //                 $query = $query->where('Stage', 'Deal Made')->whereNull('Scheduled_Time');
+    //             } elseif ($request->status == 'Scheduled') {
+    //                 $query = $query->where('Stage', 'Deal Made')->whereNotNull('Scheduled_Time');;
+    //             } elseif ($request->status == 'Picked-Up') {
+    //                 $query = $query->where('Stage', 'Picked Up');
+    //             }
+
+    //         } elseif ($request->page_type == 'payments') {
+    //             $query = Car::where(function($sub_query) {
+    //                 $sub_query->where('Stage', 'Paid');
+    //                 $sub_query->orwhere('Stage', 'Deal Made');
+    //                 $sub_query->orwhere('Stage', 'Picked Up');
+    //                 return $sub_query;
+    //             });
+
+    //             $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
+    //                             ->whereNotNull('Buyers_Quote');
+
+    //             if ($request->status == 'Paid') {
+    //                 $query = $query->where('Stage', 'Paid');
+    //             } elseif ($request->status == 'Unpaid') {
+    //                 $query = $query->where('Stage', 'Deal Made');
+    //             } elseif ($request->status == 'Overdue') {
+    //                 $query = $query->where('Stage', 'Picked Up');
+    //             }
+    //         }
+    //     }
+
+    //     $query = $query->select($select)
+    //                 // ->orderby('Closing_Date', 'desc')
+    //                    ->orderby('cars.index', 'desc');
+
+    //     if ($request->Miles) $query = $query->where('Miles', '<', $request->Miles);
+    //     if ($request->Does_the_Vehicle_Run_and_Drive) $query = $query->where('Does_the_Vehicle_Run_and_Drive', $request->Does_the_Vehicle_Run_and_Drive);
+    //     if ($request->buyers_quote) $query = $query->where('buyers_quote', '<', $request->buyers_quote);
+    //     if ($request->Any_Missing_Body_Panels_Interior_or_Engine_Parts) $query = $query->where('Any_Missing_Body_Panels_Interior_or_Engine_Parts', $request->Any_Missing_Body_Panels_Interior_or_Engine_Parts);
+    //     if ($request->Do_they_have_a_Title) $query = $query->where('Do_they_have_a_Title', $request->Do_they_have_a_Title);
+    //     if ($request->Fire_or_Flood_Damage) $query = $query->where('Fire_or_Flood_Damage', $request->Fire_or_Flood_Damage);
+    //     if ($request->Reference_Number) $query = $query->where('Reference_Number', $request->Reference_Number);
+    //     if ($request->Year) $query = $query->where('Year', $request->Year);
+    //     if ($request->Make) $query = $query->where('Make', $request->Make);
+    //     if ($request->Model) $query = $query->where('Model', $request->Make);
+    //     if ($request->distance) {
+    //         $lat_min = Auth::user()->lat -  $request->distance / 69;
+    //         $lat_max = Auth::user()->lat +  $request->distance / 69;
+    //         $lng_min = Auth::user()->lng -  $request->distance / 54.6;
+    //         $lng_max = Auth::user()->lng +  $request->distance / 54.6;
+
+    //         $query = $query->where('cars.lat', '>=', $lat_min);
+    //         $query = $query->where('cars.lat', '<=', $lat_max);
+    //         $query = $query->where('cars.lng', '>=', $lng_min);
+    //         $query = $query->where('cars.lng', '>=', $lng_max);
+
+    //         // var_dump($lat_min);
+    //         // var_dump($lat_max);
+    //         // var_dump($lng_min);
+    //         // var_dump($lng_max);
+    //     }
+
+    //     $total = $query->count();
+    //     $cars = $query->skip($page * $records_per_page)->take($records_per_page)->get();
+    //     return ['total' => $total,  'data' => $cars, 'user'=> Auth::user()];
+    // }
+
+
     public function index(Request $request)
     {
         // return json_encode(['res' => $this->test()]);
-
+        $zohoService = new ZohoSerivce();
         $page = ($request->page ?: 1) - 1;
         $records_per_page = $request->records_per_page ?: 8;
         $select = [
-            'index',
+            'id as index',
             'Year',
             'Make',
             'Model',
@@ -84,10 +239,22 @@ class CarController extends Controller
             'Closing_Date',
             'Stage',
         ];
+        $where = array();
         // $quey = null;
         if ($request->type == 'like') {
-            $query = LikeBind::where('user_id', Auth::user()->id)->leftJoin('cars', 'car_id', '=', 'cars.id');
-            $select[] = 'like_binds.id as is_liked';
+            $likes = LikeBind::get();
+            $likesArray = array();
+            foreach($likes as $like) {
+                $likesArray[] = $like->car_index;
+            }
+            $select[] = 'Any_Missing_Body_Panels_Interior_or_Engine_Parts';
+        }
+        if (!$request->page_type) $request->page_type = 'cars';
+
+        if ($request->page_type == 'cars') {
+            $stage = 'Given Quote';
+            $duration = -3;
+            $select[] = 'Do_they_have_a_Title';
             $select[] = 'Airbags_Deployed';
             $select[] = 'Is_There_Any_Body_Damage_Broken_Glass_2';
             $select[] = 'Is_there_any_Body_Damage_Broken_Glass';
@@ -97,91 +264,81 @@ class CarController extends Controller
             $select[] = 'Are_All_the_Tires_Inflated';
             $select[] = 'Which_ones_are_flat';
             $select[] = 'Fire_or_Flood_Damage';
-            $select[] = 'Any_Missing_Body_Panels_Interior_or_Engine_Parts';
             $select[] = 'What_Kind_of_Mechanical_Issues_Are_There';
-        } else {
-            if (!$request->page_type) $request->page_type = 'cars';
+            $select[] = 'Scheduled_Time';
+            // $select[] = 'Scheduled_Notes';
 
-            if ($request->page_type == 'cars') {
-                $stage = 'Given Quote';
-                $duration = -30;
-                $select[] = 'like_binds.id as is_liked';
-                $select[] = 'Airbags_Deployed';
-                $select[] = 'Is_There_Any_Body_Damage_Broken_Glass_2';
-                $select[] = 'Is_there_any_Body_Damage_Broken_Glass';
-                $select[] = 'Is_There_Any_Broken_Glass_Windows_etc';
-                $select[] = 'Are_all_the_tires_mounted';
-                $select[] = 'Which_tires_are_missing';
-                $select[] = 'Are_All_the_Tires_Inflated';
-                $select[] = 'Which_ones_are_flat';
-                $select[] = 'Fire_or_Flood_Damage';
-                $select[] = 'What_Kind_of_Mechanical_Issues_Are_There';
-                $select[] = 'Scheduled_Time';
-                $select[] = 'Scheduled_Notes';
 
-                $query = Car::leftJoin('like_binds', 'cars.id', '=', 'like_binds.car_id')
-                            ->where('Stage', $stage)
-                            ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
-                            ->whereNotNull('Buyers_Quote')
-                            ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
-            } elseif ($request->page_type == 'bids') {
-                $query = Car::where(function($sub_query) {
-                    $sub_query->where('Stage', 'Given Quote')->
-                                orwhere('Stage', 'Deal Made');
-                });
 
-                $query = $query->where('Tow_Company_id', Auth::user()->zoho_index);
 
-                if ($request->status && $request->status == 'Won') {
-                    $query = $query->where('Stage', 'Deal Made');
-                } elseif ($request->status && $request->status == 'Active') {
-                    $query = $query->where('Stage', 'Given Quote');
-                }
-            } elseif ($request->page_type == 'schedulings') {
-                $select[] = 'Scheduled_Time';
-                $select[] = 'Scheduled_Notes';
+            $query = Car::where('Stage', $stage)
+                        ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
+                        ->whereNotNull('Buyers_Quote')
+                        ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
+            if ($request->type == 'like')
+                $query = $query->whereIn('id', $likesArray);
 
-                $query = Car::where(function($sub_query) {
-                                $sub_query->where('Stage', 'Picked Up');
-                                $sub_query->orwhere('Stage', 'Deal Made');
-                                return $sub_query;
-                            });
+        } elseif ($request->page_type == 'bids') {
+            $query = Car::where(function($sub_query) {
+                $sub_query->where('Stage', 'Given Quote')->
+                            orwhere('Stage', 'Deal Made');
+            });
 
-                $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
-                                ->whereNotNull('Buyers_Quote');
+            $query = $query->where('Tow_Company_id', Auth::user()->zoho_index);
 
-                if ($request->status == 'Unscheduled') {
-                    $query = $query->where('Stage', 'Deal Made')->whereNull('Scheduled_Time');
-                } elseif ($request->status == 'Scheduled') {
-                    $query = $query->where('Stage', 'Deal Made')->whereNotNull('Scheduled_Time');;
-                } elseif ($request->status == 'Picked-Up') {
-                    $query = $query->where('Stage', 'Picked Up');
-                }
+            if ($request->status && $request->status == 'Won') {
+                $query = $query->where('Stage', 'Deal Made');
+            } elseif ($request->status && $request->status == 'Active') {
+                $query = $query->where('Stage', 'Given Quote');
+            }
+        } elseif ($request->page_type == 'schedulings') {
+            $select[] = 'Scheduled_Time';
 
-            } elseif ($request->page_type == 'payments') {
-                $query = Car::where(function($sub_query) {
-                    $sub_query->where('Stage', 'Paid');
-                    $sub_query->orwhere('Stage', 'Deal Made');
-                    $sub_query->orwhere('Stage', 'Picked Up');
-                    return $sub_query;
-                });
+            $query = Car::where(function($sub_query) {
+                            $sub_query->where('Stage', 'Picked Up');
+                            $sub_query->orwhere('Stage', 'Deal Made');
+                            return $sub_query;
+                        });
 
-                $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
-                                ->whereNotNull('Buyers_Quote');
+            $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
+                            ->whereNotNull('Buyers_Quote');
 
-                if ($request->status == 'Paid') {
-                    $query = $query->where('Stage', 'Paid');
-                } elseif ($request->status == 'Unpaid') {
-                    $query = $query->where('Stage', 'Deal Made');
-                } elseif ($request->status == 'Overdue') {
-                    $query = $query->where('Stage', 'Picked Up');
-                }
+            if ($request->status == 'Unscheduled') {
+                $query = $query->where('Stage', 'Deal Made')->whereNull('Scheduled_Time');
+            } elseif ($request->status == 'Scheduled') {
+                $query = $query->where('Stage', 'Deal Made')->whereNotNull('Scheduled_Time');;
+            } elseif ($request->status == 'Picked-Up') {
+                $query = $query->where('Stage', 'Picked Up');
+            }
+
+        } elseif ($request->page_type == 'payments') {
+            $query = Car::where(function($sub_query) {
+                $sub_query->where('Stage', 'Paid');
+                $sub_query->orwhere('Stage', 'Deal Made');
+                $sub_query->orwhere('Stage', 'Picked Up');
+                return $sub_query;
+            });
+
+            $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
+                            ->whereNotNull('Buyers_Quote');
+
+            if ($request->status == 'Paid') {
+                $query = $query->where('Stage', 'Paid');
+            } elseif ($request->status == 'Unpaid') {
+                $query = $query->where('Stage', 'Deal Made');
+            } elseif ($request->status == 'Overdue') {
+                $query = $query->where('Stage', 'Picked Up');
             }
         }
 
+
+        // $query_4_total = $query->select('count(*) as count')->orderby('id', 'desc');
+
+        // // $total_query = $this->getQueryResult($this->convertQuery($query_4_total));
+        // return json_encode(array('res'=>$this->convertQuery($query_4_total)));
         $query = $query->select($select)
                     // ->orderby('Closing_Date', 'desc')
-                       ->orderby('cars.index', 'desc');
+                       ->orderby('id', 'desc');
 
         if ($request->Miles) $query = $query->where('Miles', '<', $request->Miles);
         if ($request->Does_the_Vehicle_Run_and_Drive) $query = $query->where('Does_the_Vehicle_Run_and_Drive', $request->Does_the_Vehicle_Run_and_Drive);
@@ -199,151 +356,98 @@ class CarController extends Controller
             $lng_min = Auth::user()->lng -  $request->distance / 54.6;
             $lng_max = Auth::user()->lng +  $request->distance / 54.6;
 
-            $query = $query->where('cars.lat', '>=', $lat_min);
-            $query = $query->where('cars.lat', '<=', $lat_max);
-            $query = $query->where('cars.lng', '>=', $lng_min);
-            $query = $query->where('cars.lng', '>=', $lng_max);
+            // $query = $query->where('lat', '>=', $lat_min);
+            // $query = $query->where('lat', '<=', $lat_max);
+            // $query = $query->where('lng', '>=', $lng_min);
+            // $query = $query->where('lng', '<=', $lng_max);
 
-            // var_dump($lat_min);
-            // var_dump($lat_max);
-            // var_dump($lng_min);
-            // var_dump($lng_max);
+            $zipCodes = Location::where('lat', '>=', $lat_min)
+                                ->where('lat', '<=', $lat_max)
+                                ->where('lng', '>=', $lng_min)
+                                ->where('lng', '<=', $lng_max)
+                                ->take(50)->get();
+            $zipArray = array();
+            foreach($zipCodes as $zipCode) {
+                $zipArray[] = $zipCode->zip_code;
+            }
+            $query = $query->whereIn('Zip_Code', $zipArray);
         }
 
-        $total = $query->count();
-        $cars = $query->skip($page * $records_per_page)->take($records_per_page)->get();
-        return ['total' => $total,  'data' => $cars, 'user'=> Auth::user()];
+        // $total = $query->count();
+        $cars = $query->skip($page * $records_per_page)->take($records_per_page);
+        $total = 40;
+
+        $builder = $this->convertQuery($query);
+
+        if($request->page_type != 'cars' || $request->type == 'like' || $request->distance) {
+            $builder = str_replace(" order by", ') order by',  $builder);
+        }
+        if($request->distance && ($request->page_type != 'cars' || $request->type == 'like')) {
+            $builder = str_replace(" order by", ') order by',  $builder);
+        }
+
+        // return $builder;
+        $cars = $this->getQueryResult($builder);
+        $car_arr = array();
+
+        if($cars)
+            foreach($cars['data'] as $car) {
+                $like = LikeBind::where('user_id', Auth::user()->id)->where('car_index', $car['id'])->first();
+                $location = Location::where('Zip_Code', $car['Zip_Code'])->first();
+                if($location) {
+                    $car['Distance'] = intval($this->haversineGreatCircleDistance(Auth::user()->lat, Auth::user()->lng, $location->lat, $location->lng));
+                }
+                if($request->page_type == 'cars') {
+                    if($like) $car['is_liked'] = true;
+                    else $car['is_liked'] = false;
+                }
+                $car_arr[] = $car;
+            }
+        else $car_arr = array();
+
+        return ['total' => $total,  'data' => $car_arr, 'user'=> Auth::user()];
+    }
+
+    private function convertQuery($builder) {
+        $query = str_replace(array('?'), array('\'%s\''), $builder->toSql());
+        $query = vsprintf($query, $builder->getBindings());
+        // $query = str_replace(array("\t"), array(' '),  $query);
+
+        $laravel_query_strings = array('`', '<>', " and ", 'cars', 'Tow_Company_id', " or ");
+        $raw_sql_strings = array('', '!=', ") and ", 'Deals', 'Tow_Company.id', ") or ");
+
+        $query = str_replace($laravel_query_strings, $raw_sql_strings,  $query);
+        $bracket_count = substr_count($query, ")");
+        $query = str_replace(array('where '), array('where '.str_repeat('(', $bracket_count)), $query);
+        return $query;
+    }
+
+    public function getQueryResult($query) {
+        $Request = (new Client())->post('https://www.zohoapis.com/crm/v2/coql', [
+            'json' => array("select_query" => $query),
+            'headers' => [
+                'Authorization' => $this->ZohoBooksAccessToken
+            ]
+        ]);
+        if ($Request->getStatusCode() != 200 && $Request->getStatusCode() != 201 ) return false;
+        $JSON = $Request->getBody()->getContents();
+        $Response = json_decode($JSON, true);
+        return $Response ?? false;
     }
 
 
-    private function createInvoice($Data)
-    {
-        try {
-            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'invoices?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
-                'json' => $Data,
-                'headers' => [
-                    'Authorization' => $this->ZohoBooksAccessToken
-                ]
-            ]);
-            $JSON = $Request->getBody()->getContents();
-            return json_decode($JSON, true);
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            $er = $e->getResponse()->getBody()->getContents();
-            print_r(json_decode($er));
-            return false;
-        }
-    }
-
-    private function getItem($Id)
-    {
-        try {
-            $Request = (new Client())->get(env('ZOHO_BOOKS_API_URI').'items', [
-                'query' => [
-                    'cf_crm_car_id' => $Id,
-                    'per_page' => 1,
-                    'organization_id' => env('ZOHO_ORGANIZATION_ID')
-                ],
-                'headers' => [
-                    'Authorization' => $this->ZohoBooksAccessToken
-                ]
-            ]);
-            $JSON = $Request->getBody()->getContents();
-            $Response = json_decode($JSON, true);
-            $Item = $Response['items'][0] ?? false;
-            if (!$Item) return false;
-            if (!isset($Item['cf_crm_car_id'])) return false;
-            if ($Item['cf_crm_car_id'] != $Id) return false;
-            return $Item;
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            return false;
-        }
-    }
-    private function createItem($Data)
-    {
-        try {
-            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'items', [
-                'json' => $Data,
-                'headers' => [
-                    'Authorization' => $this->ZohoBooksAccessToken
-                ]
-            ]);
-            if ($Request->getStatusCode() != 201) return false;
-            $JSON = $Request->getBody()->getContents();
-            $Response = json_decode($JSON, true);
-            return $Response['item'] ?? false;
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            print_r($e->getResponse()->getBody()->getContents());
-            return false;
-        }
-    }
-    private function getZohoBooksCustomer($Id)
-    {
-        try {
-            $Request = (new Client())->get(env('ZOHO_BOOKS_API_URI').'contacts', [
-                'query' => [
-                    'cf_zoho_crm_id' => $Id,
-                    'per_page' => 1,
-                    'organization_id' => env('ZOHO_ORGANIZATION_ID')
-                ],
-                'headers' => [
-                    'Authorization' => $this->ZohoBooksAccessToken
-                ]
-            ]);
-            $JSON = $Request->getBody()->getContents();
-            $Response = json_decode($JSON, true);
-            $Customer = $Response['contacts'][0] ?? false;
-            if (!$Customer) return false;
-            if ($Customer['cf_zoho_crm_id'] != $Id) return false;
-            return $Customer;
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            return false;
-        }
-    }
-    private function createZohoBooksCustomer($Name, $Email, $Id)
-    {
-        try {
-            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'contacts?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
-                'json' => [
-                    'contact_name' => $Name,
-                    'email' => $Email,
-                    'custom_fields' => [
-                        [
-                            'label' => 'Zoho CRM ID',
-                            'value' => $Id
-                        ]
-                    ]
-                ],
-                'headers' => [
-                    'Authorization' => $this->ZohoBooksAccessToken
-                ]
-            ]);
-            if ($Request->getStatusCode() != 201) return false;
-            $JSON = $Request->getBody()->getContents();
-            $Response = json_decode($JSON, true);
-            return $Response['contact'] ?? false;
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            print_r($e->getResponse()->getBody()->getContents());
-
-            return false;
-        }
-    }
     public function like(Request $request, $id) {
-        $car = Car::where('index',$id)->first();
-        if(!$car) return 'invalid car';
+        // $car = Car::where('index',$id)->first();
+        // if(!$car) return 'invalid car';
 
         $link =  LikeBind::where('car_index', $id)->first();
 
-        $zohoService = new ZohoSerivce();
-        // $zohoService->updateInvoice('1061914000238914058', 'Book and crm test', Auth::user());
-        // return 'success';
-        $deals = $zohoService->getRecords('Deals', 1, 5);
-        return $deals[0]->getKeyValue('id');
         if ($request->like) {
             if (!$link) {
                 $link = new LikeBind();
                 $link->user_id = Auth::user()->id;
-                $link->car_index = $car->index;
-                $link->car_id = $car->id;
+                $link->car_index = $id;
+                $link->car_id = 0;
                 $link->save();
 
             } else {
@@ -360,8 +464,8 @@ class CarController extends Controller
 
 
     public function bid(Request $request, $id) {
-        $car = Car::where('index', $id)->first();
-        if(!$car) return 'invalid car';
+        // $car = Car::where('index', $id)->first();
+        // if(!$car) return 'invalid car';
 
         $price = $request->price;
         $user_id = Auth::user()->zoho_index;
@@ -370,14 +474,14 @@ class CarController extends Controller
         $now = new \DateTime();
 
         // update local DB
-        $car->Buyers_Quote = $price;
-        $car->Modified_By_id = $user_id;
-        $car->Modified_By_name = $user_name;
-        $car->Modified_By_email = $user_email;
-        $car->Tow_Company_id = $user_id;
-        $car->Tow_Company_name = $user_name;
-        $car->Modified_Time = $now->format('Y-m-d H:i:s');
-        $car->save();
+        // $car->Buyers_Quote = $price;
+        // $car->Modified_By_id = $user_id;
+        // $car->Modified_By_name = $user_name;
+        // $car->Modified_By_email = $user_email;
+        // $car->Tow_Company_id = $user_id;
+        // $car->Tow_Company_name = $user_name;
+        // $car->Modified_Time = $now->format('Y-m-d H:i:s');
+        // $car->save();
 
         $zohoService = new ZohoSerivce();
         $deal = $zohoService->updateDealInfo($id, $price, $user_id, $user_name, $user_email, $now);
@@ -387,17 +491,14 @@ class CarController extends Controller
     }
 
     public function setSchedule(Request $request, $id) {
-        $car = Car::where('index', $id)->first();
-        if (!$car) return ['error' => 'invalid car'];
+        // $car = Car::where('index', $id)->first();
+        // if (!$car) return ['error' => 'invalid car'];
 
-        $car->Scheduled_Time = $request->Scheduled_Time;
-        $car->Scheduled_Notes = $request->Scheduled_Notes;
-        $car->save();
         $zohoService = new ZohoSerivce();
         $now = new \DateTime($request->Scheduled_Time);
         $schedule = $zohoService->scheduleTime($id, $now);
 
-        return json_encode(array('res' => $car));
+        return json_encode(array('res' => 'success'));
     }
 
     public function pick(Request $request, $id) {
@@ -435,7 +536,7 @@ class CarController extends Controller
         $InvoiceItems = [];
         $InvoiceTotal = 0;
         foreach ($request->cars as $car) {
-            $Car = $this->getItem($car['index']);
+            $Car = $this->getItem($car['id']);
             if (!$Car) {
                 $Car = $this->createItem([
                     'name' => '#'.implode(" ", array($car['Reference_Number'], $car['Year'], $car['Make'], $car['Model'])),
@@ -443,7 +544,7 @@ class CarController extends Controller
                     'custom_fields' => [
                         [
                             'label' => 'CRM Car ID',
-                            'value' => $car['index']
+                            'value' => $car['id']
                         ],
                         [
                             'label' => 'Car Ref#',
@@ -612,4 +713,136 @@ class CarController extends Controller
        // echo "<pre>"; print_r($response); echo "</pre>";
         return 'Bid placed successfully';
     }
+
+    function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
+    {
+        // convert from degrees to radians
+        $latFrom = deg2rad($latitudeFrom);
+        $lonFrom = deg2rad($longitudeFrom);
+        $latTo = deg2rad($latitudeTo);
+        $lonTo = deg2rad($longitudeTo);
+
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+            cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+        return $angle * $earthRadius;
+    }
+
+    private function createInvoice($Data)
+    {
+        try {
+            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'invoices?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
+                'json' => $Data,
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            return json_decode($JSON, true);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $er = $e->getResponse()->getBody()->getContents();
+            print_r(json_decode($er));
+            return false;
+        }
+    }
+
+    private function getItem($Id)
+    {
+        try {
+            $Request = (new Client())->get(env('ZOHO_BOOKS_API_URI').'items', [
+                'query' => [
+                    'cf_crm_car_id' => $Id,
+                    'per_page' => 1,
+                    'organization_id' => env('ZOHO_ORGANIZATION_ID')
+                ],
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            $Item = $Response['items'][0] ?? false;
+            if (!$Item) return false;
+            if (!isset($Item['cf_crm_car_id'])) return false;
+            if ($Item['cf_crm_car_id'] != $Id) return false;
+            return $Item;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return false;
+        }
+    }
+    private function createItem($Data)
+    {
+        try {
+            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'items', [
+                'json' => $Data,
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            if ($Request->getStatusCode() != 201) return false;
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            return $Response['item'] ?? false;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            print_r($e->getResponse()->getBody()->getContents());
+            return false;
+        }
+    }
+
+
+
+    private function getZohoBooksCustomer($Id)
+    {
+        try {
+            $Request = (new Client())->get(env('ZOHO_BOOKS_API_URI').'contacts', [
+                'query' => [
+                    'cf_zoho_crm_id' => $Id,
+                    'per_page' => 1,
+                    'organization_id' => env('ZOHO_ORGANIZATION_ID')
+                ],
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            $Customer = $Response['contacts'][0] ?? false;
+            if (!$Customer) return false;
+            if ($Customer['cf_zoho_crm_id'] != $Id) return false;
+            return $Customer;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return false;
+        }
+    }
+    private function createZohoBooksCustomer($Name, $Email, $Id)
+    {
+        try {
+            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'contacts?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
+                'json' => [
+                    'contact_name' => $Name,
+                    'email' => $Email,
+                    'custom_fields' => [
+                        [
+                            'label' => 'Zoho CRM ID',
+                            'value' => $Id
+                        ]
+                    ]
+                ],
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            if ($Request->getStatusCode() != 201) return false;
+            $JSON = $Request->getBody()->getContents();
+            $Response = json_decode($JSON, true);
+            return $Response['contact'] ?? false;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            print_r($e->getResponse()->getBody()->getContents());
+
+            return false;
+        }
+    }
+
 }

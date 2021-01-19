@@ -37,4 +37,34 @@ class StripePaymentController extends Controller
 
         return back();
     }
+
+    public function createIntent(Request $request)
+    {
+        try {
+            \Stripe\Stripe::setApiKey(env('Stripe_Api_SECRETKey'));
+        } catch (\Exception $Exception) {
+            return response()->json([
+                'error' => 'Payments Configuration Error'
+            ])->setStatusCode(500);
+        }
+        try {
+            $Intent = Stripe\PaymentIntent::create([
+                'amount' => $request->input('amount'),
+                'currency' =>  $request->input('currency'),
+                'metadata' => [
+                    'UserId' =>  $request->input('user_id'),
+                    'UserEmail' => $request->input('user_email')
+                ]
+            ]);
+        } catch (\Exception $Exception) {
+            return response()->json([
+                'error' => $Exception->getMessage()
+            ])->setStatusCode(500);
+        }
+        return response()->json([
+            'Intent' => [
+                'Secret' => $Intent->client_secret
+            ]
+        ])->setStatusCode(201);
+    }
 }

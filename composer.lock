@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9e4c7e01d526ab7653890d7c4de2548",
+    "content-hash": "269a1ad9e8fccbe0af2b80c6d4ba0a4e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1758,55 +1758,6 @@
             "time": "2020-07-20T17:29:33+00:00"
         },
         {
-            "name": "psr/cache",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/cache.git",
-                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/cache/zipball/d11b50ad223250cf17b86e38383413f5a6764bf8",
-                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Cache\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for caching libraries",
-            "keywords": [
-                "cache",
-                "psr",
-                "psr-6"
-            ],
-            "support": {
-                "source": "https://github.com/php-fig/cache/tree/master"
-            },
-            "time": "2016-08-06T20:24:11+00:00"
-        },
-        {
             "name": "psr/container",
             "version": "1.0.0",
             "source": {
@@ -2401,86 +2352,17 @@
             "time": "2020-08-18T17:17:46+00:00"
         },
         {
-            "name": "spatie/enum",
-            "version": "2.3.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/enum.git",
-                "reference": "49bd478efff2552df50ef42b9d70c32178b953bd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/enum/zipball/49bd478efff2552df50ef42b9d70c32178b953bd",
-                "reference": "49bd478efff2552df50ef42b9d70c32178b953bd",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\Enum\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Brent Roose",
-                    "email": "brent@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Tom Witkowski",
-                    "email": "dev@gummibeer.de",
-                    "homepage": "https://gummibeer.de",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP Enums",
-            "homepage": "https://github.com/spatie/enum",
-            "keywords": [
-                "enum",
-                "enumerable",
-                "spatie"
-            ],
-            "support": {
-                "docs": "https://docs.spatie.be/enum",
-                "issues": "https://github.com/spatie/enum/issues",
-                "source": "https://github.com/spatie/enum"
-            },
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-07-17T20:06:15+00:00"
-        },
-        {
             "name": "stripe/stripe-php",
-            "version": "v7.67.0",
+            "version": "v7.68.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "935d2c67912007f6d17b6c08a62050252c509129"
+                "reference": "36b10e1f0e9d973f00f802bbd098bce85d0438e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/935d2c67912007f6d17b6c08a62050252c509129",
-                "reference": "935d2c67912007f6d17b6c08a62050252c509129",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/36b10e1f0e9d973f00f802bbd098bce85d0438e4",
+                "reference": "36b10e1f0e9d973f00f802bbd098bce85d0438e4",
                 "shasum": ""
             },
             "require": {
@@ -2526,9 +2408,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.67.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.68.0"
             },
-            "time": "2020-12-09T19:00:34+00:00"
+            "time": "2021-01-15T00:38:28+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -4980,121 +4862,6 @@
                 }
             ],
             "time": "2020-11-12T00:07:28+00:00"
-        },
-        {
-            "name": "weble/zohoclient",
-            "version": "3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Weble/ZohoClient.git",
-                "reference": "cedbd5469b5a4715cf85ade5bd84e3c3b6f54b9a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Weble/ZohoClient/zipball/cedbd5469b5a4715cf85ade5bd84e3c3b6f54b9a",
-                "reference": "cedbd5469b5a4715cf85ade5bd84e3c3b6f54b9a",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "guzzlehttp/guzzle": "^6.0 | ^7.0",
-                "php": ">=7.2.0",
-                "psr/cache": "^1.0",
-                "spatie/enum": "^2.3"
-            },
-            "require-dev": {
-                "cache/array-adapter": "^1.0",
-                "cache/filesystem-adapter": "^1.0",
-                "phpstan/phpstan": "^0.12.3",
-                "phpunit/phpunit": "7.*",
-                "vlucas/phpdotenv": "^4.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Weble\\ZohoClient\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniele Rosario",
-                    "email": "daniele@weble.it"
-                }
-            ],
-            "description": "Zoho API Client for oAuth auth and common tasks - PHP SDK",
-            "keywords": [
-                "Zoho",
-                "api",
-                "oauth2"
-            ],
-            "support": {
-                "issues": "https://github.com/Weble/ZohoClient/issues",
-                "source": "https://github.com/Weble/ZohoClient/tree/3.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/weble",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-10-30T09:05:41+00:00"
-        },
-        {
-            "name": "webleit/zohobooksapi",
-            "version": "4.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Weble/ZohoBooksApi.git",
-                "reference": "f365127fb5b77f4070b1f0b2d8ad5fe8ba7dcd9c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Weble/ZohoBooksApi/zipball/f365127fb5b77f4070b1f0b2d8ad5fe8ba7dcd9c",
-                "reference": "f365127fb5b77f4070b1f0b2d8ad5fe8ba7dcd9c",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/inflector": "^2.0",
-                "guzzlehttp/guzzle": "^6.0 | ^7.0",
-                "illuminate/collections": "^v8.0",
-                "php": ">=7.2.0",
-                "weble/zohoclient": "^3.0.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Webleit\\ZohoBooksApi\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniele Rosario",
-                    "email": "daniele@weble.it"
-                }
-            ],
-            "description": "Zoho Books API v3 - PHP SDK",
-            "keywords": [
-                "Zoho",
-                "api",
-                "books",
-                "zohobooks"
-            ],
-            "support": {
-                "issues": "https://github.com/Weble/ZohoBooksApi/issues",
-                "source": "https://github.com/Weble/ZohoBooksApi/tree/4.4.2"
-            },
-            "time": "2020-11-17T07:49:46+00:00"
         },
         {
             "name": "webmozart/assert",

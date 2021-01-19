@@ -29,14 +29,15 @@
                         <div class="title">Make</div>
                         <div class="title">Model</div>
                         <div class="title">City</div>
-                        <div class="title">Runs/Drivers</div>
+                        <div class="title">Distance</div>
+                        <div class="title">Drives</div>
                         <div class="title">Closing Date</div>
                         <div class="title">Mileage</div>
                         <div class="title">Current Offer</div>
                         <!-- <div class="action-go"></div> -->
                     </div>
                     <div class="car-body">
-                        <div class="car-item" v-for="car in cars" :key="car.index" @click="showDetail(car, $event)">
+                        <div class="car-item" v-for="car in cars" :key="car.id" @click="showDetail(car, $event)">
                             <div class="action-heart">
                                 <a href="javascript:;" class="mif-heart" v-bind:class="{'text-danger': car.is_liked}"  v-on:click="likeCar(car)"></a>
                             </div>
@@ -44,10 +45,11 @@
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
                             <div class="item-data">{{ car.City }}</div>
+                            <div class="item-data">{{ car.Distance }}</div>
                             <div class="item-data">{{ car.Does_the_Vehicle_Run_and_Drive }}</div>
                             <div class="item-data">{{ car.Closing_Date }}</div>
                             <div class="item-data text-center">{{ car.Miles }}</div>
-                            <div class="item-data text-center">{{ car.Buyers_Quote }}</div>
+                            <div class="item-data text-center">${{ car.Buyers_Quote}}</div>
                             <!-- <div class="text-center action-go">
                                 <a href="javascript:;" v-on:click="showDetail(car)">
                                     <span class="mif-arrow-right"></span>
@@ -214,9 +216,12 @@ var commonService = new CommonService();
         },
         filters: {
             replaceIfEmpty: function(value) {
+                // return value;
                 var emptyPlaceHolderStr = "-- None --";
-                if(value == "" || value == undefined) return emptyPlaceHolderStr;
+                if(value == "" || value == undefined || value == null) return emptyPlaceHolderStr;
                 var flag = false;
+                if(typeof value === "number") return value;
+                if(Array.isArray(value)) return value.join(',');
                 if(value.charAt(0) == "[") {
                     var ini_str = "";
                     var arr = JSON.parse(value);
@@ -239,8 +244,8 @@ var commonService = new CommonService();
 
             },
             milesValidate: function(value) {
-                if(value == "Unable to Verify")
-                    return value;
+                if(value == null)
+                    return "Unable to Verify";
                 else
                     return value + " Miles";
             },
@@ -305,7 +310,7 @@ var commonService = new CommonService();
             likeCar(car) {
                 let loader = this.$loading.show();
                 this.axios
-                    .post(`/api/car/like/${car.index}`, {like: (car.is_liked ? '' : true)}, commonService.get_api_header())
+                    .post(`/api/car/like/${car.id}`, {like: (car.is_liked ? '' : true)}, commonService.get_api_header())
                     .then(response => {
                         loader.hide();
                         car.is_liked = !car.is_liked;
@@ -362,7 +367,7 @@ var commonService = new CommonService();
                 const thiz = this;
 
                 this.axios
-                    .post(`/api/car/bid/${this.sel_car.index}`, { price: this.bid_price }, commonService.get_api_header())
+                    .post(`/api/car/bid/${this.sel_car.id}`, { price: this.bid_price }, commonService.get_api_header())
                     .then(response => {
                         if(response.data != "success") {
                             alert("No such car");
