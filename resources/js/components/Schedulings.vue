@@ -28,20 +28,20 @@
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
-                        <div class="title">Distance</div>
+                        <div class="title">Amount</div>
                     </div>
                     <div class="car-body">
                         <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': sel_car && car.id == sel_car.id}" @click="showDetail(car)">
                             <div class="item-data">
-                                <div v-if="car.Stage=='Deal Made' && !car.Scheduled_Time" class="status-active uppercase">Unscheduled </div>
-                                <div v-if="car.Stage=='Deal Made' && car.Scheduled_Time" class="status-won uppercase">Scheduled </div>
+                                <div v-if="car.Stage=='Dispatched' && !car.Scheduled_Time" class="status-active uppercase">Unscheduled </div>
+                                <div v-if="car.Stage=='Dispatched' && car.Scheduled_Time" class="status-won uppercase">Scheduled </div>
                                 <div v-if="car.Stage=='Picked Up'" class="status-fail uppercase">Picked-Up </div>
                             </div>
                             <div class="item-data">{{ car.Reference_Number }}</div>
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
-                            <div class="item-data">{{ car.Buyers_Quote }}</div>
+                            <div class="item-data">{{ toCurrency(car.Buyers_Quote) }}</div>
                             <!-- <a href="javascript:;" class="text-center action-go" v-on:click="showDetail(car)">
                                 <span class="mif-arrow-right"></span>
                             </a> -->
@@ -51,8 +51,8 @@
                                     <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
                                     <div style="display:flex;justify-content:space-between;">
                                         <div class="text-blue">{{car.Buyers_Quote}}</div>
-                                        <div v-if="car.Stage=='Deal Made' && !car.Scheduled_Time" class="status-active">Unscheduled </div>
-                                        <div v-if="car.Stage=='Deal Made' && car.Scheduled_Time" class="status-won">Scheduled </div>
+                                        <div v-if="car.Stage=='Dispatched' && !car.Scheduled_Time" class="status-active">Unscheduled </div>
+                                        <div v-if="car.Stage=='Dispatched' && car.Scheduled_Time" class="status-won">Scheduled </div>
                                         <div v-if="car.Stage=='Picked Up'" class="status-fail">Picked-Up </div>
                                     </div>
                                 </div>
@@ -83,7 +83,7 @@
                                 <button class="btn btn-primary action-button" v-on:click="sel_car=null">DONE</button>
                             </div>
                         </div>
-                        <div class="selcar-content" :class="{'background-grey': sel_car.Stage!='Deal Made' || sel_car.Scheduled_Time}" v-if="sel_car && !submit_pickup">
+                        <div class="selcar-content" :class="{'background-grey': sel_car.Stage!='Dispatched' || sel_car.Scheduled_Time}" v-if="sel_car && !submit_pickup">
                             <div class="title">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
                             <div class="selcar-detail row">
                                 <div class="calendar-wrapper">
@@ -91,7 +91,7 @@
                                         <v-calendar :available-dates='date_range' :attributes="attributes" @dayclick="onDayClick" disabled is-expanded/>
                                     </div>
                                 </div>
-                                <div class="w-100 schedule-content" v-if="sel_car.Stage=='Deal Made' && !sel_car.Scheduled_Time">
+                                <div class="w-100 schedule-content" v-if="sel_car.Stage=='Dispatched' && !sel_car.Scheduled_Time">
                                     <div class="col-md-6 field-item">
                                         <div class="item-label">Scheduled Pick-up Date</div>
                                         <div class="item-value">{{pickup_date ? pickup_date.date.toLocaleDateString() : 'MM / DD / YYYY'}}&nbsp;</div>
@@ -111,10 +111,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="action-bar" v-if="sel_car.Stage=='Deal Made' && !sel_car.Scheduled_Time">
+                            <div class="action-bar" v-if="sel_car.Stage=='Dispatched' && !sel_car.Scheduled_Time">
                                 <button class="btn btn-primary action-button" v-on:click="submitSchedule()">SCHEDULE</button>
                             </div>
-                            <div class="action-bar" v-if="sel_car.Stage=='Deal Made' && sel_car.Scheduled_Time">
+                            <div class="action-bar" v-if="sel_car.Stage=='Dispatched' && sel_car.Scheduled_Time">
                                 <button class="btn btn-primary action-button float-left background-grey" v-show="!editable" @click="enableEdit()">EDIT</button>
                                 <button class="btn btn-primary action-button" @click="submitPickedUp()">PICKED UP</button>
                             </div>
@@ -193,7 +193,7 @@ var commonService = new CommonService();
         },
         filters: {
             unscheduledAmount: function(arr) {
-                var un_arr = arr.filter(car=> car.Stage=='Deal Made' && !car.Scheduled_Time)
+                var un_arr = arr.filter(car=> car.Stage=='Dispatched' && !car.Scheduled_Time)
                 return un_arr.length;
             }
         },
@@ -275,7 +275,7 @@ var commonService = new CommonService();
                     this.pickup_date = null;
                     this.editable = false;
                     this.date_range = this.calendar_enabled_data;
-                    if (this.sel_car.Scheduled_Time) {
+                    if (this.sel_car.Scheduled_Time || this.sel_car.Stage == "Picked Up") {
                         let date = new Date(this.sel_car.Scheduled_Time);
                         this.pickup_date = {
                             id: this.sel_car.Scheduled_Time,
@@ -285,6 +285,14 @@ var commonService = new CommonService();
                     }
                     this.schedule_note = this.sel_car.Scheduled_Notes;
                 }, 100);
+            },
+            toCurrency: function(value) {
+                if(!value) return "";
+                var formatter = new Intl.NumberFormat("en-US", {
+                    style: 'currency',
+                    currency: "USD"
+                });
+                return formatter.format(value).replace("$", "$ ");
             },
             submitSchedule() {
                 if (!this.pickup_date) return alert('Please select a schedule date');
@@ -335,7 +343,7 @@ var commonService = new CommonService();
                 });
             },
             onDayClick(day) {
-                if(!this.sel_car.Scheduled_Time || this.editable)
+                if(!this.sel_car.Scheduled_Time || this.editable || this.self_car.Stage != "Picked Up")
                     this.pickup_date = day;
             },
             enableEdit() {

@@ -3,7 +3,9 @@
     <nav class="navbar navbar-expand-lg">
         <div class="collapse navbar-collapse">
             <div class="navbar-userinfo">
-                <img v-bind:src="avatar" alt="logo">
+                <div class="navbar-notification logo-wrapper">
+                    <img v-bind:src="avatar" alt="logo">
+                </div>
                 <div class="navbar-username" @click="logout">
                     {{username}} <span class="mif-arrow-drop-down"></span>
 

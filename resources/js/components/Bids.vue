@@ -42,7 +42,7 @@
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
-                            <div class="item-data">{{ car.Buyers_Quote }}</div>
+                            <div class="item-data">{{ car.Buyers_Quote | toCurrency }}</div>
                             <!-- <a href="javascript:;" class="text-center action-go" v-on:click="showDetail(car)">
                                 <span class="mif-arrow-right"></span>
                             </a> -->
@@ -208,6 +208,7 @@ var commonService = new CommonService();
                 return arr.reverse().join('/');
             },
             toCurrency: function(value) {
+                if(!value) return "";
                 var formatter = new Intl.NumberFormat("en-US", {
                     style: 'currency',
                     currency: "USD"

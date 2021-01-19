@@ -37,13 +37,13 @@
                             <div class="item-data">
                                 <input type="checkbox" style="margin-top: 4px;" v-model="car.is_checked" v-on:change="checkAll()" :disabled="car.Stage == 'Paid'">&nbsp;
                                 <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
-                                <div v-if="car.Stage=='Deal Made'" class="status-won"> Unpaid </div>
+                                <div v-if="car.Stage=='Dispatched'" class="status-won"> Unpaid </div>
                                 <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
                             </div>
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
-                            <div class="item-data text-center">{{ car.Buyers_Quote }}</div>
+                            <div class="item-data text-center">{{ toCurrency(car.Buyers_Quote) }}</div>
 
                             <div class="mobile-item item-data"  v-on:click="showDetail(car)">
                                 <div class="item-content">
@@ -52,7 +52,7 @@
                                     <div style="display:flex;justify-content:space-between;">
                                         <div class="text-blue">{{car.Buyers_Quote}}</div>
                                         <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
-                                        <div v-if="car.Stage=='Deal Made'" class="status-won"> Unpaid </div>
+                                        <div v-if="car.Stage=='Dispatched'" class="status-won"> Unpaid </div>
                                         <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
                                     </div>
                                 </div>
@@ -94,7 +94,8 @@
                             <div class="selcar-detail row">
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Card Number</div>
-                                    <div id="example2-card-number" class="input empty"></div>
+                                    <div id="example2-card-number" class="input empty stripe-elements-div"></div>
+                                    <div role="alert" class="stripe-elements-error-message-div">{{stripe_card_errors}}</div>
                                 </div>
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Cardholder Name</div>
@@ -102,11 +103,13 @@
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">Card Expiry</div>
-                                    <div id="example2-card-expiry" class="input empty"></div>
+                                    <div id="example2-card-expiry" class="input empty stripe-elements-div"></div>
+                                    <div role="alert" class="stripe-elements-error-message-div">{{stripe_expiry_errors}}</div>
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">CVC</div>
-                                    <div id="example2-card-cvc" class="input empty"></div>
+                                    <div id="example2-card-cvc" class="input empty stripe-elements-div"></div>
+                                    <div role="alert" class="stripe-elements-error-message-div">{{stripe_cvc_errors}}</div>
                                 </div>
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Amount</div>
@@ -117,7 +120,7 @@
                                 <div class="action-button background-white">
                                     <img src="/img/payment-card.png" alt="">
                                 </div>
-                                <button class="btn btn-primary action-button" v-on:click="submitPaymentTest">SUBMIT PAYMENT</button>
+                                <button class="btn btn-primary action-button" v-on:click="submitPaymentTest" :disabled='preventPayButton'>SUBMIT PAYMENT</button>
                             </div>
                         </div>
                     </div>
@@ -178,7 +181,11 @@ var commonService = new CommonService();
                 stripe: '',
                 Card: '',
                 submit_payment1: false,
-                card_errors: '',
+                stripe_card_errors: '',
+                stripe_expiry_errors: '',
+                stripe_cvc_errors: '',
+                preventPayButton: true,
+                initPreventPay: true,
                 initialized: false
             }
         },
@@ -219,42 +226,50 @@ var commonService = new CommonService();
 
         },
         methods: {
+            preventPay: function() {
+                if (this.stripe_card_errors || this.stripe_cvc_errors || this.stripe_expiry_errors) {
+                    this.preventPayButton = true;
+                } else {
+                    this.preventPayButton = false;
+                }
+            },
             initStripe: function() {
                 let elements = this.stripe.elements();
                 let Style = {
                         base: {
-                    color: '#32325d',
+                        color: '#32325d',
+                         '::placeholder': {
+                            color: '#269A8E',
+                        },
                     }
                 };
 
                 var elementStyles = {
                     base: {
-                    fontSize: '14px',
-                    border:"none",
-                    borderBottom: "1px solid #269A8E",
-                    fontWeight: 500,
-                    padding: "5px 0",
-                    outline: "none",
-                    width:"100%",
-                    font: "normal normal normal 14px/17px Lato",
-                    color: '#B9B9B9',
-                    fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
-                    fontSize: '16px',
-                    fontSmoothing: 'antialiased',
-
-                    '::placeholder': {
-                        color: '#CFD7DF',
-                    },
-                    ':-webkit-autofill': {
-                        color: '#e39f48',
-                    },
+                        fontSize: '14px',
+                        border:"none",
+                        borderBottom: "1px solid #269A8E",
+                        fontWeight: 500,
+                        padding: "5px 0",
+                        outline: "none",
+                        width:"100%",
+                        font: "normal normal normal 14px/17px Lato",
+                        color: '#B9B9B9',
+                        fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
+                        fontSize: '16px',
+                        fontSmoothing: 'antialiased',
+                        '::placeholder': {
+                            color: '#269A8E',
+                        },
+                        ':-webkit-autofill': {
+                            color: '#e39f48',
+                        },
                     },
                     invalid: {
-                    color: '#E25950',
-
-                    '::placeholder': {
-                        color: '#FFCCA5',
-                    },
+                        color: '#E25950',
+                        '::placeholder': {
+                            color: '#FF1744',
+                        },
                     },
                 };
 
@@ -263,27 +278,49 @@ var commonService = new CommonService();
                     empty: 'empty',
                     invalid: 'invalid',
                 };
-
+                let that = this;
                 this.Card = elements.create('cardNumber', {
                     style: elementStyles,
                     classes: elementClasses,
                 });
                 this.Card.mount('#example2-card-number');
-
+                this.Card.on('change', ({error}) => {
+                    if (error) {
+                        that.stripe_card_errors = error.message;
+                    } else {
+                        that.stripe_card_errors = '';
+                    }
+                    that.preventPay();
+                });
                 var cardExpiry = elements.create('cardExpiry', {
                     style: elementStyles,
                     classes: elementClasses,
                 });
                 cardExpiry.mount('#example2-card-expiry');
-
+                cardExpiry.on('change', ({error}) => {
+                    if (error) {
+                        that.stripe_expiry_errors = error.message;
+                    } else {
+                        that.stripe_expiry_errors = '';
+                    }
+                    that.preventPay();
+                });
                 var cardCvc = elements.create('cardCvc', {
                     style: elementStyles,
                     classes: elementClasses,
                 });
                 cardCvc.mount('#example2-card-cvc');
-
+                cardCvc.on('change', ({error}) => {
+                    if (error) {
+                        that.stripe_cvc_errors = error.message;
+                    } else {
+                        that.stripe_cvc_errors = '';
+                    }
+                    that.preventPay();
+                });
             },
             toCurrency: function(value) {
+                if(!value) return "";
                 var formatter = new Intl.NumberFormat("en-US", {
                     style: 'currency',
                     currency: "USD"
@@ -309,7 +346,7 @@ var commonService = new CommonService();
                 this.submit_payment = false;
             },
             refreshPage(page) {
-                 if (!page) page = this.page;
+                if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
                 this.page = page;
 
@@ -339,7 +376,7 @@ var commonService = new CommonService();
                     var data = res_data.data;
                     if(!this.initialized && this.$route.query.id) {
                         data = res_data.data.map(car => {
-                            if(car.id == this.$route.query.id) car.is_checked = true;
+                            if(car.id == this.$route.query.id && car.Stage != "Paid") car.is_checked = true;
                             else car.is_checked = false;
                         });
                     }
@@ -384,6 +421,11 @@ var commonService = new CommonService();
             submitPaymentTest() {
                 this.submit_payment1 = true;
                 let that = this;
+
+                if(!this.pay_info.card_name) {
+                    alert('card name is empty');
+                    return;
+                }
                 let loader = this.$loading.show();
                 const amount = parseFloat(this.calculateTotal.replace('$', ''));
                 this.axios.post('/api/payments/stripe/intent', {
@@ -427,6 +469,8 @@ var commonService = new CommonService();
                 });
             },
             submitPayment() {
+
+
                 // if (this.pay_info.card_no.length < 16) return alert('Please check the card number');
                 // if (!this.pay_info.card_name) return alert('Please input the cardholder name');
                 // if (this.pay_info.exp < 4) return alert('Please check the card expiry');

@@ -52,7 +52,7 @@ class ZohoSerivce {
     private $ZOHO_CURRENT_USER_EMAIL="developer@junkcarboys.com";
 
     public function __construct() {
-        $refreshToken = '1000.8493b9cfec0def159defa19499caa175.032c7bb825fd86e905a8f54d25b4a020';
+        $refreshToken = '1000.29966c65b561441f12eeae255596f4b3.51cfaf9d942475a0341d4ab96cb25b3a';
         $user = new UserSignature($this->ZOHO_CURRENT_USER_EMAIL);
         $environment = USDataCenter::PRODUCTION();
         $token = new OAuthToken(env('ZOHO_CRM_CLIENT_ID'), env('ZOHO_CRM_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
@@ -235,7 +235,7 @@ class ZohoSerivce {
         $recordOperations = new RecordOperations();
         $body = new RecordBodyWrapper();
         $records = array();
-        foreach($car_arr as $car) {
+        foreach($car_arr as $key =>$car) {
             $recordId =$car["id"];
             $record1 = new Record();
             $record1->setId($recordId);
@@ -266,8 +266,6 @@ class ZohoSerivce {
         $trigger = array("approval", "workflow", "blueprint");
         $body->setTrigger($trigger);
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
-
-
         return $resp;
     }
 

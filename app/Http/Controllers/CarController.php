@@ -296,7 +296,7 @@ class CarController extends Controller
 
             $query = Car::where(function($sub_query) {
                             $sub_query->where('Stage', 'Picked Up');
-                            $sub_query->orwhere('Stage', 'Deal Made');
+                            $sub_query->orwhere('Stage', 'Dispatched');
                             return $sub_query;
                         });
 
@@ -304,9 +304,9 @@ class CarController extends Controller
                             ->whereNotNull('Buyers_Quote');
 
             if ($request->status == 'Unscheduled') {
-                $query = $query->where('Stage', 'Deal Made')->whereNull('Scheduled_Time');
+                $query = $query->where('Stage', 'Dispatched')->whereNull('Scheduled_Time');
             } elseif ($request->status == 'Scheduled') {
-                $query = $query->where('Stage', 'Deal Made')->whereNotNull('Scheduled_Time');;
+                $query = $query->where('Stage', 'Dispatched')->whereNotNull('Scheduled_Time');;
             } elseif ($request->status == 'Picked-Up') {
                 $query = $query->where('Stage', 'Picked Up');
             }
@@ -314,7 +314,7 @@ class CarController extends Controller
         } elseif ($request->page_type == 'payments') {
             $query = Car::where(function($sub_query) {
                 $sub_query->where('Stage', 'Paid');
-                $sub_query->orwhere('Stage', 'Deal Made');
+                $sub_query->orwhere('Stage', 'Dispatched');
                 $sub_query->orwhere('Stage', 'Picked Up');
                 return $sub_query;
             });
@@ -325,7 +325,7 @@ class CarController extends Controller
             if ($request->status == 'Paid') {
                 $query = $query->where('Stage', 'Paid');
             } elseif ($request->status == 'Unpaid') {
-                $query = $query->where('Stage', 'Deal Made');
+                $query = $query->where('Stage', 'Dispatched');
             } elseif ($request->status == 'Overdue') {
                 $query = $query->where('Stage', 'Picked Up');
             }
@@ -502,17 +502,12 @@ class CarController extends Controller
     }
 
     public function pick(Request $request, $id) {
-        $car = Car::where('index', $id)->first();
-        if (!$car) return ['error' => 'invalid car'];
 
-        $car->Scheduled_Time = $request->Scheduled_Time;
-        $car->Stage = "Picked Up";
-        $car->save();
         $zohoService = new ZohoSerivce();
         $now = new \DateTime($request->Scheduled_Time);
         $pick = $zohoService->scheduleTime($id, $now, true);
 
-        return json_encode(array('res' => $car));
+        return json_encode(array('res' => 'success'));
     }
 
     public function pay(Request $request) {
@@ -520,13 +515,7 @@ class CarController extends Controller
         $zohoService = new ZohoSerivce();
 
         $now = new \DateTime($request->Scheduled_Time);
-        foreach($arr as $car_id) {
-            $car = Car::where('index', $car_id)->first();
-            if($car) {
-                $car->Stage = "Paid";
-                $car->save();
-            }
-        }
+
 
         // change in crm deals
         $deals = $zohoService->pay4Car($arr);
@@ -781,7 +770,7 @@ class CarController extends Controller
                     'Authorization' => $this->ZohoBooksAccessToken
                 ]
             ]);
-            if ($Request->getStatusCode() != 201) return false;
+            if ($Request->getStatusCode() != 201 || $Request->getStatusCode() != 200) return false;
             $JSON = $Request->getBody()->getContents();
             $Response = json_decode($JSON, true);
             return $Response['item'] ?? false;
