@@ -52,7 +52,7 @@ class ZohoSerivce {
     private $ZOHO_CURRENT_USER_EMAIL="developer@junkcarboys.com";
 
     public function __construct() {
-        $refreshToken = '1000.29966c65b561441f12eeae255596f4b3.51cfaf9d942475a0341d4ab96cb25b3a';
+        $refreshToken = '1000.cc4caa870cfffcca07d33c7fdc94dbe6.02cfaa2762c2ee5cd3d1f11f61f3b990';
         $user = new UserSignature($this->ZOHO_CURRENT_USER_EMAIL);
         $environment = USDataCenter::PRODUCTION();
         $token = new OAuthToken(env('ZOHO_CRM_CLIENT_ID'), env('ZOHO_CRM_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
@@ -65,60 +65,6 @@ class ZohoSerivce {
         $this->response = Initializer::initialize($user, $environment, $token, $tokenstore, $sdkConfig, $resourcePath, null, null);
 
     }
-
-    // public function queryTest($moduleAPIName) {
-
-    //     $customViewsOperations = new CustomViewsOperations($moduleAPIName);
-    //     //Call getCustomView method that takes customViewId as parameter
-    //     $response = $customViewsOperations->getCustomViews();
-    //     $res = $response->getObject();
-    //     $records = get_object_vars($res);
-
-
-    //     $cvid4AllCars = '1061914000000012669';
-    //     $bulkReadOperations = new BulkReadOperations();
-    //     //Get instance of RequestWrapper Class that will contain the request body
-    //     $requestWrapper = new RequestWrapper();
-
-    //     //Get instance of Query Class
-    //     $query = new Query();
-    //     //Specifies the API Name of the module to be read.
-    //     $query->setModule($moduleAPIName);
-    //     //Specifies the unique ID of the custom view whose records you want to export.
-    //     $query->setCvid($cvid4AllCars);
-    //     // List of Field API Names
-    //     $fieldAPINames = array();
-    //     array_push($fieldAPINames, "Last_Name");
-    //     //Specifies the API Name of the fields to be fetched.
-    //     $query->setFields($fieldAPINames);
-    //     //To set page value, By default value is 1.
-    //     $query->setPage(1);
-    //     //Get instance of Criteria Class
-    //     $criteria = new Criteria();
-    //     // To set API name of a field.
-    //     $criteria->setAPIName("Stage");
-    //     $criteria->setComparator(new Choice('equal'));
-    //     $criteria->setValue(new Choice('Given Quote'));
-    //     //To filter the records to be exported.
-    //     $query->setCriteria($criteria);
-    //     //To set query JSON object.
-    //     $requestWrapper->setQuery($query);
-    //     //Specify the value for this key as "ics" to export all records in the Events module as an ICS file.
-    //     // $requestWrapper->setFileType(new Choice("ics"));
-    //     //Call createBulkReadJob method that takes RequestWrapper instance as parameter
-    //     try{
-    //         $response = $bulkReadOperations->createBulkReadJob($requestWrapper);
-    //         $res = $response->getObject();
-    //         $records = $res->getData();
-    //     } catch(\com\zoho\crm\api\bulkread\APIException $e) {
-    //         print_r($e->getCode());
-    //     }
-    //     exit;
-
-    //     return $records;
-    // }
-
-
 
     public function getRecords($module = 'Deals', $page, $length) {
         $recordOperations = new RecordOperations();
@@ -139,9 +85,6 @@ class ZohoSerivce {
         $recordOperations = new RecordOperations();
         $paramInstance = new ParameterMap();
         $paramInstance->add(SearchRecordsParam::criteria(), "(Buyer_Portal_Email:equals:".$email.")");
-        // $paramInstance->add(SearchRecordsParam::page(), 1);
-        // $paramInstance->add(SearchRecordsParam::perPage(), $length);
-        //Call searchRecords method
         $response = $recordOperations->searchRecords($moduleAPIName,$paramInstance);
         $responseHandler = $response->getObject();
         if (!$responseHandler) return null;
@@ -176,26 +119,17 @@ class ZohoSerivce {
 
     public function bid($car_id, $price) {
         $moduleAPIName = "Deals";
-
         $recordId =$car_id;
-
         $recordOperations = new RecordOperations();
         $body = new RecordBodyWrapper();
         $records = array();
-
         $record1 = new Record();
         $record1->setId($recordId);
-        // $field = new Field("id, Buyers_Quote");
         $record1->addKeyValue('Buyers_Quote', $price);
-        // $record1->addFieldValue(new Field("Buyers_Quote"), $price);
-        // $record1 = array('Buyers_Quote'=>$price);
-        // array_push($records, $record1);
         $records[] = $record1;
-
         $body->setData($records);
         $trigger = array("approval", "workflow", "blueprint");
         $body->setTrigger($trigger);
-
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
         return $resp;
     }
@@ -204,34 +138,27 @@ class ZohoSerivce {
 
     public function updateDealInfo($car_id, $price, $user_id, $user_name) {
         $moduleAPIName = "Deals";
-
         $recordId =$car_id;
-
         $recordOperations = new RecordOperations();
         $body = new RecordBodyWrapper();
         $records = array();
-
         $record1 = new Record();
         $record1->setId($recordId);
         $record1->addKeyValue('Buyers_Quote', floatval($price));
-
         $Tow_company = new Record();
         $Tow_company->addKeyValue('id', $user_id);
         $Tow_company->addKeyValue('name', $user_name);
         $record1->addKeyValue('Tow_Company', $Tow_company);
         $records[] = $record1;
-
         $body->setData($records);
         $trigger = array("approval", "workflow", "blueprint");
         $body->setTrigger($trigger);
-
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
         return $resp;
     }
 
     public function pay4Car($car_arr) {
         $moduleAPIName = "Deals";
-
         $recordOperations = new RecordOperations();
         $body = new RecordBodyWrapper();
         $records = array();
@@ -242,11 +169,9 @@ class ZohoSerivce {
             $record1->addKeyValue('Stage', new Choice("Paid"));
             $records[] = $record1;
         }
-
         $body->setData($records);
         $trigger = array("approval", "workflow", "blueprint");
         $body->setTrigger($trigger);
-
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
         return $resp;
     }
@@ -261,6 +186,7 @@ class ZohoSerivce {
         $record1->setId($recordId);
         $record1->addKeyValue('Scheduled_Time', $scheduleTime);
         if($pickup) $record1->addKeyValue('Stage', new Choice("Picked Up"));
+        else $record1->addKeyValue('Stage', new Choice("Scheduled For Pick Up"));
         $records[] = $record1;
         $body->setData($records);
         $trigger = array("approval", "workflow", "blueprint");

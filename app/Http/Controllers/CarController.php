@@ -67,158 +67,6 @@ class CarController extends Controller
         return $car;
     }
 
-    // public function index(Request $request)
-    // {
-    //     // return json_encode(['res' => $this->test()]);
-
-    //     $page = ($request->page ?: 1) - 1;
-    //     $records_per_page = $request->records_per_page ?: 8;
-    //     $select = [
-    //         'index',
-    //         'Year',
-    //         'Make',
-    //         'Model',
-    //         'City',
-    //         'Does_the_Vehicle_Run_and_Drive',
-    //         'Miles',
-    //         'Buyers_Quote',
-    //         'Zip_Code',
-    //         'Reference_Number',
-    //         'Closing_Date',
-    //         'Stage',
-    //     ];
-    //     // $quey = null;
-    //     if ($request->type == 'like') {
-    //         $query = LikeBind::where('user_id', Auth::user()->id)->leftJoin('cars', 'car_id', '=', 'cars.id');
-    //         $select[] = 'like_binds.id as is_liked';
-    //         $select[] = 'Airbags_Deployed';
-    //         $select[] = 'Is_There_Any_Body_Damage_Broken_Glass_2';
-    //         $select[] = 'Is_there_any_Body_Damage_Broken_Glass';
-    //         $select[] = 'Is_There_Any_Broken_Glass_Windows_etc';
-    //         $select[] = 'Are_all_the_tires_mounted';
-    //         $select[] = 'Which_tires_are_missing';
-    //         $select[] = 'Are_All_the_Tires_Inflated';
-    //         $select[] = 'Which_ones_are_flat';
-    //         $select[] = 'Fire_or_Flood_Damage';
-    //         $select[] = 'Any_Missing_Body_Panels_Interior_or_Engine_Parts';
-    //         $select[] = 'What_Kind_of_Mechanical_Issues_Are_There';
-    //     } else {
-    //         if (!$request->page_type) $request->page_type = 'cars';
-
-    //         if ($request->page_type == 'cars') {
-    //             $stage = 'Given Quote';
-    //             $duration = -30;
-    //             $select[] = 'like_binds.id as is_liked';
-    //             $select[] = 'Airbags_Deployed';
-    //             $select[] = 'Is_There_Any_Body_Damage_Broken_Glass_2';
-    //             $select[] = 'Is_there_any_Body_Damage_Broken_Glass';
-    //             $select[] = 'Is_There_Any_Broken_Glass_Windows_etc';
-    //             $select[] = 'Are_all_the_tires_mounted';
-    //             $select[] = 'Which_tires_are_missing';
-    //             $select[] = 'Are_All_the_Tires_Inflated';
-    //             $select[] = 'Which_ones_are_flat';
-    //             $select[] = 'Fire_or_Flood_Damage';
-    //             $select[] = 'What_Kind_of_Mechanical_Issues_Are_There';
-    //             $select[] = 'Scheduled_Time';
-    //             $select[] = 'Scheduled_Notes';
-
-    //             $query = Car::leftJoin('like_binds', 'cars.id', '=', 'like_binds.car_id')
-    //                         ->where('Stage', $stage)
-    //                         ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
-    //                         ->whereNotNull('Buyers_Quote')
-    //                         ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
-    //         } elseif ($request->page_type == 'bids') {
-    //             $query = Car::where(function($sub_query) {
-    //                 $sub_query->where('Stage', 'Given Quote')->
-    //                             orwhere('Stage', 'Deal Made');
-    //             });
-
-    //             $query = $query->where('Tow_Company_id', Auth::user()->zoho_index);
-
-    //             if ($request->status && $request->status == 'Won') {
-    //                 $query = $query->where('Stage', 'Deal Made');
-    //             } elseif ($request->status && $request->status == 'Active') {
-    //                 $query = $query->where('Stage', 'Given Quote');
-    //             }
-    //         } elseif ($request->page_type == 'schedulings') {
-    //             $select[] = 'Scheduled_Time';
-    //             $select[] = 'Scheduled_Notes';
-
-    //             $query = Car::where(function($sub_query) {
-    //                             $sub_query->where('Stage', 'Picked Up');
-    //                             $sub_query->orwhere('Stage', 'Deal Made');
-    //                             return $sub_query;
-    //                         });
-
-    //             $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
-    //                             ->whereNotNull('Buyers_Quote');
-
-    //             if ($request->status == 'Unscheduled') {
-    //                 $query = $query->where('Stage', 'Deal Made')->whereNull('Scheduled_Time');
-    //             } elseif ($request->status == 'Scheduled') {
-    //                 $query = $query->where('Stage', 'Deal Made')->whereNotNull('Scheduled_Time');;
-    //             } elseif ($request->status == 'Picked-Up') {
-    //                 $query = $query->where('Stage', 'Picked Up');
-    //             }
-
-    //         } elseif ($request->page_type == 'payments') {
-    //             $query = Car::where(function($sub_query) {
-    //                 $sub_query->where('Stage', 'Paid');
-    //                 $sub_query->orwhere('Stage', 'Deal Made');
-    //                 $sub_query->orwhere('Stage', 'Picked Up');
-    //                 return $sub_query;
-    //             });
-
-    //             $query = $query->where('Tow_Company_id', Auth::user()->zoho_index)
-    //                             ->whereNotNull('Buyers_Quote');
-
-    //             if ($request->status == 'Paid') {
-    //                 $query = $query->where('Stage', 'Paid');
-    //             } elseif ($request->status == 'Unpaid') {
-    //                 $query = $query->where('Stage', 'Deal Made');
-    //             } elseif ($request->status == 'Overdue') {
-    //                 $query = $query->where('Stage', 'Picked Up');
-    //             }
-    //         }
-    //     }
-
-    //     $query = $query->select($select)
-    //                 // ->orderby('Closing_Date', 'desc')
-    //                    ->orderby('cars.index', 'desc');
-
-    //     if ($request->Miles) $query = $query->where('Miles', '<', $request->Miles);
-    //     if ($request->Does_the_Vehicle_Run_and_Drive) $query = $query->where('Does_the_Vehicle_Run_and_Drive', $request->Does_the_Vehicle_Run_and_Drive);
-    //     if ($request->buyers_quote) $query = $query->where('buyers_quote', '<', $request->buyers_quote);
-    //     if ($request->Any_Missing_Body_Panels_Interior_or_Engine_Parts) $query = $query->where('Any_Missing_Body_Panels_Interior_or_Engine_Parts', $request->Any_Missing_Body_Panels_Interior_or_Engine_Parts);
-    //     if ($request->Do_they_have_a_Title) $query = $query->where('Do_they_have_a_Title', $request->Do_they_have_a_Title);
-    //     if ($request->Fire_or_Flood_Damage) $query = $query->where('Fire_or_Flood_Damage', $request->Fire_or_Flood_Damage);
-    //     if ($request->Reference_Number) $query = $query->where('Reference_Number', $request->Reference_Number);
-    //     if ($request->Year) $query = $query->where('Year', $request->Year);
-    //     if ($request->Make) $query = $query->where('Make', $request->Make);
-    //     if ($request->Model) $query = $query->where('Model', $request->Make);
-    //     if ($request->distance) {
-    //         $lat_min = Auth::user()->lat -  $request->distance / 69;
-    //         $lat_max = Auth::user()->lat +  $request->distance / 69;
-    //         $lng_min = Auth::user()->lng -  $request->distance / 54.6;
-    //         $lng_max = Auth::user()->lng +  $request->distance / 54.6;
-
-    //         $query = $query->where('cars.lat', '>=', $lat_min);
-    //         $query = $query->where('cars.lat', '<=', $lat_max);
-    //         $query = $query->where('cars.lng', '>=', $lng_min);
-    //         $query = $query->where('cars.lng', '>=', $lng_max);
-
-    //         // var_dump($lat_min);
-    //         // var_dump($lat_max);
-    //         // var_dump($lng_min);
-    //         // var_dump($lng_max);
-    //     }
-
-    //     $total = $query->count();
-    //     $cars = $query->skip($page * $records_per_page)->take($records_per_page)->get();
-    //     return ['total' => $total,  'data' => $cars, 'user'=> Auth::user()];
-    // }
-
-
     public function index(Request $request)
     {
         // return json_encode(['res' => $this->test()]);
@@ -296,6 +144,7 @@ class CarController extends Controller
 
             $query = Car::where(function($sub_query) {
                             $sub_query->where('Stage', 'Picked Up');
+                            $sub_query->orwhere('Stage', 'Scheduled For Pick Up');
                             $sub_query->orwhere('Stage', 'Dispatched');
                             return $sub_query;
                         });
@@ -304,9 +153,9 @@ class CarController extends Controller
                             ->whereNotNull('Buyers_Quote');
 
             if ($request->status == 'Unscheduled') {
-                $query = $query->where('Stage', 'Dispatched')->whereNull('Scheduled_Time');
+                $query = $query->where('Stage', 'Dispatched');
             } elseif ($request->status == 'Scheduled') {
-                $query = $query->where('Stage', 'Dispatched')->whereNotNull('Scheduled_Time');;
+                $query = $query->where('Stage', 'Scheduled For Pick Up');
             } elseif ($request->status == 'Picked-Up') {
                 $query = $query->where('Stage', 'Picked Up');
             }
@@ -315,6 +164,7 @@ class CarController extends Controller
             $query = Car::where(function($sub_query) {
                 $sub_query->where('Stage', 'Paid');
                 $sub_query->orwhere('Stage', 'Dispatched');
+                $sub_query->orwhere('Stage', 'Scheduled For Pick Up');
                 $sub_query->orwhere('Stage', 'Picked Up');
                 return $sub_query;
             });
@@ -325,7 +175,11 @@ class CarController extends Controller
             if ($request->status == 'Paid') {
                 $query = $query->where('Stage', 'Paid');
             } elseif ($request->status == 'Unpaid') {
-                $query = $query->where('Stage', 'Dispatched');
+                $query = $query->where(function($sub_query) {
+                    $sub_query->where('Stage', 'Dispatched');
+                    $sub_query->orwhere('Stage', 'Scheduled For Pick Up');
+                    return $sub_query;
+                });
             } elseif ($request->status == 'Overdue') {
                 $query = $query->where('Stage', 'Picked Up');
             }
@@ -337,7 +191,6 @@ class CarController extends Controller
         // // $total_query = $this->getQueryResult($this->convertQuery($query_4_total));
         // return json_encode(array('res'=>$this->convertQuery($query_4_total)));
         $query = $query->select($select)
-                    // ->orderby('Closing_Date', 'desc')
                        ->orderby('id', 'desc');
 
         if ($request->Miles) $query = $query->where('Miles', '<', $request->Miles);
@@ -355,11 +208,6 @@ class CarController extends Controller
             $lat_max = Auth::user()->lat +  $request->distance / 69;
             $lng_min = Auth::user()->lng -  $request->distance / 54.6;
             $lng_max = Auth::user()->lng +  $request->distance / 54.6;
-
-            // $query = $query->where('lat', '>=', $lat_min);
-            // $query = $query->where('lat', '<=', $lat_max);
-            // $query = $query->where('lng', '>=', $lng_min);
-            // $query = $query->where('lng', '<=', $lng_max);
 
             $zipCodes = Location::where('lat', '>=', $lat_min)
                                 ->where('lat', '<=', $lat_max)
@@ -491,8 +339,6 @@ class CarController extends Controller
     }
 
     public function setSchedule(Request $request, $id) {
-        // $car = Car::where('index', $id)->first();
-        // if (!$car) return ['error' => 'invalid car'];
 
         $zohoService = new ZohoSerivce();
         $now = new \DateTime($request->Scheduled_Time);
@@ -703,7 +549,7 @@ class CarController extends Controller
         return 'Bid placed successfully';
     }
 
-    function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
+    function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 3958.7657)
     {
         // convert from degrees to radians
         $latFrom = deg2rad($latitudeFrom);
@@ -833,5 +679,52 @@ class CarController extends Controller
             return false;
         }
     }
+
+    function getDistance($addressFrom, $addressTo, $unit = ''){
+        // Google API key
+        $apiKey = env('Google_API_KEY');
+
+        // Change address format
+        $formattedAddrFrom    = str_replace(' ', '+', $addressFrom);
+        $formattedAddrTo     = str_replace(' ', '+', $addressTo);
+
+        // Geocoding API request with start address
+        $geocodeFrom = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.$formattedAddrFrom.'&sensor=false&key='.$apiKey);
+        $outputFrom = json_decode($geocodeFrom);
+        if(!empty($outputFrom->error_message)){
+            return $outputFrom->error_message;
+        }
+
+        // Geocoding API request with end address
+        $geocodeTo = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.$formattedAddrTo.'&sensor=false&key='.$apiKey);
+        $outputTo = json_decode($geocodeTo);
+        if(!empty($outputTo->error_message)){
+            return $outputTo->error_message;
+        }
+
+        // Get latitude and longitude from the geodata
+        $latitudeFrom    = $outputFrom->results[0]->geometry->location->lat;
+        $longitudeFrom    = $outputFrom->results[0]->geometry->location->lng;
+        $latitudeTo        = $outputTo->results[0]->geometry->location->lat;
+        $longitudeTo    = $outputTo->results[0]->geometry->location->lng;
+
+        // Calculate distance between latitude and longitude
+        $theta    = $longitudeFrom - $longitudeTo;
+        $dist    = sin(deg2rad($latitudeFrom)) * sin(deg2rad($latitudeTo)) +  cos(deg2rad($latitudeFrom)) * cos(deg2rad($latitudeTo)) * cos(deg2rad($theta));
+        $dist    = acos($dist);
+        $dist    = rad2deg($dist);
+        $miles    = $dist * 60 * 1.1515;
+
+        // Convert unit and return distance
+        $unit = strtoupper($unit);
+        if($unit == "K"){
+            return round($miles * 1.609344, 2).' km';
+        }elseif($unit == "M"){
+            return round($miles * 1609.344, 2).' meters';
+        }else{
+            return round($miles, 2).' miles';
+        }
+    }
+
 
 }

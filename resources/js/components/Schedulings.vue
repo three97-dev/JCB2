@@ -33,9 +33,9 @@
                     <div class="car-body">
                         <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': sel_car && car.id == sel_car.id}" @click="showDetail(car)">
                             <div class="item-data">
-                                <div v-if="car.Stage=='Dispatched' && !car.Scheduled_Time" class="status-active uppercase">Unscheduled </div>
-                                <div v-if="car.Stage=='Dispatched' && car.Scheduled_Time" class="status-won uppercase">Scheduled </div>
-                                <div v-if="car.Stage=='Picked Up'" class="status-fail uppercase">Picked-Up </div>
+                                <div v-if="car.Stage == 'Dispatched'" class="status-active uppercase">Unscheduled </div>
+                                <div v-if="car.Stage == scheduled_string" class="status-won uppercase">Scheduled </div>
+                                <div v-if="car.Stage == pickedup_string" class="status-fail uppercase">Picked-Up </div>
                             </div>
                             <div class="item-data">{{ car.Reference_Number }}</div>
                             <div class="item-data">{{ car.Year }}</div>
@@ -51,16 +51,13 @@
                                     <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
                                     <div style="display:flex;justify-content:space-between;">
                                         <div class="text-blue">{{car.Buyers_Quote}}</div>
-                                        <div v-if="car.Stage=='Dispatched' && !car.Scheduled_Time" class="status-active">Unscheduled </div>
-                                        <div v-if="car.Stage=='Dispatched' && car.Scheduled_Time" class="status-won">Scheduled </div>
-                                        <div v-if="car.Stage=='Picked Up'" class="status-fail">Picked-Up </div>
+                                        <div v-if="car.Stage == unscheduled_string" class="status-active">Unscheduled </div>
+                                        <div v-if="car.Stage == scheduled_string" class="status-won">Scheduled </div>
+                                        <div v-if="car.Stage == pickedup_string" class="status-fail">Picked-Up </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
                 <div class="car-right-content col-md-4" v-if="!is_mobile_view || (is_mobile_view && sel_car)">
@@ -83,20 +80,25 @@
                                 <button class="btn btn-primary action-button" v-on:click="sel_car=null">DONE</button>
                             </div>
                         </div>
-                        <div class="selcar-content" :class="{'background-grey': sel_car.Stage!='Dispatched' || sel_car.Scheduled_Time}" v-if="sel_car && !submit_pickup">
+                        <div class="selcar-content" :class="{'background-grey': sel_car.Stage == scheduled_string || sel_car.Stage == pickedup_string}" v-if="sel_car && !submit_pickup">
                             <div class="title">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
                             <div class="selcar-detail row">
                                 <div class="calendar-wrapper">
                                     <div class="car-calendar" style="margin:auto;">
-                                        <v-calendar :available-dates='date_range' :attributes="attributes" @dayclick="onDayClick" disabled is-expanded/>
+                                        <v-calendar :available-dates='date_range' :attributes="attributes" mode="dateTime" @dayclick="onDayClick" disabled is-expanded/>
+
                                     </div>
+                                    <div class="car-timepicker" style="margin:auto;">
+                                        <VueTimepicker :minute-interval="10" v-model="time" :disabled="!editable"/>
+                                    </div>
+
                                 </div>
-                                <div class="w-100 schedule-content" v-if="sel_car.Stage=='Dispatched' && !sel_car.Scheduled_Time">
+                                <div class="w-100 schedule-content" v-if="sel_car.Stage == unscheduled_string">
                                     <div class="col-md-6 field-item">
                                         <div class="item-label">Scheduled Pick-up Date</div>
-                                        <div class="item-value">{{pickup_date ? pickup_date.date.toLocaleDateString() : 'MM / DD / YYYY'}}&nbsp;</div>
+                                        <div class="item-value">{{pickup_date ? pickup_date.date.toLocaleDateString() + " ( " + time + " )" : 'MM / DD / YYYY  HH : mm'}}&nbsp;</div>
                                     </div>
-                                    <div class="col-md-12 field-item">
+                                    <div class="col-md-6 field-item">
                                         <div class="item-label">Notes</div>
                                         <input type="text" class="item-value" placeholder="MM / YY" v-model="schedule_note">
                                     </div>
@@ -104,21 +106,21 @@
                                 <div class="w-100 schedule-content" v-else>
                                     <div class="col-md-6 field-item">
                                         <div class="item-label">Scheduled Pick-up Date</div>
-                                        <div class="item-value">{{pickup_date ? pickup_date.date.toLocaleDateString() : 'MM / DD / YYYY'}}&nbsp;</div>
+                                        <div class="item-value">{{pickup_date ? pickup_date.date.toLocaleDateString() + " ( " + time + " )" : 'MM / DD / YYYY'}}&nbsp;</div>
                                     </div>
                                     <div class="col-md-12 field-item">
 
                                     </div>
                                 </div>
                             </div>
-                            <div class="action-bar" v-if="sel_car.Stage=='Dispatched' && !sel_car.Scheduled_Time">
+                            <div class="action-bar" v-if="sel_car.Stage== unscheduled_string">
                                 <button class="btn btn-primary action-button" v-on:click="submitSchedule()">SCHEDULE</button>
                             </div>
-                            <div class="action-bar" v-if="sel_car.Stage=='Dispatched' && sel_car.Scheduled_Time">
+                            <div class="action-bar" v-if="sel_car.Stage== scheduled_string">
                                 <button class="btn btn-primary action-button float-left background-grey" v-show="!editable" @click="enableEdit()">EDIT</button>
                                 <button class="btn btn-primary action-button" @click="submitPickedUp()">PICKED UP</button>
                             </div>
-                            <div class="action-bar" v-if="sel_car.Stage=='Picked Up'">
+                            <div class="action-bar" v-if="sel_car.Stage== pickedup_string">
                                 <button class="btn btn-primary action-button" @click="gotoPay()">PAY</button>
                             </div>
                         </div>
@@ -159,6 +161,9 @@ import CommonService from '../services/CommonService';
 var commonService = new CommonService();
 
     export default {
+        components:{
+            VueTimepicker: () => import ('vue2-timepicker')
+        },
         data() {
             return {
                 cars: [],
@@ -177,7 +182,12 @@ var commonService = new CommonService();
                 editable: false,
                 date_range: null,
                 calendar_disabled_data: { start: null, end: new Date(0, 0, 0) },
-                calendar_enabled_data: { start: new Date(0, 0, 0), end: null }
+                calendar_enabled_data: { start: new Date(0, 0, 0), end: null },
+                unscheduled_string: "Dispatched",
+                scheduled_string: "Scheduled For Pick Up",
+                pickedup_string: "Picked Up",
+                time: '09:00',
+                defaultTimezoneString: ":00-08:00"
             }
         },
         computed: {
@@ -193,7 +203,8 @@ var commonService = new CommonService();
         },
         filters: {
             unscheduledAmount: function(arr) {
-                var un_arr = arr.filter(car=> car.Stage=='Dispatched' && !car.Scheduled_Time)
+                var unscheduled_string = "Dispatched";
+                var un_arr = arr.filter(car=> car.Stage== unscheduled_string)
                 return un_arr.length;
             }
         },
@@ -275,13 +286,19 @@ var commonService = new CommonService();
                     this.pickup_date = null;
                     this.editable = false;
                     this.date_range = this.calendar_enabled_data;
-                    if (this.sel_car.Scheduled_Time || this.sel_car.Stage == "Picked Up") {
+                    if (this.sel_car.Stage == this.scheduled_string || this.sel_car.Stage == this.pickedup_string) {
                         let date = new Date(this.sel_car.Scheduled_Time);
                         this.pickup_date = {
                             id: this.sel_car.Scheduled_Time,
                             date,
                         }
+                        var time = this.sel_car.Scheduled_Time.split('T')[1];
+                        var time_arr = time.split(':');
+                        this.time = time_arr[0] + ":" + time_arr[1];
                         this.date_range = this.calendar_disabled_data;
+                    }
+                    else {
+                        this.editable = true;
                     }
                     this.schedule_note = this.sel_car.Scheduled_Notes;
                 }, 100);
@@ -299,13 +316,14 @@ var commonService = new CommonService();
                 console.log(this.sel_car);
                 let loader = this.$loading.show();
                 this.axios
-                    .post(`/api/car/schedules/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id}, commonService.get_api_header())
+                    .post(`/api/car/schedules/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id+"T"+this.time+this.defaultTimezoneString}, commonService.get_api_header())
                     .then(response => {
                         console.log(response)
                         loader.hide();
                         this.submit_pickup = true;
                         this.sel_car.Scheduled_Time = this.pickup_date.id;
                         this.sel_car.Scheduled_Notes = this.schedule_note;
+                        this.sel_car.Stage = this.scheduled_string;
                         this.sel_car = {...this.sel_car};
                 }).catch((error) => {
                     loader.hide();
@@ -329,7 +347,7 @@ var commonService = new CommonService();
                         this.submit_pickup = true;
                         this.sel_car.Scheduled_Time = this.pickup_date.id;
                         this.sel_car.Scheduled_Notes = this.schedule_note;
-                        this.sel_car.Stage = "Picked Up";
+                        this.sel_car.Stage = this.pickedup_string;
                         this.sel_car = {...this.sel_car};
                 }).catch((error) => {
                     loader.hide();
@@ -343,7 +361,7 @@ var commonService = new CommonService();
                 });
             },
             onDayClick(day) {
-                if(!this.sel_car.Scheduled_Time || this.editable || this.self_car.Stage != "Picked Up")
+                if(this.editable)
                     this.pickup_date = day;
             },
             enableEdit() {
