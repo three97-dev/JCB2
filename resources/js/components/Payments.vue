@@ -30,29 +30,29 @@
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
-                        <div class="title">Amount</div>
+                        <div class="title">Amount Due</div>
                     </div>
                     <div class="car-body">
                         <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': car.is_checked == true}">
                             <div class="item-data">
                                 <input type="checkbox" style="margin-top: 4px;" v-model="car.is_checked" v-on:change="checkAll()" :disabled="car.Stage == 'Paid'">&nbsp;
                                 <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
-                                <div v-if="car.Stage=='Dispatched'" class="status-won"> Unpaid </div>
+                                <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> Unpaid </div>
                                 <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
                             </div>
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
-                            <div class="item-data text-center">{{ toCurrency(car.Buyers_Quote) }}</div>
+                            <div class="item-data text-center">{{ toCurrency(car.Profit) }}</div>
 
                             <div class="mobile-item item-data"  v-on:click="showDetail(car)">
                                 <div class="item-content">
                                     <div class="font-weight-bold">{{car.Reference_Number}} &nbsp;&nbsp;{{car.Year}} {{car.Make}} {{car.Model}}</div>
                                     <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
                                     <div style="display:flex;justify-content:space-between;">
-                                        <div class="text-blue">{{car.Buyers_Quote}}</div>
+                                        <div class="text-blue">{{car.Profit}}</div>
                                         <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
-                                        <div v-if="car.Stage=='Dispatched'" class="status-won"> Unpaid </div>
+                                        <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> Unpaid </div>
                                         <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
                                     </div>
                                 </div>
@@ -186,7 +186,8 @@ var commonService = new CommonService();
                 stripe_cvc_errors: '',
                 preventPayButton: true,
                 initPreventPay: true,
-                initialized: false
+                initialized: false,
+                stripeApiKey: 'pk_test_cdZ2NY2Tmye1tivpd1uR3zs3'
             }
         },
         filters: {
@@ -214,7 +215,7 @@ var commonService = new CommonService();
         },
         mounted() {
             this.refreshPage(1);
-            const stripeApiKey = 'pk_test_cdZ2NY2Tmye1tivpd1uR3zs3';
+            const stripeApiKey = this.stripeApiKey;
             let stripeScript = document.createElement('script');
             stripeScript.setAttribute('src', 'https://js.stripe.com/v3/');
             stripeScript.onload = () => {
@@ -340,7 +341,7 @@ var commonService = new CommonService();
                 this.setCount();
                 var amount = 0;
                 this.cars.map(car => {
-                    if(car.is_checked) amount += parseFloat(car.Buyers_Quote || 0);
+                    if(car.is_checked) amount += parseFloat(car.Profit || 0);
                 })
                 this.calculateTotal = this.toCurrency(amount);
                 this.submit_payment = false;

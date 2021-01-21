@@ -292,16 +292,20 @@ var commonService = new CommonService();
                             id: this.sel_car.Scheduled_Time,
                             date,
                         }
-                        var time = this.sel_car.Scheduled_Time.split('T')[1];
-                        var time_arr = time.split(':');
-                        this.time = time_arr[0] + ":" + time_arr[1];
+                        var dateTime = car.Scheduled_Time;
+                        var time = dateTime.split('T')[1];
+                        if(time && time != "") {
+                            var time_arr = time.split(':');
+                            this.time = time_arr[0] + ":" + time_arr[1];
+                        }
+
                         this.date_range = this.calendar_disabled_data;
                     }
                     else {
                         this.editable = true;
                     }
                     this.schedule_note = this.sel_car.Scheduled_Notes;
-                }, 100);
+                }, 300);
             },
             toCurrency: function(value) {
                 if(!value) return "";
@@ -315,16 +319,18 @@ var commonService = new CommonService();
                 if (!this.pickup_date) return alert('Please select a schedule date');
                 console.log(this.sel_car);
                 let loader = this.$loading.show();
+                var self = this;
                 this.axios
                     .post(`/api/car/schedules/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id+"T"+this.time+this.defaultTimezoneString}, commonService.get_api_header())
                     .then(response => {
                         console.log(response)
                         loader.hide();
                         this.submit_pickup = true;
-                        this.sel_car.Scheduled_Time = this.pickup_date.id;
+                        this.sel_car.Scheduled_Time = this.pickup_date.id+"T"+this.time+this.defaultTimezoneString;
                         this.sel_car.Scheduled_Notes = this.schedule_note;
                         this.sel_car.Stage = this.scheduled_string;
                         this.sel_car = {...this.sel_car};
+                        this.editable = false;
                 }).catch((error) => {
                     loader.hide();
                     var status = error.response.status;
@@ -340,15 +346,16 @@ var commonService = new CommonService();
             submitPickedUp() {
                 let loader = this.$loading.show();
                 this.axios
-                    .post(`/api/car/pick/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id}, commonService.get_api_header())
+                    .post(`/api/car/pick/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id+"T"+this.time+this.defaultTimezoneString}, commonService.get_api_header())
                     .then(response => {
                         console.log(response)
                         loader.hide();
                         this.submit_pickup = true;
-                        this.sel_car.Scheduled_Time = this.pickup_date.id;
+                        this.sel_car.Scheduled_Time = this.pickup_date.id+"T"+this.time+this.defaultTimezoneString;
                         this.sel_car.Scheduled_Notes = this.schedule_note;
                         this.sel_car.Stage = this.pickedup_string;
                         this.sel_car = {...this.sel_car};
+                        this.editable = false;
                 }).catch((error) => {
                     loader.hide();
                     var status = error.response.status;
