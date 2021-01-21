@@ -15648,6 +15648,28 @@ body {
   border: 0;
 }
 
+#SchedulingPage .car-content .car-right-content .selcar-content .selcar-detail .calendar-wrapper .car-timepicker {
+  width: 50%;
+  margin-left: 25%;
+}
+
+#SchedulingPage .car-content .car-right-content .selcar-content .selcar-detail .calendar-wrapper .car-timepicker .vue__time-picker {
+  width: 100%;
+}
+
+#SchedulingPage .car-content .car-right-content .selcar-content .selcar-detail .calendar-wrapper .car-timepicker .vue__time-picker .dropdown {
+  width: 100%;
+}
+
+#SchedulingPage .car-content .car-right-content .selcar-content .selcar-detail .calendar-wrapper .car-timepicker .vue__time-picker .dropdown .select-list {
+  width: 100%;
+}
+
+#SchedulingPage .car-content .car-right-content .selcar-content .selcar-detail .calendar-wrapper .car-timepicker input {
+  text-align: center;
+  width: 100%;
+}
+
 #SchedulingPage .car-content .car-right-content .selcar-content .selcar-detail ::-moz-placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #269A8E;
@@ -16188,5 +16210,9 @@ body {
 
 .stripe-elements-error-message-div {
   color: #FF1744;
+}
+
+.lowercase {
+  text-transform: lowercase !important;
 }
 

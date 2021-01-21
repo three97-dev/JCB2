@@ -754,6 +754,23 @@ body {
                                 border: 0;
                             }
                         }
+                        .car-timepicker {
+                            width: 50%;
+                            margin-left: 25%;
+                            .vue__time-picker {
+                                width: 100%;
+                                .dropdown {
+                                    width: 100%;
+                                    .select-list {
+                                        width: 100%;
+                                    }
+                                }
+                            }
+                            input {
+                                text-align: center;
+                                width: 100%;
+                            }
+                        }
                     }
                     ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
                         color: #269A8E;
@@ -1219,4 +1236,7 @@ body {
 }
 .stripe-elements-error-message-div {
     color: #FF1744;
+}
+.lowercase {
+    text-transform: lowercase !important;
 }

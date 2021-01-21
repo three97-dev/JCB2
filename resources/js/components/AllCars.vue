@@ -45,7 +45,7 @@
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
                             <div class="item-data">{{ car.City }}</div>
-                            <div class="item-data">{{ car.Distance }}</div>
+                            <div class="item-data lowercase">{{ car.Distance | distanceFormat }}</div>
                             <div class="item-data">{{ car.Does_the_Vehicle_Run_and_Drive }}</div>
                             <div class="item-data">{{ car.Closing_Date }}</div>
                             <div class="item-data text-center">{{ car.Miles }}</div>
@@ -255,7 +255,16 @@ var commonService = new CommonService();
                     currency: "USD"
                 });
                 return formatter.format(value);
-            }
+            },
+            distanceFormat: function(distance) {
+                if(distance) {
+                    if(distance < 100) return distance + '\xa0\xa0\xa0\xa0\xa0mi';
+                    if(distance < 1000) return distance + '\xa0\xa0\xa0mi';
+                    if(distance < 10000) return distance + '\xa0mi';
+                    return distance + "mi";
+                }
+                return "";
+            },
         },
         methods: {
             refreshPage(page) {
