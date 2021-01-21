@@ -37,7 +37,7 @@
                             <div class="item-data">
                                 <input type="checkbox" style="margin-top: 4px;" v-model="car.is_checked" v-on:change="checkAll()" :disabled="car.Stage == 'Paid'">&nbsp;
                                 <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
-                                <div v-if="car.Stage=='Dispatched'" class="status-won"> Unpaid </div>
+                                <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> Unpaid </div>
                                 <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
                             </div>
                             <div class="item-data">{{ car.Year }}</div>
@@ -52,7 +52,7 @@
                                     <div style="display:flex;justify-content:space-between;">
                                         <div class="text-blue">{{car.Buyers_Quote}}</div>
                                         <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
-                                        <div v-if="car.Stage=='Dispatched'" class="status-won"> Unpaid </div>
+                                        <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> Unpaid </div>
                                         <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
                                     </div>
                                 </div>
