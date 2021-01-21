@@ -116,9 +116,6 @@ class CarController extends Controller
             $select[] = 'Scheduled_Time';
             // $select[] = 'Scheduled_Notes';
 
-
-
-
             $query = Car::where('Stage', $stage)
                         ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
                         ->whereNotNull('Buyers_Quote')
@@ -161,6 +158,7 @@ class CarController extends Controller
             }
 
         } elseif ($request->page_type == 'payments') {
+            $select[] = 'Profit';
             $query = Car::where(function($sub_query) {
                 $sub_query->where('Stage', 'Paid');
                 $sub_query->orwhere('Stage', 'Dispatched');
@@ -223,7 +221,7 @@ class CarController extends Controller
 
         // $total = $query->count();
         $cars = $query->skip($page * $records_per_page)->take($records_per_page);
-        $total = 40;
+        $total = '';
 
         $builder = $this->convertQuery($query);
 
@@ -375,7 +373,7 @@ class CarController extends Controller
             if (!$Car) {
                 $Car = $this->createItem([
                     'name' => '#'.implode(" ", array($car['Reference_Number'], $car['Year'], $car['Make'], $car['Model'])),
-                    'rate' => $car['Buyers_Quote'],
+                    'rate' => $car['Profit'],
                     'custom_fields' => [
                         [
                             'label' => 'CRM Car ID',
@@ -616,7 +614,7 @@ class CarController extends Controller
                     'Authorization' => $this->ZohoBooksAccessToken
                 ]
             ]);
-            if ($Request->getStatusCode() != 201 || $Request->getStatusCode() != 200) return false;
+            if ($Request->getStatusCode() != 201 && $Request->getStatusCode() != 200) return false;
             $JSON = $Request->getBody()->getContents();
             $Response = json_decode($JSON, true);
             return $Response['item'] ?? false;
@@ -669,7 +667,7 @@ class CarController extends Controller
                     'Authorization' => $this->ZohoBooksAccessToken
                 ]
             ]);
-            if ($Request->getStatusCode() != 201) return false;
+            if ($Request->getStatusCode() != 201 && $Request->getStatusCode() != 200) return false;
             $JSON = $Request->getBody()->getContents();
             $Response = json_decode($JSON, true);
             return $Response['contact'] ?? false;
