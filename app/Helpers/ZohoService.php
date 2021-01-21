@@ -52,7 +52,7 @@ class ZohoSerivce {
     private $ZOHO_CURRENT_USER_EMAIL="developer@junkcarboys.com";
 
     public function __construct() {
-        $refreshToken = '1000.cc4caa870cfffcca07d33c7fdc94dbe6.02cfaa2762c2ee5cd3d1f11f61f3b990';
+        $refreshToken = '1000.e866d49904da6bece087be6b0726f620.b6d9173c65aa88199fd0d65427de5332';
         $user = new UserSignature($this->ZOHO_CURRENT_USER_EMAIL);
         $environment = USDataCenter::PRODUCTION();
         $token = new OAuthToken(env('ZOHO_CRM_CLIENT_ID'), env('ZOHO_CRM_CLIENT_SECRET'), $refreshToken, TokenType::REFRESH, env('ZOHO_REDIRECT_URI'));
