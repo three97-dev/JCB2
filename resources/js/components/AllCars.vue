@@ -200,7 +200,7 @@ var commonService = new CommonService();
                 thiz.filter_param = {};
                 thiz.refreshPage(1);
             });
-            this.refreshPage(1);
+
             console.log('created');
         },
         beforeDestroy () {
@@ -208,7 +208,6 @@ var commonService = new CommonService();
             EventBus.$off('update-car-filter-like')
         },
         mounted() {
-            console.log('mounted');
             this.refreshPage(1);
         },
         computed: {

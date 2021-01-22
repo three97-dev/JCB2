@@ -24,10 +24,10 @@ class CarController extends Controller
 {
     private $ZohoBooksAccessToken;
     function __construct() {
-        if (!isset($this->ZohoBooksAccessToken)) {
+        // if (!isset($this->ZohoBooksAccessToken)) {
             $AccessToken = $this->getZohoBooksAccessToken();
             if ($AccessToken !== false) $this->ZohoBooksAccessToken = $AccessToken;
-        }
+        // }
     }
 
     private function getZohoBooksAccessToken()
@@ -69,8 +69,7 @@ class CarController extends Controller
 
     public function index(Request $request)
     {
-        // return json_encode(['res' => $this->test()]);
-        $zohoService = new ZohoSerivce();
+        // return $this->getCities(Auth::user(), "300");
         $page = ($request->page ?: 1) - 1;
         $records_per_page = $request->records_per_page ?: 8;
         $select = [
@@ -218,7 +217,7 @@ class CarController extends Controller
             }
             $query = $query->whereIn('Zip_Code', $zipArray);
         }
-
+        // $query = $query->whereIn('Zip_Code', $this->getCities(Auth::user(), 250));
         // $total = $query->count();
         $cars = $query->skip($page * $records_per_page)->take($records_per_page);
         $total = '';
@@ -252,6 +251,16 @@ class CarController extends Controller
         else $car_arr = array();
 
         return ['total' => $total,  'data' => $car_arr, 'user'=> Auth::user()];
+    }
+
+    private function getCities($user, $distance) {
+
+        $zip_code_arr = Location::inCircle($user->lat, $user->lng, $distance)->get();
+        $res = [];
+        foreach($zip_code_arr as $zip) {
+            $res[] = $zip->zip_code;
+        }
+        return $res;
     }
 
     private function convertQuery($builder) {

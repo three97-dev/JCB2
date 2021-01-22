@@ -15,4 +15,8 @@ class Location extends Model
         'lat',
     ];
 
+    public function scopeInCircle($query, $lat, $lon, $radius)
+    {
+        return $query->whereRaw('( 3958.7657 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) -  radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) <= ?', [$lat, $lon, $lat, $radius]);
+    }
 }
