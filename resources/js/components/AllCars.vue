@@ -47,7 +47,7 @@
                             <div class="item-data">{{ car.City }}</div>
                             <div class="item-data lowercase">{{ car.Distance | distanceFormat }}</div>
                             <div class="item-data">{{ car.Does_the_Vehicle_Run_and_Drive }}</div>
-                            <div class="item-data">{{ car.Closing_Date }}</div>
+                            <div class="item-data">{{ car.Closing_Date | changeDateFormat }}</div>
                             <div class="item-data text-center">{{ car.Miles }}</div>
                             <div class="item-data text-center">${{ car.Buyers_Quote}}</div>
                             <!-- <div class="text-center action-go">
@@ -130,16 +130,16 @@
             <div class="page-content-block-wrapper">
                 <div class="pagination">
                     <div class="page-label">
-                        Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
+                        Showing <span> {{ total }} </span> Available Cars
                     </div>
-                    <div class="pages-action">
+                    <!-- <div class="pages-action">
                         Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
                         <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page-1)">&lt; Prev</a>
                         <a class="btn-page"  href="javascript:;" v-on:click="refreshPage(page+1)">Next &gt;</a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </template>
@@ -261,6 +261,13 @@ var commonService = new CommonService();
                     if(distance < 1000) return distance + '\xa0\xa0\xa0mi';
                     if(distance < 10000) return distance + '\xa0mi';
                     return distance + "mi";
+                }
+                return "";
+            },
+            changeDateFormat: function(closing_date) {
+                if(closing_date) {
+                    var val=closing_date.split('-');
+                    return val[1] + "/" + val[2] + "/" + val[0];
                 }
                 return "";
             },

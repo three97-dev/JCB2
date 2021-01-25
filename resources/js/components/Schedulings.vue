@@ -28,7 +28,7 @@
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
-                        <div class="title">Amount</div>
+                        <div class="title">Pay Seller</div>
                     </div>
                     <div class="car-body">
                         <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': sel_car && car.id == sel_car.id}" @click="showDetail(car)">
@@ -41,7 +41,7 @@
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
-                            <div class="item-data">{{ toCurrency(car.Buyers_Quote) }}</div>
+                            <div class="item-data">{{ toCurrency(car.CUSTOMERS_QUOTE) }}</div>
                             <!-- <a href="javascript:;" class="text-center action-go" v-on:click="showDetail(car)">
                                 <span class="mif-arrow-right"></span>
                             </a> -->
@@ -50,7 +50,7 @@
                                     <div class="font-weight-bold">{{car.Reference_Number}} &nbsp;&nbsp;{{car.Year}} {{car.Make}} {{car.Model}}</div>
                                     <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
                                     <div style="display:flex;justify-content:space-between;">
-                                        <div class="text-blue">{{car.Buyers_Quote}}</div>
+                                        <div class="text-blue">{{car.CUSTOMERS_QUOTE}}</div>
                                         <div v-if="car.Stage == unscheduled_string" class="status-active">Unscheduled </div>
                                         <div v-if="car.Stage == scheduled_string" class="status-won">Scheduled </div>
                                         <div v-if="car.Stage == pickedup_string" class="status-fail">Picked-Up </div>
@@ -100,7 +100,7 @@
                                     </div>
                                     <div class="col-md-6 field-item">
                                         <div class="item-label">Notes</div>
-                                        <input type="text" class="item-value" placeholder="MM / YY" v-model="schedule_note">
+                                        <input type="text" class="item-value" placeholder="Add notes here" v-model="schedule_note">
                                     </div>
                                 </div>
                                 <div class="w-100 schedule-content" v-else>

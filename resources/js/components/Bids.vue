@@ -38,7 +38,7 @@
                                 <div v-if="car.Stage=='Given Quote'" class="status-active"> Active </div>
                                 <div v-if="car.Stage=='Deal Made'" class="status-won"> Won </div>
                             </div>
-                            <div class="item-data">{{ car.Closing_Date }}</div>
+                            <div class="item-data">{{ car.Closing_Date | changeDateFormat }}</div>
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
@@ -214,7 +214,14 @@ var commonService = new CommonService();
                     currency: "USD"
                 });
                 return formatter.format(value).replace("$", "$ ");
-            }
+            },
+            changeDateFormat: function(closing_date) {
+                if(closing_date) {
+                    var val=closing_date.split('-');
+                    return val[1] + "/" + val[2] + "/" + val[0];
+                }
+                return "";
+            },
         },
         methods: {
             refreshPage(page) {
