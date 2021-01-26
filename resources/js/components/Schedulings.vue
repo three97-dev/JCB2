@@ -28,7 +28,7 @@
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
-                        <div class="title">Amount</div>
+                        <div class="title">Pay Seller</div>
                     </div>
                     <div class="car-body">
                         <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': sel_car && car.id == sel_car.id}" @click="showDetail(car)">
@@ -41,7 +41,7 @@
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
-                            <div class="item-data">{{ toCurrency(car.Buyers_Quote) }}</div>
+                            <div class="item-data">{{ toCurrency(car.CUSTOMERS_QUOTE) }}</div>
                             <!-- <a href="javascript:;" class="text-center action-go" v-on:click="showDetail(car)">
                                 <span class="mif-arrow-right"></span>
                             </a> -->
@@ -50,7 +50,7 @@
                                     <div class="font-weight-bold">{{car.Reference_Number}} &nbsp;&nbsp;{{car.Year}} {{car.Make}} {{car.Model}}</div>
                                     <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
                                     <div style="display:flex;justify-content:space-between;">
-                                        <div class="text-blue">{{car.Buyers_Quote}}</div>
+                                        <div class="text-blue">{{car.CUSTOMERS_QUOTE}}</div>
                                         <div v-if="car.Stage == unscheduled_string" class="status-active">Unscheduled </div>
                                         <div v-if="car.Stage == scheduled_string" class="status-won">Scheduled </div>
                                         <div v-if="car.Stage == pickedup_string" class="status-fail">Picked-Up </div>
@@ -100,7 +100,7 @@
                                     </div>
                                     <div class="col-md-6 field-item">
                                         <div class="item-label">Notes</div>
-                                        <input type="text" class="item-value" placeholder="MM / YY" v-model="schedule_note">
+                                        <input type="text" class="item-value" placeholder="Add notes here" v-model="schedule_note">
                                     </div>
                                 </div>
                                 <div class="w-100 schedule-content" v-else>
@@ -134,9 +134,13 @@
                 <div class="pagination col-md-8">
                     <div class="page-label">
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
+
                     </div>
                     <div class="pages-action">
-                        Page:
+                        <select @change="changeItemCount" v-model="records_per_page">
+                            <option v-for="item in countPerPageArray" :value="item" :key="item">{{item}} items</option>
+                        </select>
+                        &nbsp;&nbsp;Per Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -148,7 +152,6 @@
                     <div class="page-label">
                         <span>{{ cars | unscheduledAmount }} </span> Unscheduled Cars
                     </div>
-
                 </div>
             </div>
         </div>
@@ -187,7 +190,8 @@ var commonService = new CommonService();
                 scheduled_string: "Scheduled For Pick Up",
                 pickedup_string: "Picked Up",
                 time: '09:00',
-                defaultTimezoneString: ":00-08:00"
+                defaultTimezoneString: ":00-08:00",
+                countPerPageArray: [8, 9, 10],
             }
         },
         computed: {
@@ -210,6 +214,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
+            this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-schedulings-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
@@ -224,6 +229,9 @@ var commonService = new CommonService();
             this.refreshPage(1);
         },
         methods: {
+            changeItemCount() {
+                this.refreshPage();
+            },
             refreshPage(page) {
                 if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
@@ -234,7 +242,7 @@ var commonService = new CommonService();
                     this.cars.push({index})
                 }
 
-                let url = '/api/cars?page_type=schedulings&page=' + this.page;
+                let url = '/api/cars?page_type=schedulings&page=' + this.page+'&records_per_page='+this.records_per_page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
                         url += '&' + key + '=' + this.filter_param[key];

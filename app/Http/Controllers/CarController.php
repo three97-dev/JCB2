@@ -32,13 +32,16 @@ class CarController extends Controller
 
     private function getZohoBooksAccessToken()
     {
+        $client_id = '1000.W5L72VDAFQIN6OB9GK08U2CISBX6AB';
+        $client_secret = '4a98ff291c7b55b4996f30cae938133f844f0f60a4';
+        $refresh_token = '1000.515041d6c362dfc964c74af8f100a599.c628b6c984848e0046e612ece1396f32';
         try {
             $Request = (new Client())->post('https://accounts.zoho.com/oauth/v2/token', [
                 'form_params' => [
-                    'client_id' => env('ZOHO_CRM_CLIENT_ID'),
-                    'client_secret' => env('ZOHO_CRM_CLIENT_SECRET'),
+                    'client_id' => $client_id,
+                    'client_secret' => $client_secret,
                     'grant_type' => 'refresh_token',
-                    'refresh_token' => env('ZOHO_REFRESH_TOKEN')
+                    'refresh_token' => $refresh_token
                 ]
             ]);
             $JSON = $Request->getBody()->getContents();
@@ -69,7 +72,7 @@ class CarController extends Controller
 
     public function index(Request $request)
     {
-        // return $this->getCities(Auth::user(), "300");
+
         $page = ($request->page ?: 1) - 1;
         $records_per_page = $request->records_per_page ?: 8;
         $select = [
@@ -87,6 +90,10 @@ class CarController extends Controller
             'Stage',
         ];
         $where = array();
+        $query_zip_arr1 = array();
+        $query_zip_arr2 = array();
+        $query_zip_arr3 = array();
+        $query_zip_arr4 = array();
         // $quey = null;
         if ($request->type == 'like') {
             $likes = LikeBind::get();
@@ -113,14 +120,48 @@ class CarController extends Controller
             $select[] = 'Fire_or_Flood_Damage';
             $select[] = 'What_Kind_of_Mechanical_Issues_Are_There';
             $select[] = 'Scheduled_Time';
+            $select[] = 'Any_Missing_Body_Panels_Interior_or_Engine_Parts';
             // $select[] = 'Scheduled_Notes';
 
             $query = Car::where('Stage', $stage)
                         ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
                         ->whereNotNull('Buyers_Quote')
                         ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
+
+
+
             if ($request->type == 'like')
                 $query = $query->whereIn('id', $likesArray);
+
+            else {
+                $cities_query = "select Zip_Code from Deals where Tow_Company.id != '".Auth::user()->zoho_index."' group by Zip_Code";
+                $zoho_cars_zip_array = $this->getQueryResult($cities_query)['data'];
+
+                $distance = 250;
+                if ($request->distance) {
+                    $distance = $request->distance;
+                }
+                foreach($zoho_cars_zip_array as $zip) {
+                    $zip_code = Location::where('zip_code', $zip['Zip_Code'])->first();
+                    if($zip_code) {
+                        $distance_zip = intval($this->haversineGreatCircleDistance(Auth::user()->lat, Auth::user()->lng, $zip_code->lat, $zip_code->lng));
+                        if($distance_zip <= $distance) {
+                            if(count($query_zip_arr1) < 50) {
+                                $query_zip_arr1[] = $zip_code->zip_code;
+                            }
+                            else if(count($query_zip_arr2) < 50) {
+                                $query_zip_arr2[] = $zip_code->zip_code;
+                            }
+                            else if(count($query_zip_arr3) < 50) {
+                                $query_zip_arr3[] = $zip_code->zip_code;
+                            }
+                            else if(count($query_zip_arr4) < 50) {
+                                $query_zip_arr4[] = $zip_code->zip_code;
+                            }
+                        }
+                    }
+                }
+            }
 
         } elseif ($request->page_type == 'bids') {
             $query = Car::where(function($sub_query) {
@@ -137,6 +178,7 @@ class CarController extends Controller
             }
         } elseif ($request->page_type == 'schedulings') {
             $select[] = 'Scheduled_Time';
+            $select[] = 'CUSTOMERS_QUOTE';
 
             $query = Car::where(function($sub_query) {
                             $sub_query->where('Stage', 'Picked Up');
@@ -160,7 +202,6 @@ class CarController extends Controller
             $select[] = 'Profit';
             $query = Car::where(function($sub_query) {
                 $sub_query->where('Stage', 'Paid');
-                $sub_query->orwhere('Stage', 'Dispatched');
                 $sub_query->orwhere('Stage', 'Scheduled For Pick Up');
                 $sub_query->orwhere('Stage', 'Picked Up');
                 return $sub_query;
@@ -187,56 +228,81 @@ class CarController extends Controller
 
         // // $total_query = $this->getQueryResult($this->convertQuery($query_4_total));
         // return json_encode(array('res'=>$this->convertQuery($query_4_total)));
-        $query = $query->select($select)
-                       ->orderby('id', 'desc');
 
-        if ($request->Miles) $query = $query->where('Miles', '<', $request->Miles);
+
+        // if ($request->Miles) $query = $query->where('Miles', '<', $request->Miles);
         if ($request->Does_the_Vehicle_Run_and_Drive) $query = $query->where('Does_the_Vehicle_Run_and_Drive', $request->Does_the_Vehicle_Run_and_Drive);
-        if ($request->buyers_quote) $query = $query->where('buyers_quote', '<', $request->buyers_quote);
-        if ($request->Any_Missing_Body_Panels_Interior_or_Engine_Parts) $query = $query->where('Any_Missing_Body_Panels_Interior_or_Engine_Parts', $request->Any_Missing_Body_Panels_Interior_or_Engine_Parts);
+        // if ($request->buyers_quote) $query = $query->where('buyers_quote', '<', $request->buyers_quote);
+        // if ($request->Any_Missing_Body_Panels_Interior_or_Engine_Parts) $query = $query->where('Any_Missing_Body_Panels_Interior_or_Engine_Parts', $request->Any_Missing_Body_Panels_Interior_or_Engine_Parts);
         if ($request->Do_they_have_a_Title) $query = $query->where('Do_they_have_a_Title', $request->Do_they_have_a_Title);
         if ($request->Fire_or_Flood_Damage) $query = $query->where('Fire_or_Flood_Damage', $request->Fire_or_Flood_Damage);
         if ($request->Reference_Number) $query = $query->where('Reference_Number', $request->Reference_Number);
         if ($request->Year) $query = $query->where('Year', $request->Year);
         if ($request->Make) $query = $query->where('Make', $request->Make);
         if ($request->Model) $query = $query->where('Model', $request->Make);
-        if ($request->distance) {
-            $lat_min = Auth::user()->lat -  $request->distance / 69;
-            $lat_max = Auth::user()->lat +  $request->distance / 69;
-            $lng_min = Auth::user()->lng -  $request->distance / 54.6;
-            $lng_max = Auth::user()->lng +  $request->distance / 54.6;
 
-            $zipCodes = Location::where('lat', '>=', $lat_min)
-                                ->where('lat', '<=', $lat_max)
-                                ->where('lng', '>=', $lng_min)
-                                ->where('lng', '<=', $lng_max)
-                                ->take(50)->get();
-            $zipArray = array();
-            foreach($zipCodes as $zipCode) {
-                $zipArray[] = $zipCode->zip_code;
-            }
-            $query = $query->whereIn('Zip_Code', $zipArray);
-        }
         // $query = $query->whereIn('Zip_Code', $this->getCities(Auth::user(), 250));
         // $total = $query->count();
-        $cars = $query->skip($page * $records_per_page)->take($records_per_page);
+        // return json_encode(['res'=>$query_zip_arr1]);
+        // if(count($query_zip_arr1)) {
+        //     $query = $query->whereIn('Zip_Code', $query_zip_arr1);
+        // }
+        $query = $query->select($select)
+                        ->skip($page * $records_per_page)
+                        ->take($records_per_page)
+                        ->orderby('id', 'desc');
+        $cars = array();
+        if($request->page_type == 'cars') {
+
+            if(count($query_zip_arr1)) {
+
+                // $query1 = $query->whereIn('Zip_Code', $query_zip_arr1);
+                $builder = $this->convertQuery($query);
+                $builder = str_replace(" order by", ') and Zip_Code in ('.$this->array2string($query_zip_arr1).') order by',  strval($builder));
+                $builder = str_replace("where ", 'where (',  strval($builder));
+                // return $builder;
+                $cars1 = $this->getQueryResult($builder)['data'];
+                // return json_encode(['res'=>$cars1]);
+                if($cars1) $cars = array_merge($cars, $cars1);
+                if(count($query_zip_arr2)) {
+                    $builder = $this->convertQuery($query);
+                    $builder = str_replace(" order by", ') and Zip_Code in ('.$this->array2string($query_zip_arr2).') order by',  strval($builder));
+                    $builder = str_replace("where ", 'where (',  strval($builder));
+                    // return $builder;
+                    $cars2 = $this->getQueryResult($builder)['data'];
+                    // return json_encode(['res'=>$cars2]);
+                    if($cars2) $cars = array_merge($cars, $cars2);
+                    if(count($query_zip_arr3)) {
+                        $builder = $this->convertQuery($query);
+                        $builder = str_replace(" order by", ') and Zip_Code in ('.$this->array2string($query_zip_arr3).') order by',  strval($builder));
+                        $builder = str_replace("where ", 'where (',  strval($builder));
+                        $cars3 = $this->getQueryResult($builder)['data'];
+                        if($cars3) $cars = array_merge($cars, $cars3);
+                        // return json_encode(['res'=>$cars3]);
+                        if(count($query_zip_arr4)) {
+                            $builder = $this->convertQuery($query);
+                            $builder = str_replace(" order by", ') and Zip_Code in ('.$this->array2string($query_zip_arr4).') order by',  strval($builder));
+                            $builder = str_replace("where ", 'where (',  strval($builder));
+                            $cars4 = $this->getQueryResult($builder)['data'];
+                            if($cars4) $cars = array_merge($cars, $cars4);
+                            // return json_encode(['res'=>$cars4]);
+                        }
+                    }
+                }
+            }
+        }
+
+        else {
+            $builder = $this->convertQuery($query);
+            $builder = str_replace(" order by", ') order by',  strval($builder));
+            $cars = $this->getQueryResult($builder)['data'];
+        }
         $total = '';
 
-        $builder = $this->convertQuery($query);
-
-        if($request->page_type != 'cars' || $request->type == 'like' || $request->distance) {
-            $builder = str_replace(" order by", ') order by',  $builder);
-        }
-        if($request->distance && ($request->page_type != 'cars' || $request->type == 'like')) {
-            $builder = str_replace(" order by", ') order by',  $builder);
-        }
-
-        // return $builder;
-        $cars = $this->getQueryResult($builder);
         $car_arr = array();
 
         if($cars)
-            foreach($cars['data'] as $car) {
+            foreach($cars as $car) {
                 $like = LikeBind::where('user_id', Auth::user()->id)->where('car_index', $car['id'])->first();
                 $location = Location::where('Zip_Code', $car['Zip_Code'])->first();
                 if($location) {
@@ -245,12 +311,36 @@ class CarController extends Controller
                 if($request->page_type == 'cars') {
                     if($like) $car['is_liked'] = true;
                     else $car['is_liked'] = false;
+
                 }
-                $car_arr[] = $car;
+                $flag = 0;
+                if ($request->Miles) {
+                    $mile = $request->Miles;
+                    if(!$car['Miles']) $flag++;
+                    else {
+                        $car_mile = $car['Miles'];
+                        if(str_contains($car_mile, "k")) $car_mile = explode("k", $car_mile)[0] * 1000;
+                        if($car_mile <= $mile) $flag++;
+                    }
+                }
+                else $flag++;
+
+                if ($request->buyers_quote) {
+                    if($car['Buyers_Quote'] <= $request->buyers_quote) $flag++;
+                }
+                else $flag++;
+
+                if ($request->Any_Missing_Body_Panels_Interior_or_Engine_Parts)
+                {
+                    if($request->Any_Missing_Body_Panels_Interior_or_Engine_Parts == $car['Any_Missing_Body_Panels_Interior_or_Engine_Parts']) $flag++;
+                }
+                else $flag++;
+                if($flag == 3) $car_arr[] = $car;
+
             }
         else $car_arr = array();
 
-        return ['total' => $total,  'data' => $car_arr, 'user'=> Auth::user()];
+        return ['total' => count($car_arr),  'data' => $car_arr, 'user'=> Auth::user()];
     }
 
     private function getCities($user, $distance) {
@@ -261,6 +351,12 @@ class CarController extends Controller
             $res[] = $zip->zip_code;
         }
         return $res;
+    }
+
+    private function array2string($array) {
+
+        $str = implode(', ', $array);
+        return $str;
     }
 
     private function convertQuery($builder) {

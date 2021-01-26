@@ -58,7 +58,7 @@
                 <select name="" id="" v-model="car_filter.Any_Missing_Body_Panels_Interior_or_Engine_Parts">
                     <option value="">Select options you would accept</option>
                     <option value="No">No</option>
-                    <option value="Refer To What's Wrong With It">Refer To What's Wrong With It?</option>
+                    <option value="Refer To What's Wrong With It?">Refer To What's Wrong With It?</option>
                     <option value="Yes">Yes</option>
                 </select>
             </div>
@@ -128,11 +128,11 @@
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Make}}</label>
-                <input type="number" :placeholder="'Type ' + filter_labels.Make" v-model="bid_filter.Make">
+                <input type="text" :placeholder="'Type ' + filter_labels.Make" v-model="bid_filter.Make">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Model}}</label>
-                <input type="number" :placeholder="'Type ' + filter_labels.Model" v-model="bid_filter.Model">
+                <input type="text" :placeholder="'Type ' + filter_labels.Model" v-model="bid_filter.Model">
             </div>
 
             <div class="filter-buttons">
@@ -160,11 +160,11 @@
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Make}}</label>
-                <input type="number" :placeholder="'Type ' + filter_labels.Make" v-model="schedulings_filter.Make">
+                <input type="text" :placeholder="'Type ' + filter_labels.Make" v-model="schedulings_filter.Make">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Model}}</label>
-                <input type="number" :placeholder="'Type ' + filter_labels.Model" v-model="schedulings_filter.Model">
+                <input type="text" :placeholder="'Type ' + filter_labels.Model" v-model="schedulings_filter.Model">
             </div>
 
             <div class="filter-buttons">
@@ -192,11 +192,11 @@
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Make}}</label>
-                <input type="number" :placeholder="'Type ' + filter_labels.Make" v-model="payment_filter.Make">
+                <input type="text" :placeholder="'Type ' + filter_labels.Make" v-model="payment_filter.Make">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Model}}</label>
-                <input type="number" :placeholder="'Type ' + filter_labels.Model" v-model="payment_filter.Model">
+                <input type="text" :placeholder="'Type ' + filter_labels.Model" v-model="payment_filter.Model">
             </div>
 
             <div class="filter-buttons">
