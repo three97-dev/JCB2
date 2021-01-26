@@ -146,7 +146,10 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        Page:
+                        <select @change="changeItemCount" v-model="records_per_page">
+                            <option v-for="item in countPerPageArray" :value="item" :key="item">{{item}} items</option>
+                        </select>
+                        &nbsp;&nbsp;Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -185,10 +188,12 @@ var commonService = new CommonService();
                 sel_car: null,
                 bid_price: '',
                 is_mobile_view: window.innerWidth <= 992,
+                countPerPageArray: [8, 9, 10],
             }
         },
         created() {
             const thiz = this;
+            this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-bid-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
@@ -224,6 +229,9 @@ var commonService = new CommonService();
             },
         },
         methods: {
+            changeItemCount() {
+                this.refreshPage();
+            },
             refreshPage(page) {
                  if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
@@ -234,7 +242,7 @@ var commonService = new CommonService();
                     this.cars.push({index})
                 }
 
-                let url = '/api/cars?page_type=bids&page=' + this.page;
+                let url = '/api/cars?page_type=bids&page=' + this.page+'&records_per_page='+this.records_per_page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
                         url += '&' + key + '=' + this.filter_param[key];

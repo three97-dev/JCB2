@@ -134,9 +134,13 @@
                 <div class="pagination col-md-8">
                     <div class="page-label">
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
+
                     </div>
                     <div class="pages-action">
-                        Page:
+                        <select @change="changeItemCount" v-model="records_per_page">
+                            <option v-for="item in countPerPageArray" :value="item" :key="item">{{item}} items</option>
+                        </select>
+                        &nbsp;&nbsp;Per Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -148,7 +152,6 @@
                     <div class="page-label">
                         <span>{{ cars | unscheduledAmount }} </span> Unscheduled Cars
                     </div>
-
                 </div>
             </div>
         </div>
@@ -187,7 +190,8 @@ var commonService = new CommonService();
                 scheduled_string: "Scheduled For Pick Up",
                 pickedup_string: "Picked Up",
                 time: '09:00',
-                defaultTimezoneString: ":00-08:00"
+                defaultTimezoneString: ":00-08:00",
+                countPerPageArray: [8, 9, 10],
             }
         },
         computed: {
@@ -210,6 +214,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
+            this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-schedulings-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
@@ -224,6 +229,9 @@ var commonService = new CommonService();
             this.refreshPage(1);
         },
         methods: {
+            changeItemCount() {
+                this.refreshPage();
+            },
             refreshPage(page) {
                 if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
@@ -234,7 +242,7 @@ var commonService = new CommonService();
                     this.cars.push({index})
                 }
 
-                let url = '/api/cars?page_type=schedulings&page=' + this.page;
+                let url = '/api/cars?page_type=schedulings&page=' + this.page+'&records_per_page='+this.records_per_page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
                         url += '&' + key + '=' + this.filter_param[key];

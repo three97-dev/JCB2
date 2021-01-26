@@ -135,7 +135,10 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        Page:
+                        <select @change="changeItemCount" v-model="records_per_page">
+                            <option v-for="item in countPerPageArray" :value="item" :key="item">{{item}} items</option>
+                        </select>
+                        &nbsp;&nbsp;Per Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -187,7 +190,8 @@ var commonService = new CommonService();
                 preventPayButton: true,
                 initPreventPay: true,
                 initialized: false,
-                stripeApiKey: 'pk_test_cdZ2NY2Tmye1tivpd1uR3zs3'
+                stripeApiKey: 'pk_test_cdZ2NY2Tmye1tivpd1uR3zs3',
+                countPerPageArray: [8, 9, 10],
             }
         },
         filters: {
@@ -202,6 +206,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
+            this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-payments-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
@@ -227,6 +232,9 @@ var commonService = new CommonService();
 
         },
         methods: {
+            changeItemCount() {
+                this.refreshPage();
+            },
             preventPay: function() {
                 if (this.stripe_card_errors || this.stripe_cvc_errors || this.stripe_expiry_errors) {
                     this.preventPayButton = true;
@@ -356,7 +364,7 @@ var commonService = new CommonService();
                     this.cars.push({index})
                 }
 
-                let url = '/api/cars?page_type=payments&page=' + this.page;
+                let url = '/api/cars?page_type=payments&page=' + this.page+'&records_per_page='+this.records_per_page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
                         url += '&' + key + '=' + this.filter_param[key];
