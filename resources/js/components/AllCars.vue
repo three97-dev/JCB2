@@ -301,7 +301,7 @@ var commonService = new CommonService();
                 .then(response => {
                     loader.hide();
                     var res_data = response.data;
-                    this.cars = res_data.data;
+                    this.cars = res_data.data.sort((a, b) =>  a.Distance - b.Distance);
                     this.total = res_data.total;
 
                     var start_page = Math.max(1, this.page - 2);

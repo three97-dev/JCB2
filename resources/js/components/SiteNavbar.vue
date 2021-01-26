@@ -6,9 +6,27 @@
                 <div class="navbar-notification logo-wrapper">
                     <img v-bind:src="avatar" alt="logo">
                 </div>
-                <div class="navbar-username" @click="logout">
-                    {{username}} <span class="mif-arrow-drop-down"></span>
-
+                <div class="navbar-username">
+                    {{username}} <span class="mif-arrow-drop-down drop-down" @click="showDropdown"></span>
+                    <div class="dropdown-action-menu" v-if="showActions">
+                        <div class="dropDownMenu-header">
+                            <div>Menu</div>
+                            <div class="close" @click="showDropdown"><span class="mif-cross-light"></span></div>
+                        </div>
+                        <div class="content">
+                            <div class="content-row">
+                                <span class="mif-user"></span>
+                                &nbsp;&nbsp;Profile
+                            </div>
+                            <div class="content-row">
+                                <span class="mif-credit-card"></span>
+                                &nbsp;&nbsp;Payment Method
+                            </div>
+                        </div>
+                        <div class="signout" @click="logout">
+                            Sign Out
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -50,6 +68,7 @@
             </b-collapse>
         </div>
     </nav>
+
 </div>
 </template>
 

@@ -90,8 +90,8 @@
                 <input type="text" placeholder="Enter a name for this search" v-model="save_filter_title">
             </div>
             <div class="buttons-group">
-                <button class="btn btn-light" v-on:click="open_filter_save_step = false">CANCEL</button>
-                <button class="btn btn-primary" v-on:click="saveSearch()">SAVE</button>
+                <button class="btn btn-light btn-save" v-on:click="open_filter_save_step = false">CANCEL</button>
+                <button class="btn btn-primary btn-apply" v-on:click="saveSearch()">SAVE</button>
             </div>
         </div>
         <div class="saved-filters" v-if="open_saved_filter">
