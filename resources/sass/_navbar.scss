@@ -35,15 +35,49 @@
             color: #363636;
             align-items: center;
             display: flex;
-            cursor: pointer;
+
+            .drop-down {
+                cursor: pointer;
+            }
             .dropdown-action-menu {
                 position: absolute;
                 top: $navHeight + 1;
                 left: 71px;
                 width: calc(100vw - 71px);
                 height: calc(100vh - #{$navHeight + 1});
-                display: none;
                 background: #fff;
+                padding: 50px;
+                .dropDownMenu-header {
+                    font: normal normal bold 40px/56px Neuzeit Grotesk;
+                    letter-spacing: 0.27px;
+                    color: #363636;
+                    div:first-child {
+                        float: left;
+                        text-decoration: underline;
+                    }
+                    .close {
+                        float: right;
+                        cursor: pointer;
+                    }
+                }
+                .content {
+                    margin-top: 150px;
+                    cursor: pointer;
+                    div.content-row {
+                        margin-top: 30px;
+                        font: normal normal 300 40px/56px Neuzeit Grotesk;
+                        letter-spacing: 0.27px;
+                    }
+                }
+                .signout {
+                    position: absolute;
+                    bottom: 50px;
+                    right: 50px;
+                    font: normal normal bold 40px/56px Neuzeit Grotesk;
+                    letter-spacing: 0.27px;
+                    color: #FF7777;
+                    cursor: pointer;
+                }
             }
         }
     }
