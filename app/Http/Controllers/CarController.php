@@ -129,14 +129,14 @@ class CarController extends Controller
                         ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
 
 
-
+            $records_per_page = 200;
             if ($request->type == 'like')
                 $query = $query->whereIn('id', $likesArray);
 
             else {
-                $cities_query = "select Zip_Code from Deals where Tow_Company.id != '".Auth::user()->zoho_index."' group by Zip_Code";
+                $cities_query = "select Zip_Code from Deals where (Stage = 'Given Quote') and Closing_Date >= '". date('Y-m-d', strtotime('-3 days')) ."' group by Zip_Code order by id desc limit 200 offset 0";
                 $zoho_cars_zip_array = $this->getQueryResult($cities_query)['data'];
-
+                // return json_encode(['res'=>$zoho_cars_zip_array]);
                 $distance = 250;
                 if ($request->distance) {
                     $distance = $request->distance;
