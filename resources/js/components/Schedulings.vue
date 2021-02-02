@@ -3,6 +3,7 @@
         <div class="page-content-block-wrapper">
             <div class="page-header">
                 <span>Scheduling Pick-Ups</span>
+                <p class="header-summary">Manage the scheduling and pick-up of vehicles you've purchased.</p>
             </div>
         </div>
 
@@ -114,14 +115,17 @@
                                 </div>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== unscheduled_string">
-                                <button class="btn btn-primary action-button" v-on:click="submitSchedule()">SCHEDULE</button>
+                                <button class="btn btn-primary action-button float-left" v-on:click="submitSchedule()">SCHEDULE</button>
+                                <button class="btn action-button btn-danger" v-on:click="submitCancel()">Cancel</button>
+                                <button class="btn btn-primary action-button float-right" @click="submitPickedUp()">PICKED UP</button>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== scheduled_string">
-                                <button class="btn btn-primary action-button float-left background-grey" v-show="!editable" @click="enableEdit()">EDIT</button>
-                                <button class="btn btn-primary action-button" @click="submitPickedUp()">PICKED UP</button>
+                                <button class="btn btn-primary action-button float-left background-grey" v-show="!editable" @click="enableEdit()">Reschedule</button>
+                                <button class="btn action-button btn-danger" v-on:click="submitCancel()">Cancel</button>
+                                <button class="btn btn-primary action-button float-right" @click="submitPickedUp()">PICKED UP</button>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== pickedup_string">
-                                <button class="btn btn-primary action-button" @click="gotoPay()">PAY</button>
+                                <button class="btn btn-primary action-button float-right" @click="gotoPay()">PAY</button>
                             </div>
                         </div>
                     </div>
@@ -353,17 +357,43 @@ var commonService = new CommonService();
             },
             submitPickedUp() {
                 let loader = this.$loading.show();
+                var scheduled_time = "";
+                if(this.pickup_date && this.pickup_date.id) scheduled_time = this.pickup_date.id+"T"+this.time+this.defaultTimezoneString;
                 this.axios
-                    .post(`/api/car/pick/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id+"T"+this.time+this.defaultTimezoneString}, commonService.get_api_header())
+                    .post(`/api/car/pick/` + this.sel_car.id, {Scheduled_Time: scheduled_time}, commonService.get_api_header())
                     .then(response => {
                         console.log(response)
                         loader.hide();
-                        this.submit_pickup = true;
-                        this.sel_car.Scheduled_Time = this.pickup_date.id+"T"+this.time+this.defaultTimezoneString;
-                        this.sel_car.Scheduled_Notes = this.schedule_note;
+
+                        if(this.pickup_date) {
+                            this.submit_pickup = true;
+                            this.sel_car.Scheduled_Time = this.pickup_date.id+"T"+this.time+this.defaultTimezoneString;
+                            this.sel_car.Scheduled_Notes = this.schedule_note;
+                        }
+
                         this.sel_car.Stage = this.pickedup_string;
                         this.sel_car = {...this.sel_car};
                         this.editable = false;
+                }).catch((error) => {
+                    loader.hide();
+                    var status = error.response.status;
+                    if (status == 401) {
+                        commonService.logout();
+                        this.$router.push('login');
+                    } else {
+                        alert('Api request error');
+                    }
+                });
+            },
+            submitCancel() {
+                var c = confirm('Are you really gonna cancel this?');
+                if(!c) return;
+                let loader = this.$loading.show();
+                this.axios
+                    .get(`/api/car/cancel/` + this.sel_car.id, commonService.get_api_header())
+                    .then(response => {
+                        loader.hide();
+                        this.refreshPage();
                 }).catch((error) => {
                     loader.hide();
                     var status = error.response.status;
@@ -389,3 +419,9 @@ var commonService = new CommonService();
         }
     }
 </script>
+<style lang="stylus" scoped>
+
+.btn-danger {
+    background-color: #e3342f;
+}
+</style>

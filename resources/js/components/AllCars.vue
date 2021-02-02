@@ -4,6 +4,7 @@
             <div class="page-content-block-wrapper">
                 <div class="page-header">
                     <span>All Cars</span>
+                    <p class="header-summary">View and bid on vehicles available for purchase.</p>
                 </div>
             </div>
 
@@ -48,7 +49,7 @@
                             <div class="item-data lowercase">{{ car.Distance | distanceFormat }}</div>
                             <div class="item-data">{{ car.Does_the_Vehicle_Run_and_Drive }}</div>
                             <div class="item-data">{{ car.Closing_Date | changeDateFormat }}</div>
-                            <div class="item-data text-center">{{ car.Miles }}</div>
+                            <div class="item-data text-center">{{ car.Miles || "Unable To Verify" }}</div>
                             <div class="item-data text-center">${{ car.Buyers_Quote}}</div>
                             <!-- <div class="text-center action-go">
                                 <a href="javascript:;" v-on:click="showDetail(car)">
@@ -100,7 +101,7 @@
                                     </div>
                                     <div class="field-item col-md-3" v-for="(detail_field, i) in detail_fields" :key="i">
                                         <div class="item-label">{{detail_field.field}}</div>
-                                        <div type="text" class="item-value">{{ sel_car[detail_field.key] | replaceIfEmpty }}</div>
+                                        <div type="text" class="item-value" :class="{'fontColorBlack': replaceIfEmpty(sel_car[detail_field.key]) != '-- None --' }">{{ replaceIfEmpty(sel_car[detail_field.key]) }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -165,6 +166,8 @@ var commonService = new CommonService();
                 bid_price: '',
                 bid_status: 1,
                 submit_bid: '',
+                sort_field: "id",
+                sort_arrow: 1,
                 detail_fields: [
                     {field: "Zip", key: "Zip_Code"},
                     {field: "City", key: "City"},
@@ -214,34 +217,7 @@ var commonService = new CommonService();
 
         },
         filters: {
-            replaceIfEmpty: function(value) {
-                // return value;
-                var emptyPlaceHolderStr = "-- None --";
-                if(value == "" || value == undefined || value == null) return emptyPlaceHolderStr;
-                var flag = false;
-                if(typeof value === "number") return value;
-                if(Array.isArray(value)) return value.join(',');
-                if(value.charAt(0) == "[") {
-                    var ini_str = "";
-                    var arr = JSON.parse(value);
-                    arr.map(val=> {
-                        if(typeof val === "object"){
-                            for(var prop in val) {
-                                if (val.hasOwnProperty(prop)) {
-                                    ini_str += val.prop;
-                                }
-                            }
-                        }
-                        else {
-                            ini_str += val;
-                        }
-                    })
-                    if(ini_str == "") return emptyPlaceHolderStr;
-                    else return ini_str;
-                }
-                return value;
 
-            },
             milesValidate: function(value) {
                 if(value == null)
                     return "Unable to Verify";
@@ -296,12 +272,16 @@ var commonService = new CommonService();
 
                 let loader = this.$loading.show();
 
+                var arrow = this.sort_arrow;
+                var sort_field = this.sort_field;
+
                 this.axios
                 .get(url, commonService.get_api_header())
                 .then(response => {
                     loader.hide();
                     var res_data = response.data;
-                    this.cars = res_data.data.sort((a, b) =>  a.Distance - b.Distance);
+                    this.cars = res_data.data.sort((a, b) =>  (a[sort_field] - b[sort_field]) * arrow );
+                    // this.cars = res_data.data;
                     this.total = res_data.total;
 
                     var start_page = Math.max(1, this.page - 2);
@@ -343,6 +323,38 @@ var commonService = new CommonService();
             },
             resetFilter() {
                 EventBus.$emit('reset-car-filter');
+            },
+            replaceIfEmpty(value) {
+                // return value;
+                var emptyPlaceHolderStr = "-- None --";
+                if(value == "" || value == undefined || value == null) return emptyPlaceHolderStr;
+                var flag = false;
+                if(typeof value === "number") return value;
+                if(Array.isArray(value)) return value.join(',');
+                if(value.charAt(0) == "[") {
+                    var ini_str = "";
+                    var arr = JSON.parse(value);
+                    arr.map(val=> {
+                        if(typeof val === "object"){
+                            for(var prop in val) {
+                                if (val.hasOwnProperty(prop)) {
+                                    ini_str += val.prop;
+                                }
+                            }
+                        }
+                        else {
+                            ini_str += val;
+                        }
+                    })
+                    if(ini_str == "") return emptyPlaceHolderStr;
+                    else return ini_str;
+                }
+                return value;
+
+            },
+            checkFontColor(val) {
+                if(val == "-- None --") return false;
+                return true;
             },
             showDetail(car, $evt) {
                 if($evt.toElement.className.includes('mif-heart')) return;
@@ -469,5 +481,8 @@ var commonService = new CommonService();
 
         }
     }
+}
+.fontColorBlack {
+    color: #000 !important;
 }
 </style>

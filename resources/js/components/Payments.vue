@@ -3,6 +3,7 @@
         <div class="page-content-block-wrapper">
             <div class="page-header">
                 <span>Your Payments</span>
+                <p class="header-summary">Make payments for the vehicles you've purchased and picked-up.</p>
             </div>
         </div>
 
@@ -27,6 +28,7 @@
                         <div class="title">
                             <input type="checkbox" v-model="checked_all" v-on:change="checkAll(true)">&nbsp;Status
                         </div>
+                        <div class="title">Ref#</div>
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
@@ -40,6 +42,7 @@
                                 <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> Unpaid </div>
                                 <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
                             </div>
+                            <div class="item-data">{{ car.Reference_Number }}</div>
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>

@@ -459,6 +459,14 @@ class CarController extends Controller
         return json_encode(array('res' => 'success'));
     }
 
+    public function cancel($id) {
+
+        $zohoService = new ZohoSerivce();
+        $pick = $zohoService->cancel($id);
+
+        return json_encode(array('res' => 'success'));
+    }
+
     public function pay(Request $request) {
         $arr = $request->cars;
         $zohoService = new ZohoSerivce();
