@@ -3,6 +3,7 @@
         <div class="page-content-block-wrapper">
             <div class="page-header">
                 <span>Scheduling Pick-Ups</span>
+                <p class="header-summary">Manage the scheduling and pick-up of vehicles you've purchased.</p>
             </div>
         </div>
 
@@ -62,8 +63,8 @@
                 </div>
                 <div class="car-right-content col-md-4" v-if="!is_mobile_view || (is_mobile_view && sel_car)">
                     <div class="title-header">
-                        <a href="javascript:;" class="btn-close-car-detail" :class="{opacityTo1: sel_car}" v-on:click="sel_car=null">
-                            <span class="mif-cancel"></span> Clear
+                        <a href="javascript:;" class="btn-close-car-detail" :class="{opacityTo1: (sel_car&&(!cancellable&&!reschedulable))}" v-on:click="cancellable=!cancellable">
+                            <span class="mif-cancel"></span> Cancel Pickup
                         </a>
                     </div>
                     <div class="car-detail">
@@ -80,8 +81,91 @@
                                 <button class="btn btn-primary action-button" v-on:click="sel_car=null">DONE</button>
                             </div>
                         </div>
-                        <div class="selcar-content" :class="{'background-grey': sel_car.Stage == scheduled_string || sel_car.Stage == pickedup_string}" v-if="sel_car && !submit_pickup">
-                            <div class="title">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
+
+                        <div class="selcar-content" v-if="sel_car && cancellable">
+                            <div class="title padding-0 margin-top-5 go-back" v-on:click="cancellable=!cancellable">
+                                <span class="mif-arrow-left"></span>
+                                <div class="narrate-label">No thanks, take me back.</div>
+                            </div>
+                            <div class="submit-content">
+                                <div class="cancel-header">Are you sure you'd like to cancel?</div>
+                                <div class="cancel-content">This will remove the vehicle from your purchases. You will need to contact dispatch@junkcarboys.com for any further correspondence.</div>
+                            </div>
+                            <div class="action-bar">
+                                <button class="btn btn-primary action-button float-right" @click="submitCancel()">YES, CANCEL</button>
+                            </div>
+                        </div>
+
+                        <div class="selcar-content" v-if="sel_car && reschedulable">
+                            <div class="title padding-0 margin-top-5 go-back" v-on:click="reschedulable=!reschedulable">
+                                <span class="mif-arrow-left"></span>
+                                <div class="narrate-label">No thanks, take me back.</div>
+                            </div>
+                            <div class="submit-content">
+                                <div class="cancel-header">You are about to reschedule for:</div>
+                                <div class="cancel-content">
+                                    Date: {{date}}<br/>Time: {{time}}
+                                </div>
+                            </div>
+                            <div class="action-bar">
+                                <button class="btn btn-primary action-button float-right" @click="submitSchedule()">CONFIRM</button>
+                            </div>
+                        </div>
+
+                        <div class="selcar-content" :class="{'background-grey': !editable}" v-if="sel_car && !submit_pickup">
+                            <div class="title padding-0 margin-top-5">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
+                            <hr class="margin-side-minus-30"/>
+                            <div class="selcar-detail row">
+                                <div class="col-md-6 field-item">
+                                    <div class="item-label">Pick-up Location</div>
+                                    <div class="item-value car-value" v-if="sel_car.Street">{{sel_car.Street}}</div>
+                                    <div class="item-value car-value">{{sel_car.City}}</div>
+                                    <div class="item-value car-value">{{sel_car.State}}</div>
+                                    <div class="item-value car-value">{{sel_car.Zip_Code}}</div>
+                                </div>
+                                <div class="col-md-6 field-item">
+                                    <div class="item-label">Vehicle Owner</div>
+                                    <div class="item-value car-value">{{sel_car.Deal_Name}}</div>
+                                    <div class="item-value car-value">{{sel_car.Phone}}</div>
+                                </div>
+                            </div>
+                            <hr class="margin-side-minus-30"/>
+                            <div class="row">
+                                <div class="col-md-6 field-item">
+                                    <div class="item-label">Pick-Up Date:</div>
+                                    <input type="date" v-model="date" name="trip-start"
+                                        class="item-value car-input-value" placeholder="Click to select a date"
+                                        min="2018-01-01" :disabled="!editable">
+                                </div>
+                                <div class="col-md-6 field-item">
+                                    <div class="item-label">Pick-Up Time:</div>
+                                    <input type="time" class="item-value car-input-value" v-model="time"  min="12:00" max="18:00"  placeholder="Click to select a time" :disabled="!editable">
+                                </div>
+                                <div class="col-md-12 field-item margin-top-20">
+                                    <div class="item-label">Notes</div>
+                                    <input type="text" class="item-value car-input-value" placeholder="Click to enter notes" v-model="sel_car.Scheduled_Note" :disabled="!editable">
+                                </div>
+
+                            </div>
+                            <div class="action-bar" v-if="sel_car.Stage== unscheduled_string">
+                                <button class="action-button none-styled-button float-left" v-on:click="submitPickedUp()">I picked-up already.</button>
+                                <button class="btn btn-primary action-button float-right" @click="submitSchedule()">SCHEDULE</button>
+                            </div>
+                            <div class="action-bar" v-if="sel_car.Stage== scheduled_string && !editable">
+                                <button class="action-button none-styled-button float-left background-grey" @click="enableEdit">I need to reschedule.</button>
+                                <button class="btn btn-primary action-button float-right" @click="submitPickedUp()">PICKED UP</button>
+                            </div>
+                            <div class="action-bar" v-if="sel_car.Stage== scheduled_string && editable">
+                                <button class="action-button none-styled-button float-left background-grey" @click="disableEdit">Cancel my edits</button>
+                                <button class="btn btn-primary action-button float-right" @click="reschedulable=!reschedulable">SAVE</button>
+                            </div>
+                            <div class="action-bar" v-if="sel_car.Stage== pickedup_string">
+                                <button class="btn btn-primary action-button float-right" @click="gotoPay()">PAY</button>
+                            </div>
+                        </div>
+
+                        <!-- <div class="selcar-content" :class="{'background-grey': sel_car.Stage == scheduled_string || sel_car.Stage == pickedup_string}" v-if="sel_car && !submit_pickup">
+                            <div class="title padding-0">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
                             <div class="selcar-detail row">
                                 <div class="calendar-wrapper">
                                     <div class="car-calendar" style="margin:auto;">
@@ -114,16 +198,24 @@
                                 </div>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== unscheduled_string">
-                                <button class="btn btn-primary action-button" v-on:click="submitSchedule()">SCHEDULE</button>
+                                <button class="btn btn-primary action-button float-left" v-on:click="submitSchedule()">SCHEDULE</button>
+                                <button class="btn action-button btn-danger" v-on:click="submitCancel()">CANCEL</button>
+                                <button class="btn btn-primary action-button float-right" @click="submitPickedUp()">PICKED UP</button>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== scheduled_string">
-                                <button class="btn btn-primary action-button float-left background-grey" v-show="!editable" @click="enableEdit()">EDIT</button>
-                                <button class="btn btn-primary action-button" @click="submitPickedUp()">PICKED UP</button>
+                                <button class="btn btn-primary action-button float-left background-grey" v-show="!editable" @click="enableEdit()">Reschedule</button>
+                                <button class="btn action-button btn-danger" v-on:click="submitCancel()">CANCEL</button>
+                                <button class="btn btn-primary action-button float-right" @click="submitPickedUp()">PICKED UP</button>
+                            </div>
+                            <div class="action-bar" v-if="sel_car.Stage== scheduled_string">
+                                <button class="btn btn-primary action-button float-left background-grey" v-show="!editable" @click="enableEdit()">Reschedule</button>
+                                <button class="btn action-button btn-danger" v-on:click="submitCancel()">CANCEL</button>
+                                <button class="btn btn-primary action-button float-right" @click="submitPickedUp()">PICKED UP</button>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== pickedup_string">
-                                <button class="btn btn-primary action-button" @click="gotoPay()">PAY</button>
+                                <button class="btn btn-primary action-button float-right" @click="gotoPay()">PAY</button>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -183,15 +275,20 @@ var commonService = new CommonService();
                 schedule_note: '',
                 is_mobile_view: window.innerWidth <= 992,
                 editable: false,
+                cancellable: false,
+                reschedulable: false,
                 date_range: null,
                 calendar_disabled_data: { start: null, end: new Date(0, 0, 0) },
                 calendar_enabled_data: { start: new Date(0, 0, 0), end: null },
                 unscheduled_string: "Dispatched",
                 scheduled_string: "Scheduled For Pick Up",
                 pickedup_string: "Picked Up",
-                time: '09:00',
                 defaultTimezoneString: ":00-08:00",
                 countPerPageArray: [8, 9, 10],
+                date: "",
+                time: '09:00',
+                temp_date: "",
+                temp_time: ""
             }
         },
         computed: {
@@ -295,26 +392,61 @@ var commonService = new CommonService();
                     this.editable = false;
                     this.date_range = this.calendar_enabled_data;
                     if (this.sel_car.Stage == this.scheduled_string || this.sel_car.Stage == this.pickedup_string) {
-                        let date = new Date(this.sel_car.Scheduled_Time);
-                        this.pickup_date = {
-                            id: this.sel_car.Scheduled_Time,
-                            date,
-                        }
+                        // let date = new Date(this.sel_car.Scheduled_Time);
+                        // this.pickup_date = {
+                        //     id: this.sel_car.Scheduled_Time,
+                        //     date,
+                        // }
                         var dateTime = car.Scheduled_Time;
-                        var time = dateTime.split('T')[1];
+                        var dTArr = dateTime.split('T');
+                        this.date = dTArr[0];
+                        var time = dTArr[1];
+                        console.log(dTArr);
                         if(time && time != "") {
                             var time_arr = time.split(':');
                             this.time = time_arr[0] + ":" + time_arr[1];
                         }
 
-                        this.date_range = this.calendar_disabled_data;
+                        // this.date_range = this.calendar_disabled_data;
                     }
                     else {
                         this.editable = true;
+                        this.date = "";
+                        this.time = "";
+                        this.sel_car.Scheduled_Note = "";
                     }
-                    this.schedule_note = this.sel_car.Scheduled_Notes;
+                    this.schedule_note = this.sel_car.Scheduled_Note;
                 }, 300);
             },
+            // showDetail(car) {
+            //     this.sel_car = null;
+            //     setTimeout(() => {
+            //         this.sel_car = car;
+            //         this.submit_pickup = false;
+            //         this.pickup_date = null;
+            //         this.editable = false;
+            //         this.date_range = this.calendar_enabled_data;
+            //         if (this.sel_car.Stage == this.scheduled_string || this.sel_car.Stage == this.pickedup_string) {
+            //             let date = new Date(this.sel_car.Scheduled_Time);
+            //             this.pickup_date = {
+            //                 id: this.sel_car.Scheduled_Time,
+            //                 date,
+            //             }
+            //             var dateTime = car.Scheduled_Time;
+            //             var time = dateTime.split('T')[1];
+            //             if(time && time != "") {
+            //                 var time_arr = time.split(':');
+            //                 this.time = time_arr[0] + ":" + time_arr[1];
+            //             }
+
+            //             this.date_range = this.calendar_disabled_data;
+            //         }
+            //         else {
+            //             this.editable = true;
+            //         }
+            //         this.schedule_note = this.sel_car.Scheduled_Note;
+            //     }, 300);
+            // },
             toCurrency: function(value) {
                 if(!value) return "";
                 var formatter = new Intl.NumberFormat("en-US", {
@@ -324,21 +456,22 @@ var commonService = new CommonService();
                 return formatter.format(value).replace("$", "$ ");
             },
             submitSchedule() {
-                if (!this.pickup_date) return alert('Please select a schedule date');
-                console.log(this.sel_car);
+                // if (!this.pickup_date) return alert('Please select a schedule date');
                 let loader = this.$loading.show();
                 var self = this;
                 this.axios
-                    .post(`/api/car/schedules/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id+"T"+this.time+this.defaultTimezoneString}, commonService.get_api_header())
+                    .post(`/api/car/schedules/` + this.sel_car.id, {Scheduled_Time: this.date+"T"+this.time+this.defaultTimezoneString, Scheduled_Note: this.sel_car.Scheduled_Note}, commonService.get_api_header())
                     .then(response => {
                         console.log(response)
                         loader.hide();
                         this.submit_pickup = true;
-                        this.sel_car.Scheduled_Time = this.pickup_date.id+"T"+this.time+this.defaultTimezoneString;
-                        this.sel_car.Scheduled_Notes = this.schedule_note;
+                        this.sel_car.Scheduled_Time = this.date+"T"+this.time+this.defaultTimezoneString;
+                        this.sel_car.Scheduled_Note = this.schedule_note;
                         this.sel_car.Stage = this.scheduled_string;
                         this.sel_car = {...this.sel_car};
+                        this.reschedulable = false;
                         this.editable = false;
+                        this.refreshPage();
                 }).catch((error) => {
                     loader.hide();
                     var status = error.response.status;
@@ -353,17 +486,42 @@ var commonService = new CommonService();
             },
             submitPickedUp() {
                 let loader = this.$loading.show();
+                var scheduled_time = "";
+                if(this.pickup_date && this.pickup_date.id) scheduled_time = this.date+"T"+this.time+this.defaultTimezoneString;
                 this.axios
-                    .post(`/api/car/pick/` + this.sel_car.id, {Scheduled_Time: this.pickup_date.id+"T"+this.time+this.defaultTimezoneString}, commonService.get_api_header())
+                    .post(`/api/car/pick/` + this.sel_car.id, {Scheduled_Time: scheduled_time, Scheduled_Note: this.sel_car.Scheduled_Note}, commonService.get_api_header())
                     .then(response => {
                         console.log(response)
                         loader.hide();
-                        this.submit_pickup = true;
-                        this.sel_car.Scheduled_Time = this.pickup_date.id+"T"+this.time+this.defaultTimezoneString;
-                        this.sel_car.Scheduled_Notes = this.schedule_note;
+
+                        if(this.pickup_date) {
+                            this.submit_pickup = true;
+                            this.sel_car.Scheduled_Time = this.date+"T"+this.time+this.defaultTimezoneString;
+                            this.sel_car.Scheduled_Note = this.schedule_note;
+                        }
+
                         this.sel_car.Stage = this.pickedup_string;
                         this.sel_car = {...this.sel_car};
                         this.editable = false;
+                        this.refreshPage();
+                }).catch((error) => {
+                    loader.hide();
+                    var status = error.response.status;
+                    if (status == 401) {
+                        commonService.logout();
+                        this.$router.push('login');
+                    } else {
+                        alert('Api request error');
+                    }
+                });
+            },
+            submitCancel() {
+                let loader = this.$loading.show();
+                this.axios
+                    .get(`/api/car/cancel/` + this.sel_car.id, commonService.get_api_header())
+                    .then(response => {
+                        loader.hide();
+                        this.refreshPage();
                 }).catch((error) => {
                     loader.hide();
                     var status = error.response.status;
@@ -381,7 +539,17 @@ var commonService = new CommonService();
             },
             enableEdit() {
                 this.editable = true;
-                this.date_range = this.calendar_enabled_data;
+                this.temp_date = this.date;
+                this.temp_time = this.time;
+                this.date = "";
+                this.time = "";
+                // this.date_range = this.calendar_enabled_data;
+            },
+            disableEdit() {
+                this.editable = false;
+                this.date = this.temp_date;
+                this.time = this.temp_time;
+                // this.date_range = this.calendar_enabled_data;
             },
             gotoPay() {
                 this.$router.push('/payments?id='+this.sel_car.id);
@@ -389,3 +557,9 @@ var commonService = new CommonService();
         }
     }
 </script>
+<style lang="stylus" scoped>
+
+.btn-danger {
+    background-color: #e3342f;
+}
+</style>

@@ -3,6 +3,7 @@
         <div class="page-content-block-wrapper">
             <div class="page-header">
                 <span>My Bids</span>
+                <p class="header-summary">View the vehicles you've bid on that haven't yet closed.</p>
             </div>
         </div>
 

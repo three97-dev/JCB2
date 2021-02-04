@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth:api'], function() {
         Route::post('schedules/{id}', 'CarController@setSchedule');
         Route::post('bid/{id}', 'CarController@bid');
         Route::post('pick/{id}', 'CarController@pick');
+        Route::get('cancel/{id}', 'CarController@cancel');
         Route::post('pay', 'CarController@pay');
     });
     Route::group(['prefix' => 'filters'], function (){
