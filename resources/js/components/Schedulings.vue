@@ -112,6 +112,19 @@
                             </div>
                         </div>
 
+                        <div class="selcar-content" v-if="sel_car && pickable">
+                            <div class="title padding-0 margin-top-5 go-back" v-on:click="pickable=!pickable">
+                                <span class="mif-arrow-left"></span>
+                                <div class="narrate-label">No thanks, take me back.</div>
+                            </div>
+                            <div class="submit-content">
+                                <div class="cancel-header">Are you confirming that you've picked up this vehicle?</div>
+                            </div>
+                            <div class="action-bar">
+                                <button class="btn btn-primary action-button float-right" @click="submitPickedUp()">CONFIRM</button>
+                            </div>
+                        </div>
+
                         <div class="selcar-content" :class="{'background-grey': !editable}" v-if="sel_car && !submit_pickup">
                             <div class="title padding-0 margin-top-5">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
                             <hr class="margin-side-minus-30"/>
@@ -148,12 +161,12 @@
 
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== unscheduled_string">
-                                <button class="action-button none-styled-button float-left" v-on:click="submitPickedUp()">I picked-up already.</button>
+                                <button class="action-button none-styled-button float-left" v-on:click="pickable=true">I picked-up already.</button>
                                 <button class="btn btn-primary action-button float-right" @click="submitSchedule()">SCHEDULE</button>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== scheduled_string && !editable">
                                 <button class="action-button none-styled-button float-left background-grey" @click="enableEdit">I need to reschedule.</button>
-                                <button class="btn btn-primary action-button float-right" @click="submitPickedUp()">PICKED UP</button>
+                                <button class="btn btn-primary action-button float-right" @click="pickable=true">PICKED UP</button>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== scheduled_string && editable">
                                 <button class="action-button none-styled-button float-left background-grey" @click="disableEdit">Cancel my edits</button>
@@ -277,6 +290,7 @@ var commonService = new CommonService();
                 editable: false,
                 cancellable: false,
                 reschedulable: false,
+                pickable: false,
                 date_range: null,
                 calendar_disabled_data: { start: null, end: new Date(0, 0, 0) },
                 calendar_enabled_data: { start: new Date(0, 0, 0), end: null },
@@ -379,6 +393,9 @@ var commonService = new CommonService();
                 });
 
                 this.sel_car = null;
+                this.pickable = false;
+                this.cancellable = false;
+                this.reschedulable = false;
             },
             resetFilter() {
                 EventBus.$emit('reset-scheduling-filter');
@@ -390,6 +407,9 @@ var commonService = new CommonService();
                     this.submit_pickup = false;
                     this.pickup_date = null;
                     this.editable = false;
+                    this.cancellable = false;
+                    this.reschedulable = false;
+                    this.pickable = false;
                     this.date_range = this.calendar_enabled_data;
                     if (this.sel_car.Stage == this.scheduled_string || this.sel_car.Stage == this.pickedup_string) {
                         // let date = new Date(this.sel_car.Scheduled_Time);
@@ -465,6 +485,7 @@ var commonService = new CommonService();
             },
             submitSchedule() {
                 // if (!this.pickup_date) return alert('Please select a schedule date');
+                if (this.date == "" || this.time == "") return alert('Please choose date and time!');
                 let loader = this.$loading.show();
                 var self = this;
                 this.axios
