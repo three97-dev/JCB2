@@ -63,7 +63,7 @@
                 </div>
                 <div class="car-right-content col-md-4" v-if="!is_mobile_view || (is_mobile_view && sel_car)">
                     <div class="title-header">
-                        <a href="javascript:;" class="btn-close-car-detail" :class="{opacityTo1: (sel_car&&(!cancellable&&!reschedulable))}" v-on:click="cancellable=!cancellable">
+                        <a href="javascript:;" class="btn-close-car-detail" :class="{opacityTo1: (sel_car&&sel_car.Stage!=pickedup_string&&!reschedulable&&!pickable&&(!cancellable&&!reschedulable))}" v-on:click="cancellable=!cancellable">
                             <span class="mif-cancel"></span> Cancel Pickup
                         </a>
                     </div>
@@ -242,10 +242,11 @@
 
                     </div>
                     <div class="pages-action">
-                        <select @change="changeItemCount" v-model="records_per_page">
+                        <!-- <select @change="changeItemCount" v-model="records_per_page">
                             <option v-for="item in countPerPageArray" :value="item" :key="item">{{item}} items</option>
                         </select>
-                        &nbsp;&nbsp;Per Page:
+                        &nbsp;&nbsp;Per Page: -->
+                        {{records_per_page}} items Per Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -325,7 +326,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
-            this.records_per_page = this.countPerPageArray[0];
+            // this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-schedulings-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];

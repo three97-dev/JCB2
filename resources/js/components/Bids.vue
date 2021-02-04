@@ -147,10 +147,7 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        <select @change="changeItemCount" v-model="records_per_page">
-                            <option v-for="item in countPerPageArray" :value="item" :key="item">{{item}} items</option>
-                        </select>
-                        &nbsp;&nbsp;Page:
+                        {{records_per_page}} items Per Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -180,7 +177,7 @@ var commonService = new CommonService();
             return {
                 cars: [],
                 page: 1,
-                records_per_page: 8,
+                records_per_page: 10,
                 total: '-',
                 valid_pages: [],
                 filter_param: {},
@@ -194,7 +191,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
-            this.records_per_page = this.countPerPageArray[0];
+            // this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-bid-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];

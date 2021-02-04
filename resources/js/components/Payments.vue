@@ -29,25 +29,25 @@
                             <input type="checkbox" v-model="checked_all" v-on:change="checkAll(true)">&nbsp;Status
                         </div>
                         <div class="title">Ref#</div>
+                        <div class="title">Dispatched Date</div>
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
-                        <div class="title">Dispatched Date</div>
                         <div class="title">Amount Due</div>
                     </div>
                     <div class="car-body">
                         <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': car.is_checked == true}">
                             <div class="item-data">
                                 <input type="checkbox" style="margin-top: 4px;" v-model="car.is_checked" v-on:change="checkAll()" :disabled="car.Stage == 'Paid'">&nbsp;
-                                <div v-if="car.Stage=='Paid'" class="status-fail"> Paid </div>
-                                <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> Unpaid </div>
+                                <div v-if="car.Stage=='Paid'" class="status-fail"> PAID </div>
+                                <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> UNPAID </div>
                                 <div v-if="car.Stage=='Picked Up'" class="status-active"> OVERDUE </div>
                             </div>
                             <div class="item-data">{{ car.Reference_Number }}</div>
+                            <div class="item-data">{{ car.Closing_Date | changeDateFormat }}</div>
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
-                            <div class="item-data">{{ car.Closing_Date | changeDateFormat }}</div>
                             <div class="item-data text-center">{{ toCurrency(car.Profit) }}</div>
 
                             <div class="mobile-item item-data"  v-on:click="showDetail(car)">
@@ -140,10 +140,11 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        <select @change="changeItemCount" v-model="records_per_page">
+                        <!-- <select @change="changeItemCount" v-model="records_per_page">
                             <option v-for="item in countPerPageArray" :value="item" :key="item">{{item}} items</option>
                         </select>
-                        &nbsp;&nbsp;Per Page:
+                        &nbsp;&nbsp;Per Page: -->
+                        {{records_per_page}} items Per Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -172,7 +173,7 @@ var commonService = new CommonService();
             return {
                 cars: [],
                 page: 1,
-                records_per_page: 8,
+                records_per_page: 10,
                 total: '-',
                 valid_pages: [],
                 filter_param: {},
@@ -213,7 +214,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
-            this.records_per_page = this.countPerPageArray[0];
+            // this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-payments-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
