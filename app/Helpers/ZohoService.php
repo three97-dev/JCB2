@@ -193,7 +193,7 @@ class ZohoSerivce {
         return $resp;
     }
 
-    public function scheduleTime($car_id, $scheduleTime, $pickup = false) {
+    public function scheduleTime($car_id, $scheduleTime, $note, $pickup = false) {
         $moduleAPIName = "Deals";
         $recordId =$car_id;
         $recordOperations = new RecordOperations();
@@ -202,6 +202,7 @@ class ZohoSerivce {
         $record1 = new Record();
         $record1->setId($recordId);
         $record1->addKeyValue('Scheduled_Time', $scheduleTime);
+        $record1->addKeyValue('Scheduled_Note', $note);
         if($pickup) $record1->addKeyValue('Stage', new Choice("Picked Up"));
         else $record1->addKeyValue('Stage', new Choice("Scheduled For Pick Up"));
         $records[] = $record1;

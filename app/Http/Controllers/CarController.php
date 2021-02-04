@@ -178,7 +178,12 @@ class CarController extends Controller
             }
         } elseif ($request->page_type == 'schedulings') {
             $select[] = 'Scheduled_Time';
+            $select[] = 'Scheduled_Note';
             $select[] = 'CUSTOMERS_QUOTE';
+            $select[] = 'Deal_Name';
+            $select[] = 'State';
+            $select[] = 'Street';
+            $select[] = 'Phone';
 
             $query = Car::where(function($sub_query) {
                             $sub_query->where('Stage', 'Picked Up');
@@ -445,7 +450,8 @@ class CarController extends Controller
 
         $zohoService = new ZohoSerivce();
         $now = new \DateTime($request->Scheduled_Time);
-        $schedule = $zohoService->scheduleTime($id, $now);
+        $note = $request->Scheduled_Note;
+        $schedule = $zohoService->scheduleTime($id, $now, $note);
 
         return json_encode(array('res' => 'success'));
     }
@@ -454,7 +460,8 @@ class CarController extends Controller
 
         $zohoService = new ZohoSerivce();
         $now = new \DateTime($request->Scheduled_Time);
-        $pick = $zohoService->scheduleTime($id, $now, true);
+        $note = $request->Scheduled_Note;
+        $pick = $zohoService->scheduleTime($id, $now, $note, true);
 
         return json_encode(array('res' => 'success'));
     }

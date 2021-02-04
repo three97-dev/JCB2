@@ -38,9 +38,9 @@
                         <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': car.is_checked == true}">
                             <div class="item-data">
                                 <input type="checkbox" style="margin-top: 4px;" v-model="car.is_checked" v-on:change="checkAll()" :disabled="car.Stage == 'Paid'">&nbsp;
-                                <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
+                                <div v-if="car.Stage=='Paid'" class="status-fail"> Paid </div>
                                 <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> Unpaid </div>
-                                <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
+                                <div v-if="car.Stage=='Picked Up'" class="status-active"> OVERDUE </div>
                             </div>
                             <div class="item-data">{{ car.Reference_Number }}</div>
                             <div class="item-data">{{ car.Year }}</div>
@@ -54,9 +54,9 @@
                                     <div>{{car.City}} &nbsp;&nbsp; {{car.Zip_Code}}</div>
                                     <div style="display:flex;justify-content:space-between;">
                                         <div class="text-blue">{{car.Profit}}</div>
-                                        <div v-if="car.Stage=='Paid'" class="status-active"> Paid </div>
+                                        <div v-if="car.Stage=='Paid'" class="status-fail"> Paid </div>
                                         <div v-if="car.Stage=='Scheduled For Pick Up'" class="status-won"> Unpaid </div>
-                                        <div v-if="car.Stage=='Picked Up'" class="status-fail"> Overdue </div>
+                                        <div v-if="car.Stage=='Picked Up'" class="status-active"> OVERDUE </div>
                                     </div>
                                 </div>
                             </div>
