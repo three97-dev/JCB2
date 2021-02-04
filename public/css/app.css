@@ -15883,6 +15883,7 @@ body {
 #PaymentsPage .car-content .car-left-content .car-item .item-data .status-won,
 #PaymentsPage .car-content .car-left-content .car-item .item-data .status-fail {
   color: #363636;
+  width: 120px;
 }
 
 #PaymentsPage .car-content .car-left-content .car-item .item-data .status-active {
