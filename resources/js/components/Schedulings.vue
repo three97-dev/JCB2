@@ -116,14 +116,14 @@
                             <div class="title padding-0 margin-top-5">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
                             <hr class="margin-side-minus-30"/>
                             <div class="selcar-detail row">
-                                <div class="col-md-6 field-item">
+                                <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-up Location</div>
                                     <div class="item-value car-value" v-if="sel_car.Street">{{sel_car.Street}}</div>
                                     <div class="item-value car-value">{{sel_car.City}}</div>
                                     <div class="item-value car-value">{{sel_car.State}}</div>
                                     <div class="item-value car-value">{{sel_car.Zip_Code}}</div>
                                 </div>
-                                <div class="col-md-6 field-item">
+                                <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Vehicle Owner</div>
                                     <div class="item-value car-value">{{sel_car.Deal_Name}}</div>
                                     <div class="item-value car-value">{{sel_car.Phone}}</div>
@@ -131,13 +131,13 @@
                             </div>
                             <hr class="margin-side-minus-30"/>
                             <div class="row">
-                                <div class="col-md-6 field-item">
+                                <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-Up Date:</div>
                                     <input type="date" v-model="date" name="trip-start"
                                         class="item-value car-input-value" placeholder="Click to select a date"
                                         min="2018-01-01" :disabled="!editable">
                                 </div>
-                                <div class="col-md-6 field-item">
+                                <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-Up Time:</div>
                                     <input type="time" class="item-value car-input-value" v-model="time"  min="12:00" max="18:00"  placeholder="Click to select a time" :disabled="!editable">
                                 </div>
@@ -157,7 +157,7 @@
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== scheduled_string && editable">
                                 <button class="action-button none-styled-button float-left background-grey" @click="disableEdit">Cancel my edits</button>
-                                <button class="btn btn-primary action-button float-right" @click="reschedulable=!reschedulable">SAVE</button>
+                                <button class="btn btn-primary action-button float-right" @click="reSchedule">SAVE</button>
                             </div>
                             <div class="action-bar" v-if="sel_car.Stage== pickedup_string">
                                 <button class="btn btn-primary action-button float-right" @click="gotoPay()">PAY</button>
@@ -454,6 +454,14 @@ var commonService = new CommonService();
                     currency: "USD"
                 });
                 return formatter.format(value).replace("$", "$ ");
+            },
+            reSchedule() {
+                if(this.date == "" || this.time == "") {
+                    alert('Please choose date and time!');
+                    return;
+                }
+
+                this.reschedulable = true;
             },
             submitSchedule() {
                 // if (!this.pickup_date) return alert('Please select a schedule date');
