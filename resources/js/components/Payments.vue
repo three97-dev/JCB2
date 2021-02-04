@@ -32,6 +32,7 @@
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
+                        <div class="title">Dispatched Date</div>
                         <div class="title">Amount Due</div>
                     </div>
                     <div class="car-body">
@@ -46,6 +47,7 @@
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
+                            <div class="item-data">{{ car.Closing_Date | changeDateFormat }}</div>
                             <div class="item-data text-center">{{ toCurrency(car.Profit) }}</div>
 
                             <div class="mobile-item item-data"  v-on:click="showDetail(car)">
@@ -198,11 +200,13 @@ var commonService = new CommonService();
             }
         },
         filters: {
-            dateFormatChange: function(val) {
-                var arr = val.split('-');
-                return arr.reverse().join('/');
-            }
-
+            changeDateFormat: function(closing_date) {
+                if(closing_date) {
+                    var val=closing_date.split('-');
+                    return val[1] + "/" + val[2] + "/" + val[0];
+                }
+                return "";
+            },
         },
         computed: {
 
