@@ -132,23 +132,29 @@
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-up Location</div>
                                     <div class="item-value car-value" v-if="sel_car.Street">{{sel_car.Street}}</div>
-                                    <div class="item-value car-value">{{sel_car.City}}</div>
-                                    <div class="item-value car-value">{{sel_car.State}}</div>
+                                    <div class="item-value car-value">{{sel_car.City}} {{sel_car.State}}</div>
                                     <div class="item-value car-value">{{sel_car.Zip_Code}}</div>
                                 </div>
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Vehicle Owner</div>
                                     <div class="item-value car-value">{{sel_car.Deal_Name}}</div>
                                     <div class="item-value car-value">{{sel_car.Phone}}</div>
+                                    <div class="item-value car-value">{{sel_car.Alt_Phone}}</div>
                                 </div>
                             </div>
                             <hr class="margin-side-minus-30"/>
                             <div class="row">
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-Up Date:</div>
-                                    <input type="date" v-model="date" name="trip-start"
-                                        class="item-value car-input-value" placeholder="Click to select a date"
-                                        min="2018-01-01" :disabled="!editable">
+                                    <div class="w-100 position-relative">
+                                        <input type="date" v-model="date" name="trip-start"
+                                            class="item-value car-input-value" ref="datepicker" placeholder="Click to select a date"
+                                            min="2018-01-01" :disabled="!editable">
+                                        <!-- <button name="trip-start" class="item-value car-input-value replaceButton" :disabled="!editable" @click="triggerInput('datepicker')">
+                                            {{date || "Click to select a date"}}
+                                        </button> -->
+                                    </div>
+
                                 </div>
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-Up Time:</div>
@@ -592,4 +598,17 @@ var commonService = new CommonService();
 .btn-danger {
     background-color: #e3342f;
 }
+input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
 </style>

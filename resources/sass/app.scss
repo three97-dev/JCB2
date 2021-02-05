@@ -1224,6 +1224,19 @@ body {
     opacity: 1 !important;
 }
 
+.opacityTo0 {
+    opacity: 0 !important;
+}
+
+.replaceButton {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    text-align: left;
+    z-index: 2;
+    background: #fff !important;
+}
+
 .uppercase {
     text-transform: uppercase;
 }

@@ -184,6 +184,7 @@ class CarController extends Controller
             $select[] = 'State';
             $select[] = 'Street';
             $select[] = 'Phone';
+            $select[] = 'Alt_Phone';
 
             $query = Car::where(function($sub_query) {
                             $sub_query->where('Stage', 'Picked Up');

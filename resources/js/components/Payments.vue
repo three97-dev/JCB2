@@ -469,7 +469,8 @@ var commonService = new CommonService();
                     that.submit_payment1= false;
                     loader.hide();
                     if (result.error) {
-                        console.log('payment error' + result.error.message);
+                        // console.log('payment error' + result.error.message);
+                        alert("Card Information isn't correct!");
                     } else {
                         if (result.paymentIntent.status === 'succeeded') {
                             console.log('payment success');
