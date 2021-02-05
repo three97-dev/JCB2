@@ -167,6 +167,7 @@ class ZohoSerivce {
             $record1 = new Record();
             $record1->setId($recordId);
             $record1->addKeyValue('Stage', new Choice("Paid"));
+            $record1->addKeyValue('Paid', true);
             $records[] = $record1;
         }
         $body->setData($records);
