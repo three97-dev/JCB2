@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                             <div class="action-bar">
-                                <button class="btn btn-primary action-button float-right" @click="massPickup()">MARK AS PICKED UP</button>
+                                <button class="btn btn-primary action-button float-right" @click="massPickup()">PICKED UP</button>
                             </div>
                         </div>
 
