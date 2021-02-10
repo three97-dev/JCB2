@@ -475,6 +475,19 @@ class CarController extends Controller
         return json_encode(array('res' => 'success'));
     }
 
+    public function pickupMass(Request $request) {
+        $arr = $request->cars;
+        $zohoService = new ZohoSerivce();
+
+        $now = new \DateTime();
+
+
+        // change in crm deals
+        $deals = $zohoService->pickupMass($arr, $now);
+
+        return json_encode(array('res' => "success"));
+    }
+
     public function pay(Request $request) {
         $arr = $request->cars;
         $zohoService = new ZohoSerivce();
