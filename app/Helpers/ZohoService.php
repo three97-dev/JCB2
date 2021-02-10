@@ -177,6 +177,26 @@ class ZohoSerivce {
         return $resp;
     }
 
+    public function pickupMass($car_arr, $now) {
+        $moduleAPIName = "Deals";
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+        foreach($car_arr as $key =>$car) {
+            $recordId =$car["id"];
+            $record1 = new Record();
+            $record1->setId($recordId);
+            $record1->addKeyValue('Stage', new Choice("Picked Up"));
+            $record1->addKeyValue('Scheduled_Time', $now);
+            $records[] = $record1;
+        }
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+        $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+        return $resp;
+    }
+
     public function cancel($car_id) {
         $moduleAPIName = "Deals";
         $recordId =$car_id;

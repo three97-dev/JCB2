@@ -24,7 +24,9 @@
             <div class="car-content">
                 <div class="car-left-content col-md-8">
                     <div class="title-header">
-                        <div class="title">Status</div>
+                        <div class="title">
+                            <input type="checkbox" v-model="checked_all" v-on:change="checkAll(true)" v-show="existingAnycar">&nbsp;Status
+                        </div>
                         <div class="title">Ref#</div>
                         <div class="title">Year</div>
                         <div class="title">Make</div>
@@ -34,6 +36,7 @@
                     <div class="car-body">
                         <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': sel_car && car.id == sel_car.id}" @click="showDetail(car)">
                             <div class="item-data">
+                                <input type="checkbox" style="margin-top: 4px;" v-model="car.is_checked" v-on:change="checkAll()" :disabled="car.Stage == 'Picked Up'">&nbsp;
                                 <div v-if="car.Stage == 'Dispatched'" class="status-active uppercase">Unscheduled </div>
                                 <div v-if="car.Stage == scheduled_string" class="status-won uppercase">Scheduled </div>
                                 <div v-if="car.Stage == pickedup_string" class="status-fail uppercase">Picked-Up </div>
@@ -63,11 +66,28 @@
                 </div>
                 <div class="car-right-content col-md-4" v-if="!is_mobile_view || (is_mobile_view && sel_car)">
                     <div class="title-header">
-                        <a href="javascript:;" class="btn-close-car-detail" :class="{opacityTo1: (sel_car&&sel_car.Stage!=pickedup_string&&!reschedulable&&!pickable&&(!cancellable&&!reschedulable))}" v-on:click="cancellable=!cancellable">
+                        <a href="javascript:;" class="btn-close-car-detail" :class="{opacityTo1: (sel_car&&sel_car.Stage!=pickedup_string&&!reschedulable&&!pickable&&(!cancellable&&!reschedulable)&&!pickup_count)}" v-on:click="cancellable=!cancellable">
                             <span class="mif-cancel"></span> Cancel Pickup
                         </a>
                     </div>
                     <div class="car-detail">
+
+                        <div class="selcar-content" v-if="pickup_count">
+                            <div class="title padding-0 margin-top-5 go-back" v-on:click="statusInitialise()">
+                                <span class="mif-arrow-left"></span>
+                                <div class="narrate-label">No thanks, take me back.</div>
+                            </div>
+                            <div class="submit-content">
+                                <div class="cancel-header">You have selected for pickup:</div>
+                                <div class="cancel-content">
+                                    {{pickup_count}} Vehicles
+                                </div>
+                            </div>
+                            <div class="action-bar">
+                                <button class="btn btn-primary action-button float-right" @click="massPickup()">MARK AS PICKED UP</button>
+                            </div>
+                        </div>
+
                         <div class="empty-content" v-if="!sel_car">
                             Click a list item to view details
                         </div>
@@ -95,6 +115,8 @@
                                 <button class="btn btn-primary action-button float-right" @click="submitCancel()">YES, CANCEL</button>
                             </div>
                         </div>
+
+
 
                         <div class="selcar-content" v-if="sel_car && reschedulable">
                             <div class="title padding-0 margin-top-5 go-back" v-on:click="reschedulable=!reschedulable">
@@ -125,7 +147,7 @@
                             </div>
                         </div>
 
-                        <div class="selcar-content" :class="{'background-grey': !editable}" v-if="sel_car && !submit_pickup">
+                        <div class="selcar-content" :class="{'background-grey': !editable}" v-if="sel_car && !submit_pickup && !pickup_count">
                             <div class="title padding-0 margin-top-5">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
                             <hr class="margin-side-minus-30"/>
                             <div class="selcar-detail row">
@@ -138,23 +160,17 @@
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Vehicle Owner</div>
                                     <div class="item-value car-value">{{sel_car.Deal_Name}}</div>
-                                    <div class="item-value car-value">{{sel_car.Phone}}</div>
-                                    <div class="item-value car-value">{{sel_car.Alt_Phone}}</div>
+                                    <div class="item-value car-value">{{sel_car.Phone | phoneNumberFormat}}</div>
+                                    <div class="item-value car-value">{{sel_car.Alt_Phone | phoneNumberFormat}}</div>
                                 </div>
                             </div>
                             <hr class="margin-side-minus-30"/>
                             <div class="row">
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-Up Date:</div>
-                                    <div class="w-100 position-relative">
-                                        <input type="date" v-model="date" name="trip-start"
-                                            class="item-value car-input-value" ref="datepicker" placeholder="Click to select a date"
-                                            min="2018-01-01" :disabled="!editable">
-                                        <!-- <button name="trip-start" class="item-value car-input-value replaceButton" :disabled="!editable" @click="triggerInput('datepicker')">
-                                            {{date || "Click to select a date"}}
-                                        </button> -->
-                                    </div>
-
+                                    <input type="date" v-model="date" name="trip-start"
+                                        class="item-value car-input-value" ref="datepicker" placeholder="Click to select a date"
+                                        min="2018-01-01" :disabled="!editable">
                                 </div>
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-Up Time:</div>
@@ -297,6 +313,7 @@ var commonService = new CommonService();
                 editable: false,
                 cancellable: false,
                 reschedulable: false,
+                pickup_count: 0,
                 pickable: false,
                 date_range: null,
                 calendar_disabled_data: { start: null, end: new Date(0, 0, 0) },
@@ -309,7 +326,8 @@ var commonService = new CommonService();
                 date: "",
                 time: '09:00',
                 temp_date: "",
-                temp_time: ""
+                temp_time: "",
+                checked_all: false,
             }
         },
         computed: {
@@ -322,12 +340,27 @@ var commonService = new CommonService();
                         dates: this.pickup_date.date,
                 }]
             },
+            existingAnycar() {
+                var pickup_count = 0;
+                this.cars.map(car => {
+                    if(car.Stage != "Picked Up") pickup_count++;
+                })
+                if(pickup_count) return true;
+                else return false;
+            }
         },
         filters: {
             unscheduledAmount: function(arr) {
                 var unscheduled_string = "Dispatched";
                 var un_arr = arr.filter(car=> car.Stage== unscheduled_string)
                 return un_arr.length;
+            },
+            phoneNumberFormat: function(phone) {
+                if(!phone || phone == "") return null;
+                var phoneNumber = String(phone);
+                phoneNumber = [phoneNumber.slice(0, 3), '-', phoneNumber.slice(3)].join('');
+                phoneNumber = [phoneNumber.slice(0, 7), '-', phoneNumber.slice(7)].join('');
+                return phoneNumber;
             }
         },
         created() {
@@ -349,6 +382,16 @@ var commonService = new CommonService();
         methods: {
             changeItemCount() {
                 this.refreshPage();
+            },
+            statusInitialise() {
+                this.cars.forEach(one => {if(one.Stage != "Picked Up") one.is_checked = false});
+                this.pickup_count = 0;
+                this.sel_car = null;
+                this.cancellable = false;
+                this.editable = false;
+                this.reschedulable = false;
+                this.pickable = false;
+                this.checked_all = false;
             },
             refreshPage(page) {
                 if (!page) page = this.page;
@@ -407,8 +450,34 @@ var commonService = new CommonService();
             resetFilter() {
                 EventBus.$emit('reset-scheduling-filter');
             },
-            showDetail(car) {
+            checkAll(force = false) {
                 this.sel_car = null;
+                if (force) {
+                    this.cars.forEach(one => {if(one.Stage != "Picked Up") one.is_checked = this.checked_all})
+                } else {
+                    this.checked_all = this.cars.filter(one => one.Stage != "Picked Up").length == this.cars.filter(one => one.is_checked).length;
+
+                }
+                var pickup_count = 0;
+                this.cars.map(car => {
+                    if(car.is_checked) pickup_count++;
+                })
+                this.pickup_count = pickup_count;
+                console.log(pickup_count);
+            },
+            showDetail(car) {
+                setTimeout(() => {
+                    var pickup_count = 0;
+                    this.cars.map(car => {
+                        if(car.is_checked) pickup_count++;
+                    })
+
+                    this.sel_car = null;
+                    if(pickup_count) {
+                        this.pickup_count = pickup_count;
+                        return;
+                    }
+                }, 200);
                 setTimeout(() => {
                     this.sel_car = car;
                     this.submit_pickup = false;
@@ -443,37 +512,8 @@ var commonService = new CommonService();
                         this.sel_car.Scheduled_Note = "";
                     }
                     this.schedule_note = this.sel_car.Scheduled_Note;
-                }, 300);
+                }, 500);
             },
-            // showDetail(car) {
-            //     this.sel_car = null;
-            //     setTimeout(() => {
-            //         this.sel_car = car;
-            //         this.submit_pickup = false;
-            //         this.pickup_date = null;
-            //         this.editable = false;
-            //         this.date_range = this.calendar_enabled_data;
-            //         if (this.sel_car.Stage == this.scheduled_string || this.sel_car.Stage == this.pickedup_string) {
-            //             let date = new Date(this.sel_car.Scheduled_Time);
-            //             this.pickup_date = {
-            //                 id: this.sel_car.Scheduled_Time,
-            //                 date,
-            //             }
-            //             var dateTime = car.Scheduled_Time;
-            //             var time = dateTime.split('T')[1];
-            //             if(time && time != "") {
-            //                 var time_arr = time.split(':');
-            //                 this.time = time_arr[0] + ":" + time_arr[1];
-            //             }
-
-            //             this.date_range = this.calendar_disabled_data;
-            //         }
-            //         else {
-            //             this.editable = true;
-            //         }
-            //         this.schedule_note = this.sel_car.Scheduled_Note;
-            //     }, 300);
-            // },
             toCurrency: function(value) {
                 if(!value) return "";
                 var formatter = new Intl.NumberFormat("en-US", {
@@ -508,6 +548,7 @@ var commonService = new CommonService();
                         this.reschedulable = false;
                         this.editable = false;
                         this.refreshPage();
+
                 }).catch((error) => {
                     loader.hide();
                     var status = error.response.status;
@@ -551,6 +592,31 @@ var commonService = new CommonService();
                     }
                 });
             },
+            massPickup() {
+                let loader = this.$loading.show();
+                var arr = [];
+                this.cars.map(car => {
+                    if(car.is_checked) arr.push(car);
+                });
+
+                this.axios
+                    .post(`/api/car/pickupMass`, { cars: arr }, commonService.get_api_header())
+                    .then(response => {
+                        loader.hide();
+                        this.statusInitialise();
+                        this.refreshPage();
+                }).catch((error) => {
+                    loader.hide();
+                    var status = error.response.status;
+                    if (status == 401) {
+                        commonService.logout();
+                        this.$router.push('login');
+                    } else {
+                        alert('Api request error');
+                    }
+                });
+            },
+
             submitCancel() {
                 let loader = this.$loading.show();
                 this.axios
@@ -610,5 +676,11 @@ input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webk
     top: 0;
     width: auto;
 }
+#SchedulingPage {
+    .status-won, .status-active, .status-fail {
+        margin-left: 0;
+    }
+}
 
 </style>
+
