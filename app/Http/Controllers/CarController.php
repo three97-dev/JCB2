@@ -208,7 +208,7 @@ class CarController extends Controller
             $select[] = 'Profit';
             $query = Car::where(function($sub_query) {
                 $sub_query->where('Stage', 'Paid');
-                $sub_query->orwhere('Stage', 'Scheduled For Pick Up');
+                // $sub_query->orwhere('Stage', 'Scheduled For Pick Up');
                 $sub_query->orwhere('Stage', 'Picked Up');
                 return $sub_query;
             });
