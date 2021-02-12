@@ -542,6 +542,7 @@ class CarController extends Controller
         $Invoice = $this->createInvoice([
             'customer_id' => $BooksCustomer['contact_id'],
             'line_items' => $InvoiceItems,
+            'status' => "Paid",
             'custom_fields' => [
                 [
                     'label' => 'Amount Owed to Junk Car Boys:',
