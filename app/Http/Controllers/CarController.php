@@ -557,11 +557,31 @@ class CarController extends Controller
             ]
         ]);
 
+        if($Invoice['code'] == 0) {
+            $invoice = $Invoice['invoice'];
+            $payment_data = array(
+                'customer_id' => $invoice['customer_id'],
+                'payment_mode' => "creditcard",
+                'amount' => $invoice['balance'],
+                'date' => $invoice['created_date'],
+                'invoices' => [
+                    array(
+                        "invoice_id" => $invoice['invoice_id'],
+                        "amount_applied" => $invoice['balance']
+                    )
+                ],
+            );
+
+            $Payment = $this->createPayment($payment_data);
+
+            return json_encode(array('res' => "success"));
+        }
+
         // var_dump($BooksCustomer);
         // var_dump($Invoice);
 
 
-        return json_encode(array('res' => "success"));
+        return json_encode(array('res' => "fail"));
     }
 
 
@@ -701,6 +721,24 @@ class CarController extends Controller
     {
         try {
             $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'invoices?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
+                'json' => $Data,
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            return json_decode($JSON, true);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $er = $e->getResponse()->getBody()->getContents();
+            print_r(json_decode($er));
+            return false;
+        }
+    }
+
+    private function createPayment($Data)
+    {
+        try {
+            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'customerpayments?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
                 'json' => $Data,
                 'headers' => [
                     'Authorization' => $this->ZohoBooksAccessToken

@@ -196,7 +196,7 @@ var commonService = new CommonService();
                 preventPayButton: true,
                 initPreventPay: true,
                 initialized: false,
-                stripeApiKey: 'pk_live_ALwf4Vu327m7ddpZqB4Rt7bD',
+                stripeApiKey: process.env.MIX_Stripe_Api_PublishKey,
                 countPerPageArray: [8, 9, 10],
             }
         },
