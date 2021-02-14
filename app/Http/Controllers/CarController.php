@@ -572,9 +572,17 @@ class CarController extends Controller
                 ],
             );
 
+
+
+
+
             $Payment = $this->createPayment($payment_data);
 
-            return json_encode(array('res' => "success"));
+            $email_address = Auth::user()->email;
+
+            $send_email = $this->sendInvoice($invoice['invoice_id'], $email_address);
+
+            return json_encode(array('res' => $send_email));
         }
 
         // var_dump($BooksCustomer);
@@ -740,6 +748,26 @@ class CarController extends Controller
         try {
             $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'customerpayments?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
                 'json' => $Data,
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            return json_decode($JSON, true);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $er = $e->getResponse()->getBody()->getContents();
+            print_r(json_decode($er));
+            return false;
+        }
+    }
+
+    private function sendInvoice($invoice_id, $email)
+    {
+        try {
+            $Request = (new Client())->post(env('ZOHO_BOOKS_API_URI').'invoices/'.$invoice_id.'/email?organization_id='.env('ZOHO_ORGANIZATION_ID'), [
+                'json' => array(
+                    "to_mail_ids"=> array($email)
+                ),
                 'headers' => [
                     'Authorization' => $this->ZohoBooksAccessToken
                 ]
