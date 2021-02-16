@@ -229,6 +229,7 @@ var commonService = new CommonService();
         mounted() {
             this.refreshPage(1);
             const stripeApiKey = this.stripeApiKey;
+            console.log(stripeApiKey);
             let stripeScript = document.createElement('script');
             stripeScript.setAttribute('src', 'https://js.stripe.com/v3/');
             stripeScript.onload = () => {
