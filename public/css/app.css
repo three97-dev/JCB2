@@ -16018,6 +16018,101 @@ body {
   background: #A3D5F280;
 }
 
+#ReportsPage .page-header {
+  background: transparent url("/img/car-header.png") 0% 0% no-repeat padding-box;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) {
+  padding: 20px 20px 0 20px;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content {
+  height: calc(100vh - 379px);
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card {
+  height: calc(100% - 20px);
+  background: #FFFFFF;
+  box-shadow: 0px 10px 10px #00000026;
+  border-radius: 10px;
+  text-align: center;
+  padding: 30px 0;
+  width: 100%;
+  position: relative;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-more {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  font-size: 20px;
+  color: #37394C;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-header,
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer {
+  background-color: white;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-header {
+  font: normal normal bold 23px/28px Lato;
+  letter-spacing: 0px;
+  color: #37394C;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-header .chart {
+  padding: 50px 0;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-body {
+  padding: 2.5rem 1.25rem;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-body .body-left {
+  font: normal normal bold 16px/19px Lato;
+  letter-spacing: 0px;
+  color: #354052;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-body .body-right {
+  font: normal normal bold 16px/19px Lato;
+  letter-spacing: 0px;
+  color: #31AEED;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer {
+  font: normal normal normal 16px/19px Lato;
+  letter-spacing: 0.11px;
+  color: #5E6E7B;
+  padding-top: 60px;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer div.row div.col-6 div {
+  padding: 5px 0;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer .left-content {
+  color: #F0166D;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer .right-content {
+  color: #3F495B;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer .space-content {
+  margin-top: 30px;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer .padding-bottom-5 {
+  padding-bottom: 5px;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer .border-right {
+  border-right: 1px solid #DCDFEF;
+}
+
 .ElementsApp input {
   font-size: 14px;
   border: none;
@@ -16369,5 +16464,13 @@ body {
 
 .margin-0 {
   margin: 0 !important;
+}
+
+.padding-left-0 {
+  padding-left: 0;
+}
+
+.padding-right-0 {
+  padding-right: 0;
 }
 

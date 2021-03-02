@@ -1040,6 +1040,101 @@ body {
 
 
 }
+
+#ReportsPage {
+    .page-header {
+        background: transparent url('/img/car-header.png') 0% 0% no-repeat padding-box;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+    .page-content-block-wrapper:nth-child(2) {
+        padding: 20px 20px 0 20px;
+        .car-content {
+            height: calc(100vh - 379px);
+            .white-card {
+                height: calc(100% - 20px);
+                background: #FFFFFF;
+                box-shadow: 0px 10px 10px #00000026;
+                border-radius: 10px;
+                text-align: center;
+                padding: 30px 0;
+                width: 100%;
+                position: relative;
+                .card-more {
+                    position: absolute;
+                    top: 10px;
+                    right: 5px;
+                    font-size: 20px;
+                    color: #37394C;
+                }
+                .card-header, .card-footer {
+                    background-color: white;
+                }
+                .card-header {
+                    font: normal normal bold 23px/28px Lato;
+                    letter-spacing: 0px;
+                    color: #37394C;
+                    .chart {
+                        padding: 50px 0;
+                    }
+                }
+                .card-body {
+                    padding: 2.5rem 1.25rem;
+                    .body-left {
+                        font: normal normal bold 16px/19px Lato;
+                        letter-spacing: 0px;
+                        color: #354052;
+                    }
+                    .body-right {
+                        font: normal normal bold 16px/19px Lato;
+                        letter-spacing: 0px;
+                        color: #31AEED;
+                    }
+                }
+                .card-footer {
+                    font: normal normal normal 16px/19px Lato;
+                    letter-spacing: 0.11px;
+                    color: #5E6E7B;
+                    padding-top: 60px;
+                    div.row {
+                        div.col-6 {
+
+                            div {
+                                padding: 5px 0;
+                            }
+                        }
+                    }
+                    .left-content {
+                        color: #F0166D;
+                    }
+                    .right-content {
+                        color: #3F495B;
+                    }
+                    .space-content {
+                        margin-top: 30px;
+                    }
+                    .padding-bottom-5 {
+                        padding-bottom: 5px;
+                    }
+                    .border-right {
+                        border-right: 1px solid #DCDFEF;
+                    }
+                }
+            }
+            // .white-card:nth-child(1) {
+            //     margin-right: 10px;
+            // }
+            // .white-card:nth-child(2), .white-card:nth-child(3) {
+            //     margin-left: 5px;
+            //     margin-right: 5px;
+            // }
+            // .white-card:nth-child(4) {
+            //     margin-left: 10px;
+            // }
+        }
+    }
+
+}
 .ElementsApp input  {
     font-size: 14px;
     border:none;
@@ -1354,4 +1449,11 @@ body {
 
 .margin-0 {
     margin: 0 !important;
+}
+
+.padding-left-0 {
+    padding-left: 0;
+}
+.padding-right-0 {
+    padding-right: 0;
 }
