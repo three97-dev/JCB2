@@ -264,7 +264,7 @@ var commonService = new CommonService();
 
                 var elementStyles = {
                     base: {
-                        fontSize: '14px',
+                        // fontSize: '14px',
                         border:"none",
                         borderBottom: "1px solid #269A8E",
                         fontWeight: 500,

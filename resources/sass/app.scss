@@ -948,20 +948,22 @@ body {
                 padding: 10px 20px;
                 background:white;
                 height: 100%;
+                overflow-y: scroll;
                 .title {
                     text-align: center;
                     padding: 0 30px;
                     font: normal normal bold 28px/32px Lato;
                 }
                 .selcar-detail {
-                    height: calc(100% - 107px);
+                    min-height: calc(100% - 107px);
+
                 }
                 .field-item {
                     margin: 10px 0;
                     .item-label {
                         // color: #1A173B;
                         // font-size: 18px;
-                        font: normal normal normal 18px/22px Lato;
+                        font: normal normal normal 1rem/22px Lato;
                         letter-spacing: 0.12px;
                         // color: #25A394;
                     }
@@ -1456,4 +1458,8 @@ body {
 }
 .padding-right-0 {
     padding-right: 0;
+}
+
+.ElementsApp input {
+    -webkit-animation: unset !important;
 }
