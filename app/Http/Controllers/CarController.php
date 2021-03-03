@@ -23,6 +23,7 @@ use Psr\Cache;
 class CarController extends Controller
 {
     private $ZohoBooksAccessToken;
+    // private $ZohoAnalyticsApiSetting = '?ZOHO_OUTPUT_FORMAT=JSON&ZOHO_ERROR_FORMAT=JSON&ZOHO_API_VERSION=1.0&ZOHO_ACTION=';
     function __construct() {
         // if (!isset($this->ZohoBooksAccessToken)) {
             $AccessToken = $this->getZohoBooksAccessToken();
@@ -346,7 +347,7 @@ class CarController extends Controller
             }
         else $car_arr = array();
 
-        return ['total' => count($car_arr),  'data' => $car_arr, 'user'=> Auth::user()];
+        return ['total' => count($car_arr),  'data' => $car_arr, 'user'=> Auth::user(), 'report' => $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - Last 30 Days", "EXPORT")];
     }
 
     private function getCities($user, $distance) {
@@ -924,5 +925,28 @@ class CarController extends Controller
         }
     }
 
+    public function getReportData($workspace, $view, $action) {
+        $url = env('ZOHO_ANALYTICS_API_URI', 'https://analyticsapi.zoho.com/api/joel@junkcarboys.com/').$workspace."/".$view;
+        $url = str_replace(' ', '%20', $url);
+        // return $url;
+        try {
+            $Request = (new Client())->get($url, [
+                'query' => [
+                    'ZOHO_OUTPUT_FORMAT' => 'JSON',
+                    'ZOHO_ERROR_FORMAT' => 'JSON',
+                    'ZOHO_API_VERSION' => '1.0',
+                    'ZOHO_ACTION' => 'EXPORT',
+                ],
+                'headers' => [
+                    'Authorization' => $this->ZohoBooksAccessToken
+                ]
+            ]);
+            $JSON = $Request->getBody()->getContents();
+            // $Response = json_decode($JSON, true, 2);
+            return $JSON;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return false;
+        }
+    }
 
 }

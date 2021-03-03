@@ -351,6 +351,7 @@ var commonService = new CommonService();
             checkAll(force = false) {
                 if (force) {
                     this.cars.forEach(one => {if(one.Stage != "Paid") one.is_checked = this.checked_all})
+
                 } else {
                     this.checked_all = this.cars.length == this.cars.filter(one => one.is_checked).length;
                     if(this.cars.filter(one => one.is_checked).length) this.showDetail();
@@ -362,6 +363,10 @@ var commonService = new CommonService();
                 })
                 this.calculateTotal = this.toCurrency(amount);
                 this.submit_payment = false;
+                setTimeout(() => {
+                    this.initialize();
+                    this.initStripe();
+                }, 100);
             },
             refreshPage(page) {
                 if (!page) page = this.page;
@@ -405,6 +410,8 @@ var commonService = new CommonService();
                     for (let index = start_page; index <= end_page; index++) {
                         this.valid_pages.push(index);
                     }
+                    // var report = JSON.parse(JSON.stringify(JSON.parse(JSON.stringify(res_data.report))));
+                    // console.log(report)
                     this.checkAll();
                 }).catch((error) => {
                     loader.hide();
@@ -430,7 +437,7 @@ var commonService = new CommonService();
                     this.submit_payment = false;
                     this.initialize();
                     this.initStripe();
-                }, 200);
+                }, 100);
             },
             initialize() {
                 this.pay_info = {card_name: "", card_no: "", cvc: "", exp: ""};
