@@ -347,7 +347,16 @@ class CarController extends Controller
             }
         else $car_arr = array();
 
-        return ['total' => count($car_arr),  'data' => $car_arr, 'user'=> Auth::user(), 'report' => $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - Last 30 Days", "EXPORT")];
+        return ['total' => count($car_arr),  'data' => $car_arr, 'user'=> Auth::user()];
+    }
+
+    public function report() {
+        $thisMonth = $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - App - This Month", "EXPORT");
+        $lastMonth = $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - App - Last Month", "EXPORT");
+        $last3Month = $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - App - Last 3 Months", "EXPORT");
+        $thisYear = $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - This Year", "EXPORT");
+        $lastYear = $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - Last Year", "EXPORT");
+        return json_encode(['thisMonth' => $thisMonth, 'lastMonth' => $lastMonth, 'last3Month' => $last3Month, 'thisYear' => $thisYear, 'lastYear' => $lastYear]);
     }
 
     private function getCities($user, $distance) {

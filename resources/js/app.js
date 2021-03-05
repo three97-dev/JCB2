@@ -15,6 +15,8 @@ import InputMask from 'vue-input-mask';
 import VueTheMask from 'vue-the-mask';
 import CommonService from './services/CommonService';
 import 'vue2-timepicker/dist/VueTimepicker.css'
+import VueApexCharts from 'vue-apexcharts'
+
 
 Vue.component('input-mask', InputMask)
 
@@ -25,6 +27,9 @@ Vue.use(IconsPlugin);
 Vue.use(Loading);
 Vue.use(VCalendar, { });
 Vue.use(VueTheMask);
+Vue.use(VueApexCharts)
+
+Vue.component('apexchart', VueApexCharts)
 
 const router = new VueRouter({
     mode: 'history',

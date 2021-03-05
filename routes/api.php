@@ -38,6 +38,7 @@ Route::post('reset-password',   'UserController@resetPassword');
 
 Route::group(['middleware' => 'auth:api'], function() {
     Route::get('cars', 'CarController@index');
+    Route::get('report', 'CarController@report');
     Route::group(['prefix' => 'car'], function () {
         Route::post('like/{id}',    'CarController@like');
         Route::post('schedules/{id}', 'CarController@setSchedule');

@@ -16060,7 +16060,6 @@ body {
 #ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-header {
   font: normal normal bold 23px/28px Lato;
   letter-spacing: 0px;
-  color: #37394C;
 }
 
 #ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-header .chart {
@@ -16068,7 +16067,7 @@ body {
 }
 
 #ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-body {
-  padding: 2.5rem 1.25rem;
+  padding: 1.5rem 1.25rem;
 }
 
 #ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-body .body-left {
@@ -16087,7 +16086,7 @@ body {
   font: normal normal normal 16px/19px Lato;
   letter-spacing: 0.11px;
   color: #5E6E7B;
-  padding-top: 60px;
+  padding-top: 20px;
 }
 
 #ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-footer div.row div.col-6 div {

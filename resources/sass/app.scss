@@ -1075,13 +1075,14 @@ body {
                 .card-header {
                     font: normal normal bold 23px/28px Lato;
                     letter-spacing: 0px;
-                    color: #37394C;
+                    // color: #37394C;
+                    // height: calc(100% - 52px);
                     .chart {
                         padding: 50px 0;
                     }
                 }
                 .card-body {
-                    padding: 2.5rem 1.25rem;
+                    padding: 1.5rem 1.25rem;
                     .body-left {
                         font: normal normal bold 16px/19px Lato;
                         letter-spacing: 0px;
@@ -1097,7 +1098,7 @@ body {
                     font: normal normal normal 16px/19px Lato;
                     letter-spacing: 0.11px;
                     color: #5E6E7B;
-                    padding-top: 60px;
+                    padding-top: 20px;
                     div.row {
                         div.col-6 {
 
