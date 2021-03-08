@@ -16033,6 +16033,11 @@ body {
   height: calc(100vh - 379px);
 }
 
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content.row {
+  margin-left: -35px;
+  margin-right: -35px;
+}
+
 #ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card {
   height: calc(100% - 20px);
   background: #FFFFFF;
@@ -16064,6 +16069,10 @@ body {
 
 #ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-header .chart {
   padding: 50px 0;
+}
+
+#ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-header .apexcharts-toolbar {
+  display: none;
 }
 
 #ReportsPage .page-content-block-wrapper:nth-child(2) .car-content .white-card .card-body {

@@ -356,7 +356,7 @@ class CarController extends Controller
         $last3Month = $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - App - Last 3 Months", "EXPORT");
         $thisYear = $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - This Year", "EXPORT");
         $lastYear = $this->getReportData("Zoho CRM Analytics", "Vehicles Stages - Last Year", "EXPORT");
-        return json_encode(['thisMonth' => $thisMonth, 'lastMonth' => $lastMonth, 'last3Month' => $last3Month, 'thisYear' => $thisYear, 'lastYear' => $lastYear]);
+        return json_encode(['thisMonth' => $thisMonth, 'lastMonth' => $lastMonth, 'last3Month' => $last3Month, 'thisYear' => $thisYear, 'lastYear' => $lastYear, 'accountName' => Auth::user()->name]);
     }
 
     private function getCities($user, $distance) {

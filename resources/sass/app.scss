@@ -1053,6 +1053,10 @@ body {
         padding: 20px 20px 0 20px;
         .car-content {
             height: calc(100vh - 379px);
+            &.row {
+                margin-left: -35px;
+                margin-right: -35px;
+            }
             .white-card {
                 height: calc(100% - 20px);
                 background: #FFFFFF;
@@ -1080,6 +1084,9 @@ body {
                     .chart {
                         padding: 50px 0;
                     }
+                    .apexcharts-toolbar {
+                        display: none;
+                    }
                 }
                 .card-body {
                     padding: 1.5rem 1.25rem;
@@ -1101,7 +1108,6 @@ body {
                     padding-top: 20px;
                     div.row {
                         div.col-6 {
-
                             div {
                                 padding: 5px 0;
                             }
