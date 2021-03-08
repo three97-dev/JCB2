@@ -116,9 +116,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-12" v-show="loading">
+                <!-- <div class="col-md-3 col-sm-12" v-show="loading">
                     <div class="white-card">
-                        <!-- <div class="card-more"><span class="mif-more-vert"></span></div> -->
+                        <div class="card-more"><span class="mif-more-vert"></span></div>
                         <div class="card-header">
                             Average Lifecycle
                             <h2 class="chart">{CHART PART}</h2>
@@ -147,6 +147,12 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div> -->
+
+                <div class="col-md-3 col-sm-12" v-show="loading">
+                    <div class="white-card">
+                        <h2 style="margin-top: 45%;">Coming Soon..</h2>
                     </div>
                 </div>
             </div>
