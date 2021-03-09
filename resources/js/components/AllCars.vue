@@ -357,7 +357,7 @@ var commonService = new CommonService();
                 return true;
             },
             showDetail(car, $evt) {
-                if($evt.toElement.className.includes('mif-heart')) return;
+                if($evt.toElement && $evt.toElement.className.includes('mif-heart') || $evt.target && $evt.target.className.includes('mif-heart')) return;
 
                 this.sel_car = car;
                 this.bid_price = (car.Buyers_Quote)? parseFloat(car.Buyers_Quote).toFixed(2) : '0';
