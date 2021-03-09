@@ -410,12 +410,7 @@ var commonService = new CommonService();
                     for (let index = start_page; index <= end_page; index++) {
                         this.valid_pages.push(index);
                     }
-                    var report = JSON.stringify(res_data.report);
-                    report = report.replace(/\\t/g, "").replace(/\\n/g, "");
-                    // report = JSON.parse(report);
-                    // report = report.replace(/(?:\\[rn])+/g, '');
-                    report = JSON.parse(JSON.parse(report).replace(/(?:\\[rn])+/g, '').replace(/\\'/g, ""));
-                    console.log(report.response.result)
+
                     this.checkAll();
                 }).catch((error) => {
                     loader.hide();
