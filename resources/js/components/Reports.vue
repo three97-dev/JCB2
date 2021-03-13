@@ -307,7 +307,7 @@ var commonService = new CommonService();
                 .then(response => {
                     loader.hide();
                     var res = response.data;
-                    this.parseJSONData(res, ['thisMonth', 'lastMonth', 'last3Month', 'thisYear', 'lastYear'], res.accountName);
+                    this.parseJSONData(res, ['thisMonth', 'lastMonth', 'last3Month', 'thisYear', 'lastYear'], "Grand Count");
                     this.loading = true;
                     var purchased3MonthBefore = this.calculate("last3Month", "purchased") - this.calculate("thisMonth", "purchased") - this.calculate("lastMonth", "purchased");
 

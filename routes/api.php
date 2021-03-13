@@ -55,5 +55,14 @@ Route::group(['middleware' => 'auth:api'], function() {
     });
 
     Route::get('stripe', 'StripePaymentController@stripe');
-    Route::post('/payments/stripe/intent', 'StripePaymentController@createIntent')->name('stripe.post');
+    Route::post('/payments/stripe/intent', 'StripePaymentController@createIntent');
+    Route::post('/payments/stripe/product_withoutdefault_intent', 'StripePaymentController@createRawIntent');
+    Route::post('/payments/stripe/product_withdefault_intent', 'StripePaymentController@createSavedIntent');
+    Route::post('/payments/stripe/createCustomer', 'StripePaymentController@createCustomer');
+    Route::post('/payments/stripe/listPayments', 'StripePaymentController@listPayments');
+    Route::post('/payments/stripe/setDefaultPayment', 'StripePaymentController@setDefaultPayment');
+    Route::post('/payments/stripe/updatePayment', 'StripePaymentController@updatePayment');
+    Route::post('/payments/stripe/deletePayment', 'StripePaymentController@deletePayment');
+    Route::get('/payments/stripe/getPaymentMethod', 'StripePaymentController@getPaymentMethod');
+    Route::get('/payments/stripe/unsetPayment', 'StripePaymentController@unsetPayment');
 });

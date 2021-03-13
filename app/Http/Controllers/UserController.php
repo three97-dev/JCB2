@@ -37,7 +37,7 @@ class UserController extends Controller
             return ['error' => 'invalid_password'];
         }
 
-        $user->resetToken();
+        // $user->resetToken();
 
         Auth::login($user);
         $res = $this->refreshAccountInfo($user);
