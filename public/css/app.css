@@ -520,11 +520,17 @@
   font-size: 14px;
   border: none;
   border-bottom: 1px solid #269A8E;
-  padding: 5px 0;
+  padding: 0;
   outline: none;
   width: 100%;
-  font: normal normal normal 14px/17px Lato;
+  font: normal normal normal 16px/20px Lato;
   letter-spacing: 0px;
+  color: #B9B9B9;
+  background: #e3e3e3;
+  padding-left: 2px;
+}
+
+#SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .content .payment-editing .item-value::-webkit-input-placeholder {
   color: #B9B9B9;
 }
 
@@ -16052,6 +16058,10 @@ body {
   font: normal normal normal 14px/17px Lato;
   letter-spacing: 0px;
   color: #B9B9B9;
+}
+
+#PaymentsPage .car-content .car-right-content .selcar-content .field-item .item-value.background-grey {
+  background: #e3e3e3;
 }
 
 #PaymentsPage .car-content .car-right-content .selcar-content .field-item .item-value.txt-amount {

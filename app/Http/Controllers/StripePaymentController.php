@@ -191,6 +191,16 @@ class StripePaymentController extends Controller
                 'type' => 'card',
             ]);
         } catch (\Exception $Exception) {
+            $error = $Exception->getMessage();
+            if(str_contains($error, "No such customer")) {
+                User::where('email', Auth::user()->email)->update(['stripe_id' => null]);
+                return response()->json([
+                    'methods' => [
+                        "data"=> [],
+                        "payment_method"=> ''
+                    ]
+                ])->setStatusCode(201);
+            }
             return response()->json([
                 'error' => $Exception->getMessage()
             ])->setStatusCode(500);

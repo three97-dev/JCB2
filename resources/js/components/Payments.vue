@@ -100,23 +100,23 @@
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Card Number</div>
                                     <div id="example2-card-number" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
-                                    <input type="text" class="item-value" disabled v-model="pay_info.card_no" placeholder="1234 1234 1234 1234" v-else />
+                                    <input type="text" class="item-value background-grey" disabled v-model="pay_info.card_no" placeholder="1234 1234 1234 1234" v-else />
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_card_errors}}</div>
                                 </div>
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Cardholder Name</div>
-                                    <input type="text" class="item-value" v-model="pay_info.card_name" placeholder="Your name" :disabled="paymentDefined">
+                                    <input type="text" class="item-value background-grey" v-model="pay_info.card_name" placeholder="Your name" :disabled="paymentDefined">
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">Card Expiry</div>
                                     <div id="example2-card-expiry" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
-                                    <input class="item-value" disabled v-model="pay_info.exp" placeholder="MM/YY" v-else/>
+                                    <input class="item-value background-grey" disabled v-model="pay_info.exp" placeholder="MM/YY" v-else/>
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_expiry_errors}}</div>
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">CVC</div>
                                     <div id="example2-card-cvc" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
-                                    <input type="text" class="item-value" disabled v-model="pay_info.cvc" placeholder="XXX" v-else/>
+                                    <input type="text" class="item-value background-grey" disabled v-model="pay_info.cvc" placeholder="XXX" v-else/>
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_cvc_errors}}</div>
                                 </div>
                                 <div class="col-md-12 field-item">
@@ -260,6 +260,7 @@ var commonService = new CommonService();
                 let Style = {
                         base: {
                         color: '#32325d',
+                        background: "#e3e3e3",
                          '::placeholder': {
                             color: '#269A8E',
                         },
@@ -275,11 +276,13 @@ var commonService = new CommonService();
                         padding: "5px 0",
                         outline: "none",
                         width:"100%",
-                        font: "normal normal normal 14px/17px Lato",
+                        font: "normal normal normal 16px/20px Lato",
                         color: '#B9B9B9',
                         fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
-                        fontSize: '16px',
+                        fontSize: "16px",
+                        lineHeight: "20px",
                         fontSmoothing: 'antialiased',
+                        backgroundColor: "#e3e3e3",
                         '::placeholder': {
                             color: '#269A8E',
                         },
@@ -358,7 +361,7 @@ var commonService = new CommonService();
 
                 } else {
                     this.checked_all = this.cars.length == this.cars.filter(one => one.is_checked).length;
-                    if(this.cars.filter(one => one.is_checked).length) this.showDetail();
+                    // if(this.cars.filter(one => one.is_checked).length) this.showDetail();
                 }
                 this.setCount();
                 var amount = 0;
@@ -367,10 +370,11 @@ var commonService = new CommonService();
                 })
                 this.calculateTotal = this.toCurrency(amount);
                 this.submit_payment = false;
-                setTimeout(() => {
-                    this.initialize();
-                    this.initStripe();
-                }, 100);
+                if(this.cars.filter(one => one.is_checked).length) this.showDetail();
+                // setTimeout(() => {
+                //     this.initialize();
+                //     this.initStripe();
+                // }, 100);
             },
             refreshPage(page) {
                 if (!page) page = this.page;
@@ -447,7 +451,7 @@ var commonService = new CommonService();
                             that.submit_payment = false;
                             that.initialize();
                             that.initStripe();
-                        }, 100);
+                        }, 400);
                     else {
                         let payment = response.data.detail;
                         console.log("here ", payment)

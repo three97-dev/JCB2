@@ -977,6 +977,10 @@ body {
                         font: normal normal normal 14px/17px Lato;
                         letter-spacing: 0px;
                         color: #B9B9B9;
+
+                        &.background-grey {
+                            background: #e3e3e3;
+                        }
                         &.txt-amount {
                             font-weight: bold;
                             font-size: 24px;

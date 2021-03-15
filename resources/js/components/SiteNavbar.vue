@@ -197,7 +197,8 @@ export default {
             payments: [],
             default_id: '',
             editingCard: '',
-            sel_payment: {}
+            sel_payment: {},
+            autoSetDefault: false,
         };
     },
     mounted() {
@@ -302,6 +303,9 @@ export default {
                     that.default_id = response.data.methods.payment_method;
                     // if(response.data.methods.data.length == 1)
                     //     that.setDefaultPayment(response.data.methods.data[0].id);
+                    if(that.autoSetDefault)
+                        that.setDefaultPayment(response.data.methods.data[0].id);
+                    that.autoSetDefault = false;
                     loader.hide();
                 }).catch(function (error) {
                     console.log(error);
@@ -310,6 +314,7 @@ export default {
         },
         setDefaultPayment(payment) {
             this.default_id = payment;
+            let that = this;
             this.axios.post('/api/payments/stripe/setDefaultPayment', {payment: payment},commonService.get_api_header())
                 .then(function (response) {
 
@@ -330,6 +335,7 @@ export default {
             let Style = {
                     base: {
                     color: '#32325d',
+                    paddingLeft: "5px",
                         '::placeholder': {
                         color: '#B9B9B9',
                     },
@@ -349,6 +355,7 @@ export default {
                     color: '#B9B9B9',
                     fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
                     fontSize: '16px',
+                    backgroundColor: "#e3e3e3",
                     fontSmoothing: 'antialiased',
                     '::placeholder': {
                         color: '#B9B9B9',
@@ -479,6 +486,10 @@ export default {
                 } else {
                     if (result.paymentIntent.status === 'succeeded') {
                         loader.hide();
+                        var conf = confirm("Would you like to make this your default payment method?");
+                        if(conf){
+                            that.autoSetDefault = true;
+                        }
                         that.listStripePaymentMethods();
                         that.paymentEditing = false;
 
