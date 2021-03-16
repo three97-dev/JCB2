@@ -37,7 +37,7 @@
                                                 <div class="row card-content">
                                                     <div class="col-md-5">
                                                         <div class="card-placeholder-image">
-                                                            <img src="/img/card-placeholder.png" alt="">
+                                                            <img :src="cardImageLoc + lower(payment.card.brand) + '.png'" alt="">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-7">
@@ -73,7 +73,7 @@
                                 <div class="col-md-12">
                                     <div class="payment-editing">
                                         <div class="card-placeholder-image">
-                                            <img src="/img/card-placeholder.png" alt="">
+                                            <img :src="cardImageLoc + lower(cardType) + '.png'" alt="">
                                         </div>
                                         <div class="row">
                                             <div class="col-md-5">
@@ -199,6 +199,8 @@ export default {
             editingCard: '',
             sel_payment: {},
             autoSetDefault: false,
+            cardType: 'generic',
+            cardImageLoc: '/img/card-logos/CreditCardLogos_'
         };
     },
     mounted() {
@@ -215,9 +217,6 @@ export default {
         };
 
         document.head.appendChild(stripeScript);
-
-
-
     },
     watch: {
         $route (to_route, from_route) {
@@ -267,6 +266,7 @@ export default {
                     this.initialize();
                     this.initStripe();
                 }, 100);
+                this.cardType = "generic";
             }
             else {
                 this.paymentCreate = false;
@@ -274,7 +274,7 @@ export default {
                 let payment = this.payments.filter(payment => payment.id == card);
                 payment = payment[0];
                 let exp_month = payment.card.exp_month < 10? "0" + payment.card.exp_month: payment.card.exp_month;
-
+                this.cardType = payment.card.brand;
                 this.pay_info = {
                     card_no : "**** **** **** " + payment.card.last4,
                     card_name : payment.billing_details.name,
@@ -541,6 +541,12 @@ export default {
                     alert(error);
                     loader.hide();
                 });
+        },
+        lower(cardType) {
+            let card = cardType.toLowerCase();
+            if(card != 'americanexpress' && card != 'discover' && card != 'mastercard' && card != 'visa')
+                return 'generic';
+            return card;
         },
     }
 }
