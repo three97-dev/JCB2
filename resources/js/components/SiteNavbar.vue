@@ -81,7 +81,7 @@
                                                     <div class="col-md-12 field-item">
                                                         <div class="item-label">Card Number</div>
                                                         <div id="example1-card-number" class="input empty stripe-elements-div" v-if="paymentCreate"></div>
-                                                        <input type="text" class="item-value" disabled v-model="pay_info.card_no" placeholder="1234 1234 1234 1234" v-else />
+                                                        <input type="text" class="item-value disabled" disabled v-model="pay_info.card_no" placeholder="1234 1234 1234 1234" v-else />
                                                         <div role="alert" class="stripe-elements-error-message-div">{{stripe_card_errors}}</div>
                                                     </div>
                                                     <div class="col-md-12 field-item">
@@ -97,7 +97,7 @@
                                                     <div class="col-md-6 field-item">
                                                         <div class="item-label">CVC</div>
                                                         <div id="example1-card-cvc" class="input empty stripe-elements-div" v-if="paymentCreate"></div>
-                                                        <input type="text" class="item-value" disabled v-model="pay_info.cvc" placeholder="XXX" v-else/>
+                                                        <input type="text" class="item-value disabled" disabled v-model="pay_info.cvc" placeholder="XXX" v-else/>
                                                         <div role="alert" class="stripe-elements-error-message-div">{{stripe_cvc_errors}}</div>
                                                     </div>
                                                 </div>
@@ -216,10 +216,7 @@ export default {
 
         document.head.appendChild(stripeScript);
 
-        let that = this;
-        setTimeout(function(){
-            that.listStripePaymentMethods();
-        }, 1500);
+
 
     },
     watch: {
@@ -254,9 +251,11 @@ export default {
             this.showActions = !this.showActions;
             this.showPaymentSettings = false;
             this.paymentEditing = false;
+            EventBus.$emit('uncheckAll', !this.showActions);
         },
         showPayment(flag) {
             this.showPaymentSettings = !this.showPaymentSettings;
+            this.listStripePaymentMethods();
         },
         editCard(card = null) {
             this.paymentEditing = true;

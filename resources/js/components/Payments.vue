@@ -100,28 +100,34 @@
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Card Number</div>
                                     <div id="example2-card-number" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
-                                    <input type="text" class="item-value background-grey" disabled v-model="pay_info.card_no" placeholder="1234 1234 1234 1234" v-else />
+                                    <input type="text" class="item-value background-grey disabled" disabled v-model="pay_info.card_no" placeholder="1234 1234 1234 1234" v-else />
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_card_errors}}</div>
                                 </div>
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Cardholder Name</div>
-                                    <input type="text" class="item-value background-grey" v-model="pay_info.card_name" placeholder="Your name" :disabled="paymentDefined">
+                                    <input type="text" class="item-value background-grey" :class="{'disabled': paymentDefined}" v-model="pay_info.card_name" placeholder="Your name" :disabled="paymentDefined">
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">Card Expiry</div>
                                     <div id="example2-card-expiry" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
-                                    <input class="item-value background-grey" disabled v-model="pay_info.exp" placeholder="MM/YY" v-else/>
+                                    <input class="item-value background-grey disabled" disabled v-model="pay_info.exp" placeholder="MM/YY" v-else/>
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_expiry_errors}}</div>
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">CVC</div>
                                     <div id="example2-card-cvc" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
-                                    <input type="text" class="item-value background-grey" disabled v-model="pay_info.cvc" placeholder="XXX" v-else/>
+                                    <input type="text" class="item-value background-grey disabled" disabled v-model="pay_info.cvc" placeholder="XXX" v-else/>
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_cvc_errors}}</div>
                                 </div>
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Amount</div>
                                     <input type="text" class="item-value txt-amount" v-model="calculateTotal" placeholder="" readOnly>
+                                </div>
+                                <div class="edit_enable_button" v-if="paymentDefined" @click="enableCardInput">
+                                    Edit Payment Details
+                                </div>
+                                <div class="edit_enable_button" v-if="!paymentDefined && default_id" @click="showDetail">
+                                    Use Default Payment Method
                                 </div>
                             </div>
                             <div class="action-bar">
@@ -202,6 +208,9 @@ var commonService = new CommonService();
                 stripeApiKey: process.env.MIX_Stripe_Api_PublishKey,
                 countPerPageArray: [8, 9, 10],
                 paymentDefined: false,
+                customer_id: '',
+                paymentSaving: false,
+                default_id: null,
             }
         },
         filters: {
@@ -224,6 +233,10 @@ var commonService = new CommonService();
                 thiz.filter_string = thiz.filter_param['filter_string'];
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
+            });
+
+            EventBus.$on('uncheckAll', function(flag) {
+                if(flag) thiz.refreshPage();
             });
 
         },
@@ -437,13 +450,29 @@ var commonService = new CommonService();
             resetFilter() {
                 EventBus.$emit('reset-payment-filter');
             },
+            enableCardInput() {
+
+                let car = this.sel_car;
+                this.sel_car = null;
+                let that = this;
+                that.paymentDefined = false;
+                setTimeout(() => {
+
+                    that.submit_payment = false;
+                    this.sel_car = car;
+                    that.initialize();
+                    that.initStripe();
+                }, 600);
+            },
             showDetail(car) {
                 this.sel_car = null;
+                this.stripe_card_errors = this.stripe_cvc_errors = this.stripe_expiry_errors = '';
                 let that = this;
                 let loader = this.$loading.show();
                 this.axios.get('/api/payments/stripe/getPaymentMethod', commonService.get_api_header())
                 .then(function (response) {
                     const payment_method = response.data.payment_method;
+                    that.default_id = payment_method;
                     if(payment_method == null)
                         setTimeout(() => {
                             that.paymentDefined = false;
@@ -454,7 +483,6 @@ var commonService = new CommonService();
                         }, 400);
                     else {
                         let payment = response.data.detail;
-                        console.log("here ", payment)
                         that.paymentDefined = true;
                         let exp_month = payment.card.exp_month < 10? "0" + payment.card.exp_month: payment.card.exp_month;
                         that.pay_info = {
@@ -463,6 +491,7 @@ var commonService = new CommonService();
                             exp : exp_month + " / " + (payment.card.exp_year-2000),
                             cvc: "XXX"
                         };
+
                         that.preventPayButton = false;
                     }
                     loader.hide();
@@ -474,6 +503,7 @@ var commonService = new CommonService();
             },
             initialize() {
                 this.pay_info = {card_name: "", card_no: "", cvc: "", exp: ""};
+                this.stripe_card_errors = this.stripe_cvc_errors = this.stripe_expiry_errors = '';
             },
 
             submitPaymentTest() {
@@ -492,33 +522,77 @@ var commonService = new CommonService();
                 let loader = this.$loading.show();
                 const amount = parseFloat(this.calculateTotal.replace('$', ''));
                 let target = 'product_withdefault_intent';
-                if(!this.paymentDefined) target = 'product_withoutdefault_intent';
-                this.axios.post('/api/payments/stripe/'+target, {
-                    'amount': amount *100,
-                    'currency': 'USD'
-                },commonService.get_api_header())
-                .then(function (response) {
-                    loader.hide();
-                    that.confirmCardPayment(response.data.Intent.Secret);
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                    loader.hide();
-                });
+                var conf = null;
+                if(!this.paymentDefined) {
+                    conf = confirm("Do you want to save this new payment method?");
+                    target = 'product_withoutdefault_intent';
+                }
+                if(conf) {
+                    this.paymentSaving = true;
+                    this.axios.post('/api/payments/stripe/createCustomer', {},commonService.get_api_header())
+                        .then(function (response) {
+                            that.customer_id = response.data.customer_id;
+                            that.axios.post('/api/payments/stripe/intent', {
+                                'amount': amount *100,
+                                'currency': 'USD',
+                                'customer' : response.data.customer_id,
+                            },commonService.get_api_header())
+                            .then(function (response) {
+                                loader.hide();
+                                that.confirmCardPayment(response.data.Intent.Secret);
+                            }).catch(function (error) {
+                                console.log(error);
+                                alert(error);
+                                loader.hide();
+                            });
+                        }).catch(function (error) {
+                            console.log(error);
+                            alert(error);
+                            loader.hide();
+                        });
+                }
+                else {
+                    this.axios.post('/api/payments/stripe/'+target, {
+                        'amount': amount *100,
+                        'currency': 'USD'
+                    },commonService.get_api_header())
+                    .then(function (response) {
+                        loader.hide();
+                        if(that.paymentDefined) that.submitPayment();
+                        else that.confirmCardPayment(response.data.Intent.Secret);
+                    }).catch(function (error) {
+                        console.log(error);
+                        alert(error);
+                        loader.hide();
+                    });
+                }
+
             },
             confirmCardPayment(clientSecret) {
                 let loader = this.$loading.show();
                 let that = this;
-                var data = {payment_method: {
+                var data = {
+                    payment_method: {
                         card: this.Card,
                     }
                 };
                 if(this.paymentDefined) data = {};
+                if(this.paymentSaving) data = {
+                    payment_method: {
+                        card: this.Card,
+                        billing_details: {
+                            name: this.pay_info.card_name,
+                        },
+                    },
+                    setup_future_usage: 'off_session'
+                };
+
                 this.stripe.confirmCardPayment(clientSecret, data).then(function(result) {
                     that.submit_payment1= false;
                     loader.hide();
+                    that.paymentSaving = false;
                     if (result.error) {
-                        // console.log('payment error' + result.error.message);
+                        console.log(result.error.message)
                         alert("Card Information isn't correct!");
                     } else {
                         if (result.paymentIntent.status === 'succeeded') {

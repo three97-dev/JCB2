@@ -47,7 +47,7 @@ class StripePaymentController extends Controller
 
     public function createIntent(Request $request)
     {
-
+        $customer_id = $request->input('customer');
         try {
             \Stripe\Stripe::setApiKey(env('Stripe_Api_SECRETKey'));
         } catch (\Exception $Exception) {
@@ -56,10 +56,34 @@ class StripePaymentController extends Controller
             ])->setStatusCode(500);
         }
         try {
+            $customer = \Stripe\Customer::retrieve($request->input('customer'));
+        } catch (\Exception $Exception) {
+            $error = $Exception->getMessage();
+            if(str_contains($error, "No such customer")) {
+                try {
+                    $customer = \Stripe\Customer::create([
+                        'email' => Auth::user()->email
+                    ]);
+                } catch (\Exception $Exception) {
+                    return response()->json([
+                        'error' => $Exception->getMessage()
+                    ])->setStatusCode(500);
+                }
+            }
+            else
+            return response()->json([
+                'error' => $Exception->getMessage()
+            ])->setStatusCode(500);
+        }
+
+        User::where('email', Auth::user()->email)->update(['stripe_id' => $customer->id]);
+        $customer_id = $customer->id;
+
+        try {
             $Intent = Stripe\PaymentIntent::create([
                 'amount' => $request->input('amount'),
                 'currency' =>  $request->input('currency'),
-                'customer' => $request->input('customer'),
+                'customer' => $customer_id,
                 'metadata' => [
                     'UserId' =>  $request->input('user_id'),
                     'UserEmail' => $request->input('user_email')
@@ -286,6 +310,13 @@ class StripePaymentController extends Controller
             $method = \Stripe\PaymentMethod::retrieve($payment_id);
 
         } catch (\Exception $Exception) {
+            $error = $Exception->getMessage();
+            if(str_contains($error, "No such PaymentMethod")) {
+                User::where('email', Auth::user()->email)->update(['payment_method' => null]);
+                return response()->json([
+                    'payment_method' => null
+                ])->setStatusCode(201);
+            }
             return response()->json([
                 'error' => $Exception->getMessage()
             ])->setStatusCode(500);
