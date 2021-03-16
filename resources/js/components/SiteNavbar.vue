@@ -48,7 +48,7 @@
                                                             Expires {{payment.card.exp_month | monthFilter}} / {{payment.card.exp_year}}
                                                         </div>
                                                     </div>
-
+                                                    <div class="markup-default" v-if="default_id == payment.id">Default Payment</div>
                                                 </div>
                                                 <hr class="card-divider"/>
                                                 <div class="card-action">

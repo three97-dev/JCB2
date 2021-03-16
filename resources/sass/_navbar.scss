@@ -160,6 +160,16 @@
                         padding: 1rem 2rem;
                         width: fit-content;
                     }
+                    .markup-default {
+                        position: absolute;
+                        font-size: 0.75rem;
+                        background-color: #B7FFBB;
+                        padding: 0 0.5rem;
+                        right: 0;
+                        top: 8px;
+                        color: #035781;
+                        border: 1px solid #B7FFBB;
+                    }
                 }
                 .signout {
                     position: absolute;
