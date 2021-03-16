@@ -598,11 +598,7 @@ var commonService = new CommonService();
                         if (result.paymentIntent.status === 'succeeded') {
                             console.log('payment success');
                             console.log(result);
-                            // that.submitPayment();
-                            // pass id from paymentIntent to backend when making next request for payment verification
-                            // continue making create invoice request here
-                            // we're done, if you have api keys you can test
-                            //
+                            that.submitPayment();
                         } else {
                             console.log('payment error');
                         }
@@ -616,7 +612,7 @@ var commonService = new CommonService();
                 // if (!this.pay_info.card_name) return alert('Please input the cardholder name');
                 // if (this.pay_info.exp < 4) return alert('Please check the card expiry');
                 // if (this.pay_info.cvc < 3) return alert('Please check card cvc number');
-
+                return;
                 var arr = [];
                 this.cars.map(car => {
                     if(car.is_checked) arr.push(car);
