@@ -26,7 +26,7 @@
                         <div class="content" v-if="showPaymentSettings" style="cursor: unset;">
                             <div class="content-row">
                                 <div>Payment Method</div>
-                                <button class="card-action-btn action-button unset-default-btn" @click="unsetPayment" v-if="default_id && !paymentEditing">Unset Payment Method</button>
+                                <!-- <button class="card-action-btn action-button unset-default-btn" @click="unsetPayment" v-if="default_id && !paymentEditing">Unset Payment Method</button> -->
                             </div>
                             <br>
                             <div class="row" v-if="!paymentEditing">
@@ -53,7 +53,7 @@
                                                 <hr class="card-divider"/>
                                                 <div class="card-action">
                                                     <button class="card-action-btn" @click="setDefaultPayment(payment.id)" v-if="default_id != payment.id">Set as Default</button>
-                                                    <button class="card-action-btn" @click="deletePayment(payment.id)" v-if="default_id != payment.id || payments.length == 1">Remove</button>
+                                                    <button class="card-action-btn" @click="deletePayment(payment.id)">Remove</button>
                                                     <button class="card-action-btn" @click="editCard(payment.id)">Edit</button>
                                                 </div>
 
