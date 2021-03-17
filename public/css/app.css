@@ -525,8 +525,7 @@
   width: 100%;
   font: normal normal normal 16px/20px Lato;
   letter-spacing: 0px;
-  color: #B9B9B9;
-  background: #e3e3e3;
+  color: #363636;
   padding-left: 2px;
 }
 
@@ -16071,10 +16070,6 @@ body {
   color: #B9B9B9;
 }
 
-#PaymentsPage .car-content .car-right-content .selcar-content .field-item .item-value.background-grey {
-  background: #e3e3e3;
-}
-
 #PaymentsPage .car-content .car-right-content .selcar-content .field-item .item-value.txt-amount {
   font-weight: bold;
   font-size: 24px;
@@ -16083,15 +16078,15 @@ body {
 }
 
 #PaymentsPage .car-content .car-right-content .selcar-content .field-item ::-moz-placeholder {
-  color: #269A8E;
+  color: #B9B9B9;
 }
 
 #PaymentsPage .car-content .car-right-content .selcar-content .field-item :-ms-input-placeholder {
-  color: #269A8E;
+  color: #B9B9B9;
 }
 
 #PaymentsPage .car-content .car-right-content .selcar-content .field-item ::placeholder {
-  color: #269A8E;
+  color: #B9B9B9;
 }
 
 #PaymentsPage .car-content .car-right-content .selcar-content .edit_enable_button {
@@ -16518,10 +16513,6 @@ body {
   border-radius: 10px;
 }
 
-.background-grey {
-  background-color: #6D7A87;
-}
-
 .selcar-content.background-grey {
   background: #E4E4E4 !important;
 }
@@ -16630,5 +16621,6 @@ body {
 .disabled {
   cursor: not-allowed;
   color: #4c4c4c !important;
+  background: #e3e3e3;
 }
 

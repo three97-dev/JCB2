@@ -122,11 +122,11 @@
             </div>
             <div class="navbar-nav">
                 <div class="nav-wrapper">
-                <router-link to="/" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'home'}">All Cars</router-link>
-                <router-link to="/bids" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'bids'}">Bids</router-link>
-                <router-link to="/schedulings" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'schedulings'}">Scheduling</router-link>
-                <router-link to="/payments" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'payments'}">Payment</router-link>
-                <router-link to="/reports" class="nav-item nav-link" v-bind:class="{'active': $route.name == 'reports'}">Reports</router-link>
+                <router-link to="/" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'home'}">All Cars</router-link>
+                <router-link to="/bids" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'bids'}">Bids</router-link>
+                <router-link to="/schedulings" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'schedulings'}">Scheduling</router-link>
+                <router-link to="/payments" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'payments'}">Payment</router-link>
+                <router-link to="/reports" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'reports'}">Reports</router-link>
                 </div>
             </div>
             <div class="navbar-notification"><span class="mif-bell"></span></div>
@@ -287,7 +287,7 @@ export default {
 
         cancelEditing() {
             this.paymentEditing = false;
-
+            this.stripe_card_errors = this.stripe_cvc_errors = this.stripe_expiry_errors = '';
         },
 
         initialize() {
@@ -351,10 +351,10 @@ export default {
                     outline: "none",
                     width:"100%",
                     font: "normal normal normal 14px/17px Lato",
-                    color: '#B9B9B9',
+                    color: '#363636',
                     fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
                     fontSize: '16px',
-                    backgroundColor: "#e3e3e3",
+                    // backgroundColor: "#e3e3e3",
                     fontSmoothing: 'antialiased',
                     '::placeholder': {
                         color: '#B9B9B9',

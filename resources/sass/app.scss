@@ -978,9 +978,9 @@ body {
                         letter-spacing: 0px;
                         color: #B9B9B9;
 
-                        &.background-grey {
-                            background: #e3e3e3;
-                        }
+                        // &.background-grey {
+
+                        // }
                         &.txt-amount {
                             font-weight: bold;
                             font-size: 24px;
@@ -989,7 +989,7 @@ body {
                         }
                     }
                     ::placeholder {
-                        color: #269A8E;
+                        color: #B9B9B9;
                     }
                 }
                 .edit_enable_button {
@@ -1377,9 +1377,9 @@ body {
     border-radius: 10px;
 }
 
-.background-grey {
-    background-color: #6D7A87;
-}
+// .background-grey {
+//     background-color: #6D7A87;
+// }
 .selcar-content.background-grey {
     background: #E4E4E4 !important;
 }
@@ -1484,4 +1484,5 @@ body {
 .disabled {
     cursor: not-allowed;
     color: #4c4c4c !important;
+    background: #e3e3e3;
 }

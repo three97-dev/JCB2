@@ -273,7 +273,7 @@ var commonService = new CommonService();
                 let Style = {
                         base: {
                         color: '#32325d',
-                        background: "#e3e3e3",
+                        // background: "#e3e3e3",
                          '::placeholder': {
                             color: '#269A8E',
                         },
@@ -290,14 +290,15 @@ var commonService = new CommonService();
                         outline: "none",
                         width:"100%",
                         font: "normal normal normal 16px/20px Lato",
-                        color: '#B9B9B9',
+                        color: '#363636',
                         fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
                         fontSize: "16px",
                         lineHeight: "20px",
                         fontSmoothing: 'antialiased',
-                        backgroundColor: "#e3e3e3",
+                        // backgroundColor: "#e3e3e3",
                         '::placeholder': {
-                            color: '#269A8E',
+                            // color: '#269A8E',
+                            color: '#B9B9B9',
                         },
                         ':-webkit-autofill': {
                             color: '#e39f48',
@@ -456,11 +457,12 @@ var commonService = new CommonService();
                 this.sel_car = null;
                 let that = this;
                 that.paymentDefined = false;
+                this.initialize();
                 setTimeout(() => {
 
                     that.submit_payment = false;
                     this.sel_car = car;
-                    that.initialize();
+                    // that.initialize();
                     that.initStripe();
                 }, 600);
             },
