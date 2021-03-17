@@ -614,7 +614,6 @@ var commonService = new CommonService();
                 // if (!this.pay_info.card_name) return alert('Please input the cardholder name');
                 // if (this.pay_info.exp < 4) return alert('Please check the card expiry');
                 // if (this.pay_info.cvc < 3) return alert('Please check card cvc number');
-                return;
                 var arr = [];
                 this.cars.map(car => {
                     if(car.is_checked) arr.push(car);
