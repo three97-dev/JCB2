@@ -86,7 +86,7 @@
                                                     </div>
                                                     <div class="col-md-12 field-item">
                                                         <div class="item-label">Cardholder Name</div>
-                                                        <input type="text" class="item-value" v-model="pay_info.card_name" placeholder="Your name">
+                                                        <input type="text" class="item-value" v-model="pay_info.card_name" placeholder="Your name"  onkeypress="return /[a-z ]/i.test(event.key)" />
                                                     </div>
                                                     <div class="col-md-6 field-item">
                                                         <div class="item-label">Card Expiry</div>

@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Cardholder Name</div>
-                                    <input type="text" class="item-value background-grey" :class="{'disabled': paymentDefined}" v-model="pay_info.card_name" placeholder="Your name" :disabled="paymentDefined">
+                                    <input type="text" class="item-value background-grey" :class="{'disabled': paymentDefined}" v-model="pay_info.card_name" placeholder="Your name" :disabled="paymentDefined" onkeypress="return /[a-z ]/i.test(event.key)">
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">Card Expiry</div>
