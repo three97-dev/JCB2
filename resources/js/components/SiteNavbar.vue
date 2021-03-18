@@ -43,7 +43,7 @@
         </div>
         <div class="navbar-mobile d-lg-none w-100">
             <div class="navbar-mobile-content">
-                <img class="user-avatar" v-bind:src="avatar" alt="logos">
+                <img class="user-avatar" v-bind:src="avatar" alt="logos-ava">
 
                 <div class="nav-mobile-title" v-if="$route.name=='home'">All Cars</div>
                 <div class="nav-mobile-title" v-if="$route.name=='bids'">Your Bids</div>
