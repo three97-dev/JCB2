@@ -42,7 +42,7 @@
                                                     </div>
                                                     <div class="col-md-7">
                                                         <div class="card-last-4number">
-                                                            {{ upper(payment.card.brand) }} {{payment.card.last4}}
+                                                            Visa {{payment.card.last4}}
                                                         </div>
                                                         <div class="card-expire">
                                                             Expires {{payment.card.exp_month | monthFilter}} / {{payment.card.exp_year}}
@@ -544,18 +544,10 @@ export default {
         },
         lower(cardType) {
             let card = cardType.toLowerCase();
-            if(card != 'amex' && card != 'discover' && card != 'mastercard' && card != 'visa')
+            if(card != 'americanexpress' && card != 'discover' && card != 'mastercard' && card != 'visa')
                 return 'generic';
             return card;
         },
-        upper(cardType) {
-            let card = this.lower(cardType);
-            if(card == 'amex') return "AMEX";
-            if(card == 'discover') return "DISC";
-            if(card == 'mastercard') return "MAST";
-            if(card == 'visa') return "VISA";
-            return "OTHER";
-        }
     }
 }
 </script>
