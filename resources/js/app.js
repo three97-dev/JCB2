@@ -10,13 +10,9 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import VCalendar from 'v-calendar';
-// import VueTimepicker from 'vue2-timepicker';
 import InputMask from 'vue-input-mask';
-import VueTheMask from 'vue-the-mask';
+import VueTheMask from 'vue-the-mask'
 import CommonService from './services/CommonService';
-import 'vue2-timepicker/dist/VueTimepicker.css'
-import VueApexCharts from 'vue-apexcharts'
-
 
 Vue.component('input-mask', InputMask)
 
@@ -27,9 +23,6 @@ Vue.use(IconsPlugin);
 Vue.use(Loading);
 Vue.use(VCalendar, { });
 Vue.use(VueTheMask);
-Vue.use(VueApexCharts)
-
-Vue.component('apexchart', VueApexCharts)
 
 const router = new VueRouter({
     mode: 'history',
@@ -41,7 +34,7 @@ router.beforeEach((to, from, next) => {
 
     if(to.matched.some(record => record.meta.requiresAuth)) {
         if (commonService.is_authenticated()) {
-            next()
+            next()            
         } else {
             next({
                 path: '/login',

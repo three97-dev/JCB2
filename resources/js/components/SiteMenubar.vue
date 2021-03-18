@@ -3,7 +3,7 @@
     <div class="site-menubar-body">
         <ul class="site-menu" v-if="$route.name=='home'">
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openCarsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_cars_filter}"></span></a>
+                <a href="javascript:;" v-on:click="openCarsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_cars_filter}"></span></a>                
             </li>
             <li class="site-menu-item">
                 <a href="javascript:;" v-on:click="applyLikeFilter()"> <span class="mif-heart"  v-bind:class="{'text-selected': filter_like}"></span> </a>
@@ -14,17 +14,17 @@
         </ul>
         <ul class="site-menu" v-if="$route.name=='bids'">
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openBidsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_bids_filter}"></span></a>
+                <a href="javascript:;" v-on:click="openBidsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_bids_filter}"></span></a>                
             </li>
         </ul>
         <ul class="site-menu" v-if="$route.name=='schedulings'">
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openSchedulingsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_schedulings_filter}"></span></a>
+                <a href="javascript:;" v-on:click="openSchedulingsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_schedulings_filter}"></span></a>                
             </li>
         </ul>
         <ul class="site-menu" v-if="$route.name=='payments'">
             <li class="site-menu-item">
-                <a href="javascript:;" v-on:click="openPaymentsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_payments_filter}"></span></a>
+                <a href="javascript:;" v-on:click="openPaymentsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_payments_filter}"></span></a>                
             </li>
         </ul>
     </div>
@@ -58,7 +58,7 @@
                 <select name="" id="" v-model="car_filter.Any_Missing_Body_Panels_Interior_or_Engine_Parts">
                     <option value="">Select options you would accept</option>
                     <option value="No">No</option>
-                    <option value="Refer To What's Wrong With It?">Refer To What's Wrong With It?</option>
+                    <option value="Refer To What's Wrong With It">Refer To What's Wrong With It?</option>
                     <option value="Yes">Yes</option>
                 </select>
             </div>
@@ -90,8 +90,8 @@
                 <input type="text" placeholder="Enter a name for this search" v-model="save_filter_title">
             </div>
             <div class="buttons-group">
-                <button class="btn btn-light btn-save" v-on:click="open_filter_save_step = false">CANCEL</button>
-                <button class="btn btn-primary btn-apply" v-on:click="saveSearch()">SAVE</button>
+                <button class="btn btn-light" v-on:click="open_filter_save_step = false">CANCEL</button>
+                <button class="btn btn-primary" v-on:click="saveSearch()">SAVE</button>
             </div>
         </div>
         <div class="saved-filters" v-if="open_saved_filter">
@@ -121,23 +121,23 @@
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Reference_Number}}</label>
                 <input type="number" :placeholder="'Type ' + filter_labels.Reference_Number" v-model="bid_filter.Reference_Number">
-            </div>
+            </div>            
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Year}}</label>
                 <input type="number" :placeholder="'Type ' + filter_labels.Year" v-model="bid_filter.Year">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Make}}</label>
-                <input type="text" :placeholder="'Type ' + filter_labels.Make" v-model="bid_filter.Make">
+                <input type="number" :placeholder="'Type ' + filter_labels.Make" v-model="bid_filter.Make">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Model}}</label>
-                <input type="text" :placeholder="'Type ' + filter_labels.Model" v-model="bid_filter.Model">
+                <input type="number" :placeholder="'Type ' + filter_labels.Model" v-model="bid_filter.Model">
             </div>
-
+            
             <div class="filter-buttons">
-                <button class="btn btn-light btn-save" v-on:click="open_bids_filter=false">CANCEL</button>
-                <button class="btn btn-primary btn-apply" v-on:click="applyBidsFilter()">APPLY</button>
+                <button class="btn btn-light" v-on:click="open_bids_filter=false">CANCEL</button>
+                <button class="btn btn-primary" v-on:click="applyBidsFilter()">APPLY</button>
             </div>
         </div>
         <div class="schedulings-filter" v-if="open_schedulings_filter">
@@ -153,23 +153,23 @@
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Reference_Number}}</label>
                 <input type="number" :placeholder="'Type ' + filter_labels.Reference_Number" v-model="schedulings_filter.Reference_Number">
-            </div>
+            </div>            
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Year}}</label>
                 <input type="number" :placeholder="'Type ' + filter_labels.Year" v-model="schedulings_filter.Year">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Make}}</label>
-                <input type="text" :placeholder="'Type ' + filter_labels.Make" v-model="schedulings_filter.Make">
+                <input type="number" :placeholder="'Type ' + filter_labels.Make" v-model="schedulings_filter.Make">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Model}}</label>
-                <input type="text" :placeholder="'Type ' + filter_labels.Model" v-model="schedulings_filter.Model">
+                <input type="number" :placeholder="'Type ' + filter_labels.Model" v-model="schedulings_filter.Model">
             </div>
-
+            
             <div class="filter-buttons">
-                <button class="btn btn-light btn-save" v-on:click="open_schedulings_filter=false">CANCEL</button>
-                <button class="btn btn-primary btn-apply" v-on:click="applySchedulingsFilter()">APPLY</button>
+                <button class="btn btn-light" v-on:click="open_schedulings_filter=false">CANCEL</button>
+                <button class="btn btn-primary" v-on:click="applySchedulingsFilter()">APPLY</button>
             </div>
         </div>
         <div class="payments-filter" v-if="open_payments_filter">
@@ -185,28 +185,28 @@
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Reference_Number}}</label>
                 <input type="number" :placeholder="'Type ' + filter_labels.Reference_Number" v-model="payment_filter.Reference_Number">
-            </div>
+            </div>            
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Year}}</label>
                 <input type="number" :placeholder="'Type ' + filter_labels.Year" v-model="payment_filter.Year">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Make}}</label>
-                <input type="text" :placeholder="'Type ' + filter_labels.Make" v-model="payment_filter.Make">
+                <input type="number" :placeholder="'Type ' + filter_labels.Make" v-model="payment_filter.Make">
             </div>
             <div class="filter-item">
                 <label for="" class="filter-label">{{filter_labels.Model}}</label>
-                <input type="text" :placeholder="'Type ' + filter_labels.Model" v-model="payment_filter.Model">
+                <input type="number" :placeholder="'Type ' + filter_labels.Model" v-model="payment_filter.Model">
             </div>
-
+            
             <div class="filter-buttons">
-                <button class="btn btn-light btn-save" v-on:click="open_payments_filter=false">CANCEL</button>
-                <button class="btn btn-primary btn-apply" v-on:click="applyPaymentsFilter()">APPLY</button>
+                <button class="btn btn-light" v-on:click="open_payments_filter=false">CANCEL</button>
+                <button class="btn btn-primary" v-on:click="applyPaymentsFilter()">APPLY</button>
             </div>
         </div>
     </div>
     <div class="popup-wrapper">
-
+        
     </div>
 </div>
 </template>
@@ -367,7 +367,7 @@ var commonService = new CommonService();
             },
             openCarsFilter() {
                 this.open_cars_filter = !this.open_cars_filter;
-
+                
                 if (this.open_cars_filter) {
                     this.open_filter_save_step = false;
                     this.open_saved_filter = false;
@@ -381,7 +381,7 @@ var commonService = new CommonService();
                 if (Object.keys(params).length == 0) return alert('Search parameters are empty.');
                 this.open_filter_save_step = true;
                 this.save_filter_title = '';
-
+                
             },
             saveSearch() {
                 var title = this.save_filter_title;
@@ -403,7 +403,7 @@ var commonService = new CommonService();
                         alert('Api request error');
                     }
                 });
-
+                
             },
             openSavedFilter() {
                 this.open_saved_filter = !this.open_saved_filter;
@@ -419,7 +419,7 @@ var commonService = new CommonService();
                             var filters = response.data.filters;
                             filters.map(filter=>filter.filter = JSON.parse(filter.filter));
                             this.saved_filters = filters;
-
+                            
                     }).catch((error) => {
                         loader.hide();
                         var status = error.response.status;
@@ -431,12 +431,12 @@ var commonService = new CommonService();
                         }
                     });
                 }
-
+                
             },
             editFilter(filter) {
                 this.car_filter = filter.filter;
                 this.openCarsFilter();
-
+                
             },
             deleteFilter(filter) {
                 if (!confirm("Are you sure to delete the search?")) return;
@@ -458,68 +458,64 @@ var commonService = new CommonService();
                         alert('Api request error');
                     }
                 });
-
+                
             },
             applySavedFilter(filter) {
                 this.car_filter = filter.filter;
                 this.open_saved_filter = false;
                 this.applyCarsFilter();
-
+                
             },
             applyCarsFilter() {
                 const params = this.get_filter_param(this.car_filter);
                 params['filter_string'] = this.getFilterString(params);
-                params['filter_like'] = this.filter_like;
-
+                
                 EventBus.$emit('update-car-filter', params);
                 this.open_cars_filter = false;
-
+                
             },
             applyLikeFilter() {
                 this.filter_like = !this.filter_like;
                 this.open_cars_filter = false;
                 this.open_saved_filter = false;
-                const params = this.get_filter_param(this.car_filter);
-                params['filter_string'] = this.getFilterString(params);
-                params['filter_like'] = this.filter_like;
-                EventBus.$emit('update-car-filter', params);
-
+                EventBus.$emit('update-car-filter-like', this.filter_like);
+                
             },
             // bids
             openBidsFilter() {
                 this.open_bids_filter = !this.open_bids_filter;
-
+                
             },
             applyBidsFilter() {
                 this.open_bids_filter = false;
                 const params = this.get_filter_param(this.bid_filter);
                 params['filter_string'] = this.getFilterString(params);
                 EventBus.$emit('update-bid-filter', params);
-
+                
             },
             // scheduling
             openSchedulingsFilter() {
                 this.open_schedulings_filter = !this.open_schedulings_filter;
-
+                
             },
             applySchedulingsFilter() {
                 this.open_schedulings_filter = false;
                 const params = this.get_filter_param(this.schedulings_filter);
                 params['filter_string'] = this.getFilterString(params);
                 EventBus.$emit('update-schedulings-filter', params);
-
+                
             },
             // payments
             openPaymentsFilter() {
                 this.open_payments_filter = !this.open_payments_filter;
-
+                
             },
             applyPaymentsFilter() {
                 this.open_payments_filter = false;
                 const params = this.get_filter_param(this.payment_filter);
                 params['filter_string'] = this.getFilterString(params);
                 EventBus.$emit('update-payments-filter', params);
-
+                
             },
         }
     }

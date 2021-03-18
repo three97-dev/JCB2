@@ -37,12 +37,12 @@ class UserController extends Controller
             return ['error' => 'invalid_password'];
         }
 
-        // $user->resetToken();
+        $user->resetToken();
 
         Auth::login($user);
-        $res = $this->refreshAccountInfo($user);
-
-        return ['success' => true, 'data' => $user, 'res'=> $res] ;
+        $this->refreshAccountInfo($user);
+        
+        return ['success' => true, 'data' => $user ] ;
     }
 
     private function refreshCompanyData() {
@@ -58,7 +58,7 @@ class UserController extends Controller
             } catch (\Throwable $th) {
                 break;
             }
-
+            
             if (!is_array($records)) break;
 
             foreach ($records as $record) {
@@ -119,12 +119,10 @@ class UserController extends Controller
         $user->street = $account->getKeyValue('Shipping_Street');
 
         $zip_code = $account->getKeyValue('Shipping_Code');
-        if($zip_code) {
-            $code_data = $zohoService->getLocationByZipCode($zip_code);
-            if ($code_data) {
-                $user->lat = $code_data['lat'];
-                $user->lng = $code_data['lng'];
-            }
+        $code_data = $zohoService->getLocationByZipCode($zip_code);
+        if ($code_data) {
+            $user->lat = $code_data['lat'];
+            $user->lng = $code_data['lng'];
         }
 
         $user->save();
@@ -163,7 +161,7 @@ class UserController extends Controller
         if ($user->remember_token != $temp_password) {
             return ['error' => 'Invalid temp password'];
         }
-
+        
         $user->password = bcrypt($password);
         $user->save();
 

@@ -7,7 +7,6 @@ import AllCars from '../components/AllCars.vue';
 import Bids from '../components/Bids.vue';
 import Schedulings from '../components/Schedulings.vue';
 import Payments from '../components/Payments.vue';
-import Reports from '../components/Reports.vue';
 
 export const routes = [
     {
@@ -81,13 +80,5 @@ export const routes = [
         meta: {
             requiresAuth: true
         }
-    },
-    {
-        name: 'reports',
-        path: '/reports',
-        component: Reports,
-        meta: {
-            requiresAuth: true
-        }
-    },
+    }
 ];

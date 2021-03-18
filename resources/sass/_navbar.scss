@@ -18,16 +18,11 @@
     }
     .navbar-userinfo {
         display: flex;
-        z-index: 1;
-        .logo-wrapper{
-            margin-left: 10px;
-            padding: 5px;
-            img {
-                // margin: 0 20px;
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-            }
+        img {
+            margin: 0 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
         }
         .navbar-username {
             font: normal normal bold 28px/40px Neuzeit Grotesk;
@@ -35,174 +30,16 @@
             color: #363636;
             align-items: center;
             display: flex;
-
-            .drop-down {
-                cursor: pointer;
-            }
-            .dropdown-action-menu {
-                position: absolute;
-                top: $navHeight + 1;
-                left: 71px;
-                width: calc(100vw - 71px);
-                height: calc(100vh - #{$navHeight + 1});
-                background: #fff;
-                padding: 50px;
-                .dropDownMenu-header {
-                    font: normal normal bold 40px/56px Neuzeit Grotesk;
-                    letter-spacing: 0.27px;
-                    color: #363636;
-                    div:first-child {
-                        float: left;
-                        span {
-                            text-decoration: underline;
-                        }
-                    }
-                    .close {
-                        float: right;
-                        cursor: pointer;
-                    }
-                }
-                .content {
-                    margin-top: 150px;
-                    cursor: pointer;
-                    div.content-row {
-                        margin-top: 30px;
-                        font: normal normal 300 40px/56px Neuzeit Grotesk;
-                        letter-spacing: 0.27px;
-                        position: relative;
-                        .unset-default-btn {
-                            position: absolute;
-                            right: 0;
-                            bottom: 0;
-                            width: unset !important;
-                            padding: 0 2rem;
-                            font: normal normal bold 20px/24px Lato;
-
-                        }
-                    }
-                    .card-info{
-                        border: 1px solid grey;
-                        margin-bottom: 1rem;
-                        &.selected {
-                            // border-color: red;
-                            box-shadow: 0px 10px 20px grey;
-                        }
-                        .card-content {
-                            padding: 1rem;
-                            .card-last-4number{
-                                font: normal normal bold 28px/40px Neuzeit Grotesk;
-                                letter-spacing: 0.22px;
-                                color: #363636;
-                            }
-                            .card-expire {
-                                font: normal normal normal 20px/24px Neuzeit Grotesk;
-                                letter-spacing: 0.16px;
-                                color: #6D7A87;
-                            }
-                        }
-                        .card-action{
-                            padding: 1rem;
-                            text-align: right;
-                            .card-action-btn {
-                                font: normal normal bold 24px/28px Neuzeit Grotesk;
-                                letter-spacing: 0.22px;
-                                color: #30ABE8;
-                                border: 0;
-                                background-color: transparent;
-                                &:focus {
-                                    outline: unset;
-                                }
-                            }
-                        }
-                        .card-divider {
-                            margin: 0;
-                            border-top: 1px solid grey;
-                        }
-                    }
-                    .add-card {
-                        width: 100%;
-                        padding: 4.3rem 0;
-                        border: 1px dashed grey;
-                        cursor: pointer;
-                    }
-                    .payment-editing {
-                        border: 1px solid grey;
-                        padding: 2rem;
-
-                        .item-label {
-                            font: normal normal normal 18px/22px Lato;
-                            color: #1a1738;
-                            margin-top: 1rem;
-                        }
-                        .item-value {
-                            font-size: 14px;
-                            border: none;
-                            border-bottom: 1px solid #269A8E;
-                            padding: 0;
-                            outline: none;
-                            width: 100%;
-                            font: normal normal normal 16px/20px Lato;
-                            letter-spacing: 0px;
-                            color: #363636;
-                            // background: #e3e3e3;
-                            padding-left: 2px;
-                            &::-webkit-input-placeholder {
-                                color: #B9B9B9;
-                            }
-                        }
-
-                        .stripe-elements-error-message-div {
-                            font: normal normal normal 14px/17px Neuzeit Grotesk
-                        }
-                    }
-                    .card-placeholder-image {
-                        border: 1px solid grey;
-                        padding: 1rem 2rem;
-                        width: fit-content;
-                    }
-                    .markup-default {
-                        position: absolute;
-                        font-size: 0.75rem;
-                        background-color: #B7FFBB;
-                        padding: 0 0.5rem;
-                        right: 0;
-                        top: 8px;
-                        color: #035781;
-                        border: 1px solid #B7FFBB;
-                    }
-                }
-                .signout {
-                    position: absolute;
-                    bottom: 50px;
-                    right: 50px;
-                    font: normal normal bold 40px/56px Neuzeit Grotesk;
-                    letter-spacing: 0.27px;
-                    color: #FF7777;
-                    cursor: pointer;
-                    .cancel-button {
-                        color: #000 !important;
-                        background-color: #ccc;
-                        border-color: transparent;
-                    }
-                }
-            }
         }
     }
-
     .navbar-nav {
         position: absolute;
         // justify-content: center;
         // height: 100%;
         padding: 5px 0;
         // width: 100%;
-        // width: calc(100% - 470px);
-        width: 100%;
-        // left: 470px;
-        // z-index: -1;
-        .nav-wrapper{
-            text-align: center;
-            margin: auto;
-        }
+        width: calc(100% - 470px);
+        left: 470px;
         .nav-link {
             // height: $navHeight;
             font: normal normal 300 28px/40px Neuzeit Grotesk;
@@ -213,7 +50,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            float: left;
             &.active {
                 // background: #31AEED 0% 0% no-repeat padding-box;
                 // color: #FFFFFF;
@@ -235,7 +71,6 @@
         text-align: center;
         border-radius: 50%;
         padding: 9px;
-        z-index: 1;
     }
     .navbar-action {
         button {
@@ -305,7 +140,5 @@
             }
         }
     }
-    .display-flex {
-        display: flex;
-    }
+
 }
