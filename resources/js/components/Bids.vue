@@ -3,12 +3,13 @@
         <div class="page-content-block-wrapper">
             <div class="page-header">
                 <span>My Bids</span>
+                <p class="header-summary">View the vehicles you've bid on that haven't yet closed.</p>
             </div>
         </div>
 
         <div class="page-content-block-wrapper">
             <div class="page-filter">
-                <span class="filter-label">Filters:</span>            
+                <span class="filter-label">Filters:</span>
                 <div class="filter-content" v-if="filter_string != ''">
                     <a href="javascript:;" class="mif-cancel text-danger" v-on:click="resetFilter()"></a>
                     {{filter_string}}
@@ -33,16 +34,16 @@
                         <!-- <div class="action-go"></div> -->
                     </div>
                     <div class="car-body">
-                        <div class="car-item" v-for="car in cars" :key="car.index" v-bind:class="{'selected': sel_car && car.index == sel_car.index}" @click="showDetail(car)">
+                        <div class="car-item" v-for="car in cars" :key="car.id" v-bind:class="{'selected': sel_car && car.id == sel_car.id}" @click="showDetail(car)">
                             <div class="item-data">
                                 <div v-if="car.Stage=='Given Quote'" class="status-active"> Active </div>
                                 <div v-if="car.Stage=='Deal Made'" class="status-won"> Won </div>
                             </div>
-                            <div class="item-data">{{ car.Closing_Date }}</div>
+                            <div class="item-data">{{ car.Closing_Date | changeDateFormat }}</div>
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
-                            <div class="item-data">{{ car.Buyers_Quote }}</div>
+                            <div class="item-data">{{ car.Buyers_Quote | toCurrency }}</div>
                             <!-- <a href="javascript:;" class="text-center action-go" v-on:click="showDetail(car)">
                                 <span class="mif-arrow-right"></span>
                             </a> -->
@@ -66,7 +67,7 @@
                             <span class="mif-cancel"></span> Clear
                         </a>
                     </div>
-                    
+
                     <div class="car-detail">
                         <div class="empty-content" v-if="!sel_car">
                             Click a list item to view details
@@ -146,7 +147,7 @@
                         Showing <span> {{(page-1) * records_per_page + 1 }} </span> to <span> {{ (page-1) * records_per_page + cars.length }} </span> of {{total}} Available Cars
                     </div>
                     <div class="pages-action">
-                        Page: 
+                        {{records_per_page}} items Per Page:
                         <template v-for="one of valid_pages">
                             <a :key="one"  class="btn-page" v-bind:class="{active: one == page}" href="javascript:;" v-on:click="refreshPage(one)">{{one}}</a>
                         </template>
@@ -158,7 +159,7 @@
                     <div class="page-label" v-if="sel_car">
                         <span>Ref#  {{ sel_car.Reference_Number }} </span> Selected
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -176,7 +177,7 @@ var commonService = new CommonService();
             return {
                 cars: [],
                 page: 1,
-                records_per_page: 8,
+                records_per_page: 10,
                 total: '-',
                 valid_pages: [],
                 filter_param: {},
@@ -185,10 +186,12 @@ var commonService = new CommonService();
                 sel_car: null,
                 bid_price: '',
                 is_mobile_view: window.innerWidth <= 992,
+                countPerPageArray: [8, 9, 10],
             }
         },
         created() {
             const thiz = this;
+            // this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-bid-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
@@ -208,25 +211,36 @@ var commonService = new CommonService();
                 return arr.reverse().join('/');
             },
             toCurrency: function(value) {
+                if(!value) return "";
                 var formatter = new Intl.NumberFormat("en-US", {
                     style: 'currency',
                     currency: "USD"
                 });
                 return formatter.format(value).replace("$", "$ ");
-            }
+            },
+            changeDateFormat: function(closing_date) {
+                if(closing_date) {
+                    var val=closing_date.split('-');
+                    return val[1] + "/" + val[2] + "/" + val[0];
+                }
+                return "";
+            },
         },
         methods: {
+            changeItemCount() {
+                this.refreshPage();
+            },
             refreshPage(page) {
                  if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
                 this.page = page;
-                
+
                 this.cars = [];
                 for (let index = 0; index < this.records_per_page; index++) {
                     this.cars.push({index})
                 }
-                
-                let url = '/api/cars?page_type=bids&page=' + this.page;
+
+                let url = '/api/cars?page_type=bids&page=' + this.page+'&records_per_page='+this.records_per_page;
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
                         url += '&' + key + '=' + this.filter_param[key];
