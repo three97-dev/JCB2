@@ -113,6 +113,7 @@ class StripePaymentController extends Controller
         }
         try {
             $customer = \Stripe\Customer::retrieve($request->input('customer'));
+            // $customer = \Stripe\Customer::retrieve($request->input('customer'));
         } catch (\Exception $Exception) {
             $error = $Exception->getMessage();
             if(str_contains($error, "No such customer")) {
