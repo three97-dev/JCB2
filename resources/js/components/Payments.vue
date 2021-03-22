@@ -99,26 +99,35 @@
                             <div class="selcar-detail row">
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Card Number</div>
-                                    <div id="example2-card-number" class="input empty stripe-elements-div"></div>
+                                    <div id="example2-card-number" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
+                                    <input type="text" class="item-value background-grey disabled" disabled v-model="pay_info.card_no" placeholder="1234 1234 1234 1234" v-else />
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_card_errors}}</div>
                                 </div>
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Cardholder Name</div>
-                                    <input type="text" class="item-value" v-model="pay_info.card_name" placeholder="Your name">
+                                    <input type="text" class="item-value background-grey" :class="{'disabled': paymentDefined}" v-model="pay_info.card_name" placeholder="Your name" :disabled="paymentDefined" onkeypress="return /[a-z ]/i.test(event.key)">
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">Card Expiry</div>
-                                    <div id="example2-card-expiry" class="input empty stripe-elements-div"></div>
+                                    <div id="example2-card-expiry" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
+                                    <input class="item-value background-grey disabled" disabled v-model="pay_info.exp" placeholder="MM/YY" v-else/>
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_expiry_errors}}</div>
                                 </div>
                                 <div class="col-md-6 field-item">
                                     <div class="item-label">CVC</div>
-                                    <div id="example2-card-cvc" class="input empty stripe-elements-div"></div>
+                                    <div id="example2-card-cvc" class="input empty stripe-elements-div" v-if="!paymentDefined"></div>
+                                    <input type="text" class="item-value background-grey disabled" disabled v-model="pay_info.cvc" placeholder="XXX" v-else/>
                                     <div role="alert" class="stripe-elements-error-message-div">{{stripe_cvc_errors}}</div>
                                 </div>
                                 <div class="col-md-12 field-item">
                                     <div class="item-label">Amount</div>
                                     <input type="text" class="item-value txt-amount" v-model="calculateTotal" placeholder="" readOnly>
+                                </div>
+                                <div class="edit_enable_button" v-if="paymentDefined" @click="enableCardInput">
+                                    Edit Payment Details
+                                </div>
+                                <div class="edit_enable_button" v-if="!paymentDefined && default_id" @click="showDetail">
+                                    Use Default Payment Method
                                 </div>
                             </div>
                             <div class="action-bar">
@@ -198,6 +207,10 @@ var commonService = new CommonService();
                 initialized: false,
                 stripeApiKey: process.env.MIX_Stripe_Api_PublishKey,
                 countPerPageArray: [8, 9, 10],
+                paymentDefined: false,
+                customer_id: '',
+                paymentSaving: false,
+                default_id: null,
             }
         },
         filters: {
@@ -220,6 +233,10 @@ var commonService = new CommonService();
                 thiz.filter_string = thiz.filter_param['filter_string'];
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
+            });
+
+            EventBus.$on('uncheckAll', function(flag) {
+                if(flag) thiz.refreshPage();
             });
 
         },
@@ -256,6 +273,7 @@ var commonService = new CommonService();
                 let Style = {
                         base: {
                         color: '#32325d',
+                        // background: "#e3e3e3",
                          '::placeholder': {
                             color: '#269A8E',
                         },
@@ -271,13 +289,16 @@ var commonService = new CommonService();
                         padding: "5px 0",
                         outline: "none",
                         width:"100%",
-                        font: "normal normal normal 14px/17px Lato",
-                        color: '#B9B9B9',
+                        font: "normal normal normal 16px/20px Lato",
+                        color: '#363636',
                         fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
-                        fontSize: '16px',
+                        fontSize: "16px",
+                        lineHeight: "20px",
                         fontSmoothing: 'antialiased',
+                        // backgroundColor: "#e3e3e3",
                         '::placeholder': {
-                            color: '#269A8E',
+                            // color: '#269A8E',
+                            color: '#B9B9B9',
                         },
                         ':-webkit-autofill': {
                             color: '#e39f48',
@@ -354,7 +375,7 @@ var commonService = new CommonService();
 
                 } else {
                     this.checked_all = this.cars.length == this.cars.filter(one => one.is_checked).length;
-                    if(this.cars.filter(one => one.is_checked).length) this.showDetail();
+                    // if(this.cars.filter(one => one.is_checked).length) this.showDetail();
                 }
                 this.setCount();
                 var amount = 0;
@@ -363,10 +384,11 @@ var commonService = new CommonService();
                 })
                 this.calculateTotal = this.toCurrency(amount);
                 this.submit_payment = false;
-                setTimeout(() => {
-                    this.initialize();
-                    this.initStripe();
-                }, 100);
+                if(this.cars.filter(one => one.is_checked).length) this.showDetail();
+                // setTimeout(() => {
+                //     this.initialize();
+                //     this.initStripe();
+                // }, 100);
             },
             refreshPage(page) {
                 if (!page) page = this.page;
@@ -429,22 +451,71 @@ var commonService = new CommonService();
             resetFilter() {
                 EventBus.$emit('reset-payment-filter');
             },
+            enableCardInput() {
+
+                let car = this.sel_car;
+                this.sel_car = null;
+                let that = this;
+                that.paymentDefined = false;
+                this.initialize();
+                setTimeout(() => {
+
+                    that.submit_payment = false;
+                    this.sel_car = car;
+                    // that.initialize();
+                    that.initStripe();
+                }, 600);
+            },
             showDetail(car) {
                 this.sel_car = null;
-                setTimeout(() => {
-                    this.sel_car = car;
-                    this.submit_payment = false;
-                    this.initialize();
-                    this.initStripe();
-                }, 100);
+                this.stripe_card_errors = this.stripe_cvc_errors = this.stripe_expiry_errors = '';
+                let that = this;
+                let loader = this.$loading.show();
+                this.axios.get('/api/payments/stripe/getPaymentMethod', commonService.get_api_header())
+                .then(function (response) {
+                    const payment_method = response.data.payment_method;
+                    that.default_id = payment_method;
+                    if(payment_method == null)
+                        setTimeout(() => {
+                            that.paymentDefined = false;
+                            that.sel_car = car;
+                            that.submit_payment = false;
+                            that.initialize();
+                            that.initStripe();
+                        }, 400);
+                    else {
+                        let payment = response.data.detail;
+                        that.paymentDefined = true;
+                        let exp_month = payment.card.exp_month < 10? "0" + payment.card.exp_month: payment.card.exp_month;
+                        that.pay_info = {
+                            card_no : "**** **** **** " + payment.card.last4,
+                            card_name : payment.billing_details.name,
+                            exp : exp_month + " / " + (payment.card.exp_year-2000),
+                            cvc: "XXX"
+                        };
+
+                        that.preventPayButton = false;
+                    }
+                    loader.hide();
+                }).catch(function (error) {
+                    console.log(error);
+                    alert(error);
+                    loader.hide();
+                });
             },
             initialize() {
                 this.pay_info = {card_name: "", card_no: "", cvc: "", exp: ""};
+                this.stripe_card_errors = this.stripe_cvc_errors = this.stripe_expiry_errors = '';
             },
 
             submitPaymentTest() {
                 this.submit_payment1 = true;
                 let that = this;
+
+                // let iframe = document.getElementById("example2-card-number").children[0].children[0];
+                // var innerDoc = (iframe.contentDocument) ? iframe.contentDocument : iframe.contentWindow.document;
+                // console.log(innerDoc)
+                // return;
 
                 if(!this.pay_info.card_name) {
                     alert('card name is empty');
@@ -452,41 +523,84 @@ var commonService = new CommonService();
                 }
                 let loader = this.$loading.show();
                 const amount = parseFloat(this.calculateTotal.replace('$', ''));
-                this.axios.post('/api/payments/stripe/intent', {
-                    'amount': amount *100,
-                    'currency': 'USD'
-                },commonService.get_api_header())
-                .then(function (response) {
-                    loader.hide();
-                    that.confirmCardPayment(response.data.Intent.Secret);
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                    loader.hide();
-                });
+                let target = 'product_withdefault_intent';
+                var conf = null;
+                if(!this.paymentDefined) {
+                    conf = confirm("Do you want to save this new payment method?");
+                    target = 'product_withoutdefault_intent';
+                }
+                if(conf) {
+                    this.paymentSaving = true;
+                    this.axios.post('/api/payments/stripe/createCustomer', {},commonService.get_api_header())
+                        .then(function (response) {
+                            that.customer_id = response.data.customer_id;
+                            that.axios.post('/api/payments/stripe/intent', {
+                                'amount': amount *100,
+                                'currency': 'USD',
+                                'customer' : response.data.customer_id,
+                            },commonService.get_api_header())
+                            .then(function (response) {
+                                loader.hide();
+                                that.confirmCardPayment(response.data.Intent.Secret);
+                            }).catch(function (error) {
+                                console.log(error);
+                                alert(error);
+                                loader.hide();
+                            });
+                        }).catch(function (error) {
+                            console.log(error);
+                            alert(error);
+                            loader.hide();
+                        });
+                }
+                else {
+                    this.axios.post('/api/payments/stripe/'+target, {
+                        'amount': amount *100,
+                        'currency': 'USD'
+                    },commonService.get_api_header())
+                    .then(function (response) {
+                        loader.hide();
+                        if(that.paymentDefined) that.submitPayment();
+                        else that.confirmCardPayment(response.data.Intent.Secret);
+                    }).catch(function (error) {
+                        console.log(error);
+                        alert(error);
+                        loader.hide();
+                    });
+                }
+
             },
             confirmCardPayment(clientSecret) {
                 let loader = this.$loading.show();
                 let that = this;
-                this.stripe.confirmCardPayment(clientSecret, {
+                var data = {
                     payment_method: {
                         card: this.Card,
                     }
-                    }).then(function(result) {
+                };
+                if(this.paymentDefined) data = {};
+                if(this.paymentSaving) data = {
+                    payment_method: {
+                        card: this.Card,
+                        billing_details: {
+                            name: this.pay_info.card_name,
+                        },
+                    },
+                    setup_future_usage: 'off_session'
+                };
+
+                this.stripe.confirmCardPayment(clientSecret, data).then(function(result) {
                     that.submit_payment1= false;
                     loader.hide();
+                    that.paymentSaving = false;
                     if (result.error) {
-                        // console.log('payment error' + result.error.message);
+                        console.log(result.error.message)
                         alert("Card Information isn't correct!");
                     } else {
                         if (result.paymentIntent.status === 'succeeded') {
                             console.log('payment success');
-                            console.log(result.paymentIntent);
+                            console.log(result);
                             that.submitPayment();
-                            // pass id from paymentIntent to backend when making next request for payment verification
-                            // continue making create invoice request here
-                            // we're done, if you have api keys you can test
-                            //
                         } else {
                             console.log('payment error');
                         }
@@ -500,7 +614,6 @@ var commonService = new CommonService();
                 // if (!this.pay_info.card_name) return alert('Please input the cardholder name');
                 // if (this.pay_info.exp < 4) return alert('Please check the card expiry');
                 // if (this.pay_info.cvc < 3) return alert('Please check card cvc number');
-
                 var arr = [];
                 this.cars.map(car => {
                     if(car.is_checked) arr.push(car);

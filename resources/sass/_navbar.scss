@@ -53,7 +53,9 @@
                     color: #363636;
                     div:first-child {
                         float: left;
-                        text-decoration: underline;
+                        span {
+                            text-decoration: underline;
+                        }
                     }
                     .close {
                         float: right;
@@ -67,6 +69,106 @@
                         margin-top: 30px;
                         font: normal normal 300 40px/56px Neuzeit Grotesk;
                         letter-spacing: 0.27px;
+                        position: relative;
+                        .unset-default-btn {
+                            position: absolute;
+                            right: 0;
+                            bottom: 0;
+                            width: unset !important;
+                            padding: 0 2rem;
+                            font: normal normal bold 20px/24px Lato;
+
+                        }
+                    }
+                    .card-info{
+                        border: 1px solid grey;
+                        margin-bottom: 1rem;
+                        &.selected {
+                            // border-color: red;
+                            box-shadow: 0px 10px 20px grey;
+                        }
+                        .card-content {
+                            padding: 1rem;
+                            .card-last-4number{
+                                font: normal normal bold 28px/40px Neuzeit Grotesk;
+                                letter-spacing: 0.22px;
+                                color: #363636;
+                            }
+                            .card-expire {
+                                font: normal normal normal 20px/24px Neuzeit Grotesk;
+                                letter-spacing: 0.16px;
+                                color: #6D7A87;
+                            }
+                        }
+                        .card-action{
+                            padding: 1rem;
+                            text-align: right;
+                            .card-action-btn {
+                                font: normal normal bold 24px/28px Neuzeit Grotesk;
+                                letter-spacing: 0.22px;
+                                color: #30ABE8;
+                                border: 0;
+                                background-color: transparent;
+                                &:focus {
+                                    outline: unset;
+                                }
+                            }
+                        }
+                        .card-divider {
+                            margin: 0;
+                            border-top: 1px solid grey;
+                        }
+                    }
+                    .add-card {
+                        width: 100%;
+                        padding: 4.3rem 0;
+                        border: 1px dashed grey;
+                        cursor: pointer;
+                    }
+                    .payment-editing {
+                        border: 1px solid grey;
+                        padding: 2rem;
+
+                        .item-label {
+                            font: normal normal normal 18px/22px Lato;
+                            color: #1a1738;
+                            margin-top: 1rem;
+                        }
+                        .item-value {
+                            font-size: 14px;
+                            border: none;
+                            border-bottom: 1px solid #269A8E;
+                            padding: 0;
+                            outline: none;
+                            width: 100%;
+                            font: normal normal normal 16px/20px Lato;
+                            letter-spacing: 0px;
+                            color: #363636;
+                            // background: #e3e3e3;
+                            padding-left: 2px;
+                            &::-webkit-input-placeholder {
+                                color: #B9B9B9;
+                            }
+                        }
+
+                        .stripe-elements-error-message-div {
+                            font: normal normal normal 14px/17px Neuzeit Grotesk
+                        }
+                    }
+                    .card-placeholder-image {
+                        border: 1px solid grey;
+                        padding: 1rem 2rem;
+                        width: fit-content;
+                    }
+                    .markup-default {
+                        position: absolute;
+                        font-size: 0.75rem;
+                        background-color: #B7FFBB;
+                        padding: 0 0.5rem;
+                        right: 0;
+                        top: 8px;
+                        color: #035781;
+                        border: 1px solid #B7FFBB;
                     }
                 }
                 .signout {
@@ -77,10 +179,16 @@
                     letter-spacing: 0.27px;
                     color: #FF7777;
                     cursor: pointer;
+                    .cancel-button {
+                        color: #000 !important;
+                        background-color: #ccc;
+                        border-color: transparent;
+                    }
                 }
             }
         }
     }
+
     .navbar-nav {
         position: absolute;
         // justify-content: center;
