@@ -303,7 +303,7 @@ class CarController extends Controller
 
             $total_builder = $this->convertQuery($total_query);
             $total_builder = str_replace(" order by", ') order by',  strval($total_builder));
-            $total_cars_count = $this->getQueryResult($total_builder)['info']['count'];
+            $total_cars_count = $this->getQueryResult($total_builder);
         }
         // $total = '';
 
@@ -347,7 +347,9 @@ class CarController extends Controller
             }
         else $car_arr = array();
 
-        $total_count = ($request->page_type == 'cars')? count($car_arr) : $total_cars_count;
+        $total_count = ($request->page_type == 'cars')? count($car_arr) : $total_cars_count['info']['count'];
+
+        $total_count_data = ($request->page_type == 'cars')? [] : $total_cars_count;
 
         return ['total' => $total_count,  'data' => $car_arr, 'user'=> Auth::user()];
     }
