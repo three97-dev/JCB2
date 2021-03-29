@@ -250,10 +250,6 @@ class CarController extends Controller
 
         $query = $query->select($select)
                         ->orderby('id', 'desc');
-        $total_query = $query;
-
-        $query = $query->skip($page * $records_per_page)
-                ->take($records_per_page);
 
         $cars = array();
         if($request->page_type == 'cars') {
@@ -297,13 +293,15 @@ class CarController extends Controller
         }
 
         else {
-            $builder = $this->convertQuery($query);
-            $builder = str_replace(" order by", ') order by',  strval($builder));
-            $cars = $this->getQueryResult($builder)['data'];
 
-            $total_builder = $this->convertQuery($total_query);
+            $total_builder = $this->convertQuery($query);
             $total_builder = str_replace(" order by", ') order by',  strval($total_builder));
-            $total_cars_count = $this->getQueryResult($total_builder);
+            $total_cars_count = $this->getQueryResult($total_builder)['info']['count'];
+
+            $builder = $total_builder." limit ".$records_per_page." offset ".$page * $records_per_page;
+            $cars = $this->getQueryResult($builder)['data'];
+            // $query = $query->skip($page * $records_per_page)
+            //     ->take($records_per_page);
         }
         // $total = '';
 
@@ -347,11 +345,9 @@ class CarController extends Controller
             }
         else $car_arr = array();
 
-        $total_count = ($request->page_type == 'cars')? count($car_arr) : $total_cars_count['info']['count'];
+        $total_count = ($request->page_type == 'cars')? count($car_arr) : $total_cars_count;
 
-        $total_count_data = ($request->page_type == 'cars')? [] : $total_cars_count;
-
-        return ['total' => $total_count, "total_cars" => $total_count_data, 'data' => $car_arr, 'user'=> Auth::user()];
+        return ['total' => $total_count,  'data' => $car_arr, 'user'=> Auth::user()];
     }
 
     public function report() {
