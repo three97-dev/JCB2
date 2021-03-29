@@ -248,16 +248,13 @@ class CarController extends Controller
         if ($request->Make) $query = $query->where('Make', $request->Make);
         if ($request->Model) $query = $query->where('Model', $request->Make);
 
-        // $query = $query->whereIn('Zip_Code', $this->getCities(Auth::user(), 250));
-        // $total = $query->count();
-        // return json_encode(['res'=>$query_zip_arr1]);
-        // if(count($query_zip_arr1)) {
-        //     $query = $query->whereIn('Zip_Code', $query_zip_arr1);
-        // }
         $query = $query->select($select)
-                        ->skip($page * $records_per_page)
-                        ->take($records_per_page)
                         ->orderby('id', 'desc');
+        $total_query = $query;
+
+        $query = $query->skip($page * $records_per_page)
+                ->take($records_per_page);
+
         $cars = array();
         if($request->page_type == 'cars') {
 
@@ -303,8 +300,12 @@ class CarController extends Controller
             $builder = $this->convertQuery($query);
             $builder = str_replace(" order by", ') order by',  strval($builder));
             $cars = $this->getQueryResult($builder)['data'];
+
+            $total_builder = $this->convertQuery($total_query);
+            $total_builder = str_replace(" order by", ') order by',  strval($total_builder));
+            $total_cars_count = $this->getQueryResult($total_builder)['info']['count'];
         }
-        $total = '';
+        // $total = '';
 
         $car_arr = array();
 
@@ -318,7 +319,6 @@ class CarController extends Controller
                 if($request->page_type == 'cars') {
                     if($like) $car['is_liked'] = true;
                     else $car['is_liked'] = false;
-
                 }
                 $flag = 0;
                 if ($request->Miles) {
@@ -347,7 +347,9 @@ class CarController extends Controller
             }
         else $car_arr = array();
 
-        return ['total' => count($car_arr),  'data' => $car_arr, 'user'=> Auth::user()];
+        $total_count = ($request->page_type == 'cars')? count($car_arr) : $total_cars_count;
+
+        return ['total' => $total_count,  'data' => $car_arr, 'user'=> Auth::user()];
     }
 
     public function report() {
