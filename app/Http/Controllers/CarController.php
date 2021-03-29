@@ -351,7 +351,7 @@ class CarController extends Controller
 
         $total_count_data = ($request->page_type == 'cars')? [] : $total_cars_count;
 
-        return ['total' => $total_count,  'data' => $car_arr, 'user'=> Auth::user()];
+        return ['total' => $total_count, "total_cars" => $total_count_data, 'data' => $car_arr, 'user'=> Auth::user()];
     }
 
     public function report() {
