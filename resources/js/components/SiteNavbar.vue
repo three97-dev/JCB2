@@ -10,10 +10,10 @@
                     {{username}} <span class="mif-arrow-drop-down drop-down" @click="showDropdown"></span>
                     <div class="dropdown-action-menu" v-if="showActions">
                         <div class="dropDownMenu-header">
-                            <div><span>Menu</span> {{submenu}}</div>
+                            <div><span class="cursor-pointer" @click="stateInitialize">Menu</span> {{submenu}}</div>
                             <div class="close" @click="showDropdown"><span class="mif-cross-light"></span></div>
                         </div>
-                        <div class="content" v-if="!showPaymentSettings">
+                        <div class="content" v-if="!showPaymentSettings && !showProfileSettings">
                             <div class="content-row">
                                 <span class="mif-user"></span>
                                 &nbsp;&nbsp;Profile
@@ -22,6 +22,19 @@
                                 <span class="mif-credit-card"></span>
                                 &nbsp;&nbsp;Payment Method
                             </div>
+                        </div>
+                        <div class="content" v-if="showProfileSettings" style="cursor: unset;">
+
+                            <div class="profile-wrapper">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="content" v-if="showPaymentSettings" style="cursor: unset;">
                             <div class="content-row">
@@ -108,7 +121,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="signout" @click="logout" v-if="!showPaymentSettings">
+                        <div class="signout" @click="logout" v-if="!showPaymentSettings && !showProfileSettings">
                             Sign Out
                         </div>
 
@@ -177,6 +190,7 @@ export default {
             username: '',
             avatar : '/img/avatar.png',
             showActions: false,
+            showProfileSettings: false,
             showPaymentSettings: false,
             paymentEditing: false,
             paymentCreate: false,
@@ -226,7 +240,7 @@ export default {
     },
     computed: {
         submenu() {
-            return this.showPaymentSettings? " > Payment Method" : "";
+            return this.showPaymentSettings? " > Payment Method" : this.showProfileSettings? " > Profile" : "";
         }
     },
     filters: {
@@ -251,6 +265,15 @@ export default {
             this.showPaymentSettings = false;
             this.paymentEditing = false;
             EventBus.$emit('uncheckAll', !this.showActions);
+        },
+        stateInitialize() {
+            this.showPaymentSettings = false;
+            this.showProfileSettings = false;
+            this.paymentEditing = false;
+        },
+        showProfile(flag) {
+            this.showProfileSettings = !this.showProfileSettings;
+            // this.listStripePaymentMethods();
         },
         showPayment(flag) {
             this.showPaymentSettings = !this.showPaymentSettings;

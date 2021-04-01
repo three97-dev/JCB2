@@ -692,6 +692,13 @@
   display: flex;
 }
 
+#SiteNavbar .profile-wrapper {
+  width: 100%;
+  height: 100%;
+  border: 1px solid red;
+  padding: 50px;
+}
+
 /*!
  * Bootstrap v4.5.3 (https://getbootstrap.com/)
  * Copyright 2011-2020 The Bootstrap Authors
@@ -15767,6 +15774,7 @@ body {
   padding: 10px 20px;
   background: white;
   height: 100%;
+  overflow-y: scroll;
   position: relative;
 }
 
@@ -15883,7 +15891,7 @@ body {
   font: normal normal bold 18px/22px Lato;
   letter-spacing: 0.12px;
   color: #25A394;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 #SchedulingPage .car-content .car-right-content .selcar-content .field-item .item-value {
@@ -15913,10 +15921,9 @@ body {
 }
 
 #SchedulingPage .car-content .car-right-content .selcar-content .action-bar {
-  text-align: center;
-  position: absolute;
-  width: calc(100% - 40px);
-  bottom: 10px;
+  text-align: right;
+  display: flex;
+  justify-content: space-between;
 }
 
 #SchedulingPage .car-content .car-right-content .selcar-content .submit-content {
@@ -16579,6 +16586,11 @@ body {
   margin-right: -30px;
 }
 
+.margin-topbottom-half {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .margin-top-5 {
   margin-top: 5px;
 }
@@ -16622,5 +16634,13 @@ body {
   cursor: not-allowed;
   color: #4c4c4c !important;
   background: #e3e3e3;
+}
+
+.margin15 {
+  margin: 0 15px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 

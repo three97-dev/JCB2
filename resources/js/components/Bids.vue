@@ -82,7 +82,7 @@
                             </div>
                         </div>
                         <div class="selcar-content" v-if="sel_car && !sel_car.submit_bid">
-                            <div class="title">{{sel_car.Year}} {{sel_car.Make}} {{sel_car.Model}}</div>
+                            <div class="title margin15">{{sel_car.Year}} {{sel_car.Make}} {{sel_car.Model}}</div>
                             <div class="closing-date">Closing Date: {{sel_car.Closing_Date | dateFormatChange}}</div>
                             <div class="current-offer" :class="{statusWon: sel_car.Stage=='Deal Made'}">
                                 <div class="row1">Your Offer</div>

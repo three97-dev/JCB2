@@ -307,7 +307,7 @@ var commonService = new CommonService();
                 .then(response => {
                     loader.hide();
                     var res = response.data;
-                    this.parseJSONData(res, ['thisMonth', 'lastMonth', 'last3Month', 'thisYear', 'lastYear'], "Grand Count");
+                    this.parseJSONData(res, ['thisMonth', 'lastMonth', 'last3Month', 'thisYear', 'lastYear'], res.accountName);
                     this.loading = true;
                     var purchased3MonthBefore = this.calculate("last3Month", "purchased") - this.calculate("thisMonth", "purchased") - this.calculate("lastMonth", "purchased");
 
@@ -320,11 +320,11 @@ var commonService = new CommonService();
                     var pickup3MonthBefore = this.getItemValue("last3Month", 2) - this.getItemValue("lastMonth", 2) - this.getItemValue("thisMonth", 2);
                     this.closingSeries= [{
                         name: 'closing',
-                        data: [ parseInt(100 * paid3MonthBefore/purchased3MonthBefore), this.calculate("lastMonth", "closing_rate"), this.calculate("thisMonth", "closing_rate") ]
+                        data: [ parseInt(100 * paid3MonthBefore/purchased3MonthBefore) || 0, this.calculate("lastMonth", "closing_rate"), this.calculate("thisMonth", "closing_rate") ]
                     }];
                     this.pickupSeries= [{
                         name: 'pickup',
-                        data: [ parseInt(100 * pickup3MonthBefore/purchased3MonthBefore), this.calculate("lastMonth", "pickup_rate"), this.calculate("thisMonth", "pickup_rate") ]
+                        data: [ parseInt(100 * pickup3MonthBefore/purchased3MonthBefore) || 0, this.calculate("lastMonth", "pickup_rate"), this.calculate("thisMonth", "pickup_rate") ]
                     }];
                 }).catch((error) => {
                     loader.hide();
