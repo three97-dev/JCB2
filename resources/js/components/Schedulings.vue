@@ -28,6 +28,7 @@
                             <input type="checkbox" v-model="checked_all" v-on:change="checkAll(true)" v-show="existingAnycar">&nbsp;Status
                         </div>
                         <div class="title">Ref#</div>
+                        <div class="title">Closing Date</div>
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
@@ -42,6 +43,7 @@
                                 <div v-if="car.Stage == pickedup_string" class="status-fail uppercase">Picked-Up </div>
                             </div>
                             <div class="item-data">{{ car.Reference_Number }}</div>
+                            <div class="item-data">{{ car.Closing_Date | changeDateFormat }}</div>
                             <div class="item-data">{{ car.Year }}</div>
                             <div class="item-data">{{ car.Make }}</div>
                             <div class="item-data">{{ car.Model }}</div>
@@ -149,7 +151,7 @@
 
                         <div class="selcar-content" :class="{'background-grey': !editable}" v-if="sel_car && !submit_pickup && !pickup_count">
                             <div class="title padding-0 margin-top-5">{{sel_car.Year}}&nbsp;&nbsp;{{sel_car.Make}}&nbsp;&nbsp;{{sel_car.Model}}</div>
-                            <hr class="margin-side-minus-30"/>
+                            <hr class="margin-side-minus-30 margin-topbottom-half"/>
                             <div class="selcar-detail row">
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-up Location</div>
@@ -164,7 +166,7 @@
                                     <div class="item-value car-value">{{sel_car.Alt_Phone | phoneNumberFormat}}</div>
                                 </div>
                             </div>
-                            <hr class="margin-side-minus-30"/>
+                            <hr class="margin-side-minus-30 margin-top: 0.75rem;"/>
                             <div class="row">
                                 <div class="col-md-6 field-item margin-0">
                                     <div class="item-label">Pick-Up Date:</div>
@@ -361,7 +363,14 @@ var commonService = new CommonService();
                 phoneNumber = [phoneNumber.slice(0, 3), '-', phoneNumber.slice(3)].join('');
                 phoneNumber = [phoneNumber.slice(0, 7), '-', phoneNumber.slice(7)].join('');
                 return phoneNumber;
-            }
+            },
+            changeDateFormat: function(closing_date) {
+                if(closing_date) {
+                    var val=closing_date.split('-');
+                    return val[1] + "/" + val[2] + "/" + val[0];
+                }
+                return "";
+            },
         },
         created() {
             const thiz = this;

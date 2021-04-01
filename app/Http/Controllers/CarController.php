@@ -248,8 +248,12 @@ class CarController extends Controller
         if ($request->Make) $query = $query->where('Make', $request->Make);
         if ($request->Model) $query = $query->where('Model', $request->Make);
 
-        $query = $query->select($select)
-                        ->orderby('id', 'desc');
+        $query = $query->select($select);
+
+        if($request->page_type == 'schedulings')
+            $query =  $query->orderby('Closing_Date', 'desc');
+        else
+            $query =  $query->orderby('id', 'desc');
 
         $cars = array();
         if($request->page_type == 'cars') {
