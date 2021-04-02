@@ -313,5 +313,21 @@
         height: 100%;
         border: 1px solid red;
         padding: 50px;
+        .input-label{
+            width: 100%;
+            color: #6D7A87;
+            font-size: 40px;
+            font-weight: 300;
+        }
+        input.input {
+            border: 0;
+            border-bottom: 2px solid black;
+            color: black;
+            outline: none;
+            margin-bottom: 30px;
+            &::-webkit-input-placeholder {
+                color: black;
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@
                             <div class="close" @click="showDropdown"><span class="mif-cross-light"></span></div>
                         </div>
                         <div class="content" v-if="!showPaymentSettings && !showProfileSettings">
-                            <div class="content-row">
+                            <div class="content-row" @click="showProfile">
                                 <span class="mif-user"></span>
                                 &nbsp;&nbsp;Profile
                             </div>
@@ -28,8 +28,19 @@
                             <div class="profile-wrapper">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div>
-
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="input-label">First Name</label>
+                                                <input type="text" placeholder="Input" class="input" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="input-label">Last Name</label>
+                                                <input type="text" placeholder="Input" class="input" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="input-label">Company Name</label>
+                                                <input type="text" placeholder="Input" class="input" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

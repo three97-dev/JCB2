@@ -699,6 +699,25 @@
   padding: 50px;
 }
 
+#SiteNavbar .profile-wrapper .input-label {
+  width: 100%;
+  color: #6D7A87;
+  font-size: 40px;
+  font-weight: 300;
+}
+
+#SiteNavbar .profile-wrapper input.input {
+  border: 0;
+  border-bottom: 2px solid black;
+  color: black;
+  outline: none;
+  margin-bottom: 30px;
+}
+
+#SiteNavbar .profile-wrapper input.input::-webkit-input-placeholder {
+  color: black;
+}
+
 /*!
  * Bootstrap v4.5.3 (https://getbootstrap.com/)
  * Copyright 2011-2020 The Bootstrap Authors
