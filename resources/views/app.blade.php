@@ -17,9 +17,6 @@
     </style>
 </head>
 <body>
-<!-- Start of HubSpot Embed Code -->
-  <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/19633342.js"></script>
-<!-- End of HubSpot Embed Code -->
 <div id="app"></div>
 <script src="{{ mix('js/app.js') }}?{{time()}}" type="text/javascript"></script>
 </body>

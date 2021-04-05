@@ -16,6 +16,8 @@ import VueTheMask from 'vue-the-mask';
 import CommonService from './services/CommonService';
 import 'vue2-timepicker/dist/VueTimepicker.css'
 import VueApexCharts from 'vue-apexcharts'
+import myUpload from 'vue-image-crop-upload'
+import {Tabs, Tab} from 'vue-tabs-component';
 
 
 Vue.component('input-mask', InputMask)
@@ -28,8 +30,12 @@ Vue.use(Loading);
 Vue.use(VCalendar, { });
 Vue.use(VueTheMask);
 Vue.use(VueApexCharts)
+Vue.use(myUpload)
+Vue.component('tabs', Tabs);
+Vue.component('tab', Tab);
 
 Vue.component('apexchart', VueApexCharts)
+Vue.component('my-upload', myUpload)
 
 const router = new VueRouter({
     mode: 'history',
