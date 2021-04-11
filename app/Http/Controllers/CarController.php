@@ -77,6 +77,7 @@ class CarController extends Controller
         $page = ($request->page ?: 1) - 1;
         $records_per_page = $request->records_per_page ?: 8;
         $select = [
+            'Tow_Company.Account_Name',
             'id as index',
             'Year',
             'Make',
@@ -124,11 +125,12 @@ class CarController extends Controller
             $select[] = 'Any_Missing_Body_Panels_Interior_or_Engine_Parts';
             // $select[] = 'Scheduled_Notes';
 
+            $custom_search = 'auction';
             $query = Car::where('Stage', $stage)
                         ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
+                        ->where('Tow_Company.Account_Name', 'like', '%'.$custom_search.'%')
                         ->whereNotNull('Buyers_Quote')
                         ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
-
 
             $records_per_page = 200;
             if ($request->type == 'like')
@@ -259,7 +261,6 @@ class CarController extends Controller
         if($request->page_type == 'cars') {
 
             if(count($query_zip_arr1)) {
-
                 // $query1 = $query->whereIn('Zip_Code', $query_zip_arr1);
                 $builder = $this->convertQuery($query);
                 $builder = str_replace(" order by", ') and Zip_Code in ('.$this->array2string($query_zip_arr1).') order by',  strval($builder));
