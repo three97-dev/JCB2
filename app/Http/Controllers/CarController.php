@@ -77,6 +77,7 @@ class CarController extends Controller
         $page = ($request->page ?: 1) - 1;
         $records_per_page = $request->records_per_page ?: 8;
         $select = [
+            'Filter_Auction',
             'Tow_Company.Account_Name',
             'id as index',
             'Year',
@@ -128,7 +129,7 @@ class CarController extends Controller
             $custom_search = 'auction';
             $query = Car::where('Stage', $stage)
                         ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
-                        ->where('Tow_Company.Account_Name', 'like', '%'.$custom_search.'%')
+                        ->where('Filter_Auction', '<>', '%'.$custom_search.'%')
                         ->whereNotNull('Buyers_Quote')
                         ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
 
@@ -265,6 +266,9 @@ class CarController extends Controller
                 $builder = $this->convertQuery($query);
                 $builder = str_replace(" order by", ') and Zip_Code in ('.$this->array2string($query_zip_arr1).') order by',  strval($builder));
                 $builder = str_replace("where ", 'where (',  strval($builder));
+                // echo '<pre>';
+                // print_r($builder);
+                // die;
                 // return $builder;
                 $cars1 = $this->getQueryResult($builder)['data'];
                 // return json_encode(['res'=>$cars1]);
