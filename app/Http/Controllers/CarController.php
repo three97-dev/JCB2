@@ -129,7 +129,7 @@ class CarController extends Controller
             $custom_search = 'auction';
             $query = Car::where('Stage', $stage)
                         ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
-                        ->where('Filter_Auction', '<>', '%'.$custom_search.'%')
+                        ->where('Filter_Auction', '!=', $custom_search)
                         ->whereNotNull('Buyers_Quote')
                         ->where('Closing_Date', '>=', date('Y-m-d', strtotime($duration . ' days')));
 
