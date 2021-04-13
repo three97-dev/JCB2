@@ -268,6 +268,48 @@ class ZohoSerivce {
         return $resp;
     }
 
+    public function updateAccount($id, $username, $companyName) {
+        $moduleAPIName = "Accounts";
+        $recordId =$id;
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+        $record1 = new Record();
+        $record1->setId($recordId);
+        $record1->addKeyValue('Account_Name', $username);
+        $record1->addKeyValue('Owners_Name', $companyName);
+        $records[] = $record1;
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+        $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+        return $resp;
+    }
+
+    public function updateAddress($id, $billingAddress, $shippingAddress) {
+        $moduleAPIName = "Accounts";
+        $recordId =$id;
+        $recordOperations = new RecordOperations();
+        $body = new RecordBodyWrapper();
+        $records = array();
+        $record1 = new Record();
+        $record1->setId($recordId);
+        if($billingAddress['street']) $record1->addKeyValue('Billing_Street', $billingAddress['street']);
+        if($billingAddress['city']) $record1->addKeyValue('Billing_City', $billingAddress['city']);
+        if($billingAddress['state']) $record1->addKeyValue('Billing_State', $billingAddress['state']);
+        if($billingAddress['code']) $record1->addKeyValue('Billing_Code', $billingAddress['code']);
+        if($shippingAddress['street']) $record1->addKeyValue('Shipping_Street', $shippingAddress['street']);
+        if($shippingAddress['city']) $record1->addKeyValue('Shipping_City', $shippingAddress['city']);
+        if($shippingAddress['state']) $record1->addKeyValue('Shipping_State', $shippingAddress['state']);
+        if($shippingAddress['code']) $record1->addKeyValue('Shipping_Code', $shippingAddress['code']);
+        $records[] = $record1;
+        $body->setData($records);
+        $trigger = array("approval", "workflow", "blueprint");
+        $body->setTrigger($trigger);
+        $resp = $recordOperations->updateRecords($moduleAPIName, $body);
+        return $resp;
+    }
+
     public function refreshUserData() {
         $records = $this->getAllUsers();
         foreach ($records as $record) {

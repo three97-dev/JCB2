@@ -170,6 +170,58 @@ class UserController extends Controller
         return ['success' => true];
     }
 
+    public function getProfile() {
+        $zohoService = new ZohoSerivce();
+        $account = $zohoService->getAccount(Auth::user()->email);
+        return json_encode(['user'=>["username" => $account->getKeyValue("Account_Name"), "companyName" => $account->getKeyValue("Owners_Name"), "photo" => Auth::user()->photo]]);
+    }
+
+    public function saveProfile(Request $request) {
+        $user = User::where('email', Auth::user()->email)->first();
+        $user->name = $request->username;
+        $user->photo = $request->photo;
+        $user->save();
+        $zohoService = new ZohoSerivce();
+        $account = $zohoService->updateAccount($user->zoho_index, $request->username, $request->companyName);
+        return json_encode(['res'=>"success"]);
+    }
+
+    public function uploadPhoto(Request $request) {
+        $time = new \DateTime();
+        $imageName = time().'.'.$request->form->extension();
+
+        $request->form->move(public_path('img/profiles'), $imageName);
+        return $imageName;
+    }
+
+    public function getAddress() {
+        $zohoService = new ZohoSerivce();
+        $account = $zohoService->getAccount(Auth::user()->email);
+        $billingAddress = [
+            "street"=>$account->getKeyValue("Billing_Street"),
+            "city"=>$account->getKeyValue("Billing_City"),
+            "state"=>$account->getKeyValue("Billing_State"),
+            "code"=>$account->getKeyValue("Billing_Code"),
+            "suite"=>'',
+        ];
+        $shippingAddress = [
+            "street"=>$account->getKeyValue("Shipping_Street"),
+            "city"=>$account->getKeyValue("Shipping_City"),
+            "state"=>$account->getKeyValue("Shipping_State"),
+            "code"=>$account->getKeyValue("Shipping_Code"),
+            "suite"=>'',
+        ];
+        return json_encode(['billingAddress'=> $billingAddress, 'shippingAddress'=> $shippingAddress ]);
+    }
+
+    public function saveAddress(Request $request) {
+        $user = User::where('email', Auth::user()->email)->first();
+
+        $zohoService = new ZohoSerivce();
+        $account = $zohoService->updateAddress($user->zoho_index, $request->billingAddress, $request->shippingAddress);
+        return json_encode(['res'=>"success"]);
+    }
+
     public function logout(Request $request) {
         Auth::logout();
         return redirect('/login');

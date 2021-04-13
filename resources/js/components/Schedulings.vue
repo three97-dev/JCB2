@@ -28,7 +28,7 @@
                             <input type="checkbox" v-model="checked_all" v-on:change="checkAll(true)" v-show="existingAnycar">&nbsp;Status
                         </div>
                         <div class="title">Ref#</div>
-                        <div class="title">Closing Date</div>
+                        <div class="title">Date Sent</div>
                         <div class="title">Year</div>
                         <div class="title">Make</div>
                         <div class="title">Model</div>
