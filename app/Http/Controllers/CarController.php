@@ -126,7 +126,7 @@ class CarController extends Controller
             $select[] = 'Any_Missing_Body_Panels_Interior_or_Engine_Parts';
             // $select[] = 'Scheduled_Notes';
 
-            $custom_search = 'auction';
+            $custom_search = 'Auction';
             $query = Car::where('Stage', $stage)
                         ->where('Tow_Company_id', '<>', Auth::user()->zoho_index)
                         ->where('Filter_Auction', '!=', $custom_search)
