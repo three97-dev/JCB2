@@ -13,58 +13,190 @@
                             <div><span class="cursor-pointer" @click="stateInitialize">Menu</span> {{submenu}}</div>
                             <div class="close" @click="showDropdown"><span class="mif-cross-light"></span></div>
                         </div>
-                        <div class="content" v-if="!showPaymentSettings && !showProfileSettings && !showAddressSettings">
+                        <div class="content" v-if="!showPaymentSettings && !showProfileSettings">
                             <div class="content-row" @click="showProfile">
                                 <span class="mif-user"></span>
-                                &nbsp;&nbsp;Profile
+                                &nbsp;&nbsp;Profile Settings
                             </div>
                             <div class="content-row" @click="showPayment">
                                 <span class="mif-credit-card"></span>
                                 &nbsp;&nbsp;Payment Method
                             </div>
-                            <div class="content-row" @click="showAddress">
-                                <span class="mif-my-location"></span>
-                                &nbsp;&nbsp;Address
-                            </div>
+                            
                         </div>
                         <div class="content" v-if="showProfileSettings" style="cursor: unset;">
 
                             <div class="profile-wrapper">
-                                <div class="row">
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="input-label">Name</label>
-                                            <input type="text" placeholder="Input" class="input" v-model="username" />
+                                <div class="row main-row">
+                                    <div class="col-md-4 profile-col">
+                                       
+                                        <input type="file" @change="filesChange($event.target.files)" class="profile_uploader" accept="image/*" ref="myfile"/>
+                                        <div class="profile_wrapper" :style="'background-image:' + image" @click="clickUploader">
+                                            <div>Click to add</div>
                                         </div>
-                                        <!-- <div class="form-group">
-                                            <label class="input-label">Last Name</label>
-                                            <input type="text" placeholder="Input" class="input" />
-                                        </div> -->
+                                        <div class="edit-profile">
+                                            <a href="#">Edit Profile Photo</a>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="input-label">Display Name</label>
+                                            <input type="text" placeholder="Input" class="input" v-model="username" />
+                                        </div>                      
                                         <div class="form-group">
                                             <label class="input-label">Company Name</label>
                                             <input type="text" placeholder="Input" class="input" v-model="companyName" />
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <!-- <a class="btn" @click="toggleShow">set avatar</a>
-                                        <my-upload field="img"
-                                            ki="0"
-                                            :width="300"
-                                            :height="300"
-                                            url="/upload"
-                                            :params="params"
-                                            :headers="headers"
-                                            lang-type="en"
-                                            :value="false"
-                                            imgFormat="png"
-                                            :allowImgFormat="['gif','jpg','png']"
-                                            ></my-upload> -->
-                                        <input type="file" @change="filesChange($event.target.files)" class="profile_uploader" accept="image/*" ref="myfile"/>
-                                        <div class="profile_wrapper" :style="'background-image:' + image" @click="clickUploader">
-                                            <div>Click to add</div>
-                                        </div>
+                                    <div class="col-md-8 addr">
+                                    <div class="new-address">
+                                        <p><a href="#">+ New Address</a></p>    
                                     </div>
+                                        <tabs class="address-add">
+                                <tab name="Primary Address">
+                                    <div class="address_form">
+
+                                        <div class="row">
+                                            <div class="col-md-7">
+                                                <div class="row">
+                                                   <div class="col-md-12">
+                                                     <div class="form-group primary">
+                                                    <label class="input-label" style="float: left; width: unset;">Address Name: </label>
+                                                    <div class="input" >Primary Address</div>
+                                                   </div>
+                                                </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">Street Address </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.street" />
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.suite" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">City/Town </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.city" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">State/Province </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.state" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.code" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class="detail-address mb-3">
+                                                    <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
+                                                    <ul class="nav nav-pills nav-justified">
+                                                        <li class="active"><a href="#">OFF</a></li>
+                                                        <li><a href="#">YES</a></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
+                                                    <div class="input my-loc-input" >ABC Towing Company</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </tab>
+                                <tab name="Address2">
+                                    <div class="address_form">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                    <div class="form-group">
+                                                    <label class="input-label" style="float: left; width: unset;">Address Name: </label>
+                                                    <div class="input" >Address2</div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">Street Address </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.street" />
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.suite" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">City/Town </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.city" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">State/Province </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.state" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.code" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                              <div class="col-md-4">
+                                                
+                                            </div>
+                                       
+                                        </div>
+
+                                    </div>
+                                </tab>
+                            </tabs>
+                             
+                                    </div>
+                                    
                                     <div class="accountActionBtn">
                                         <button class="btn btn-primary action-button" @click="saveProfile">SAVE</button>
                                     </div>
@@ -158,141 +290,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="content" v-if="showAddressSettings" style="cursor: unset;">
-
-                            <tabs>
-                                <tab name="Primary Address">
-                                    <div class="address_form">
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <div class="form-group" style="display: flex;">
-                                                    <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                    <div class="input" >Primary Address</div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">Street Address </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.street" />
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.suite" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">City/Town </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.city" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">State/Province </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.state" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.code" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <button class="btn btn-primary action-button address-btn" @click="saveAddress">SAVE</button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </tab>
-                                <tab name="Address2">
-                                    <div class="address_form">
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <div class="form-group" style="display: flex;">
-                                                    <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                    <div class="input" >Address2</div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">Street Address </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.street" />
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.suite" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">City/Town </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.city" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">State/Province </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.state" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.code" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <button class="btn btn-primary action-button address-btn" @click="saveAddress">SAVE</button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </tab>
-                                <tab name="+ New">
-                                    <div class="address_form">
-                                        Coming Soon
-
-                                    </div>
-                                </tab>
-                            </tabs>
-
-                        </div>
-                        <div class="signout" @click="logout" v-if="!showPaymentSettings && !showProfileSettings && !showAddressSettings">
+              
+                        <div class="signout" @click="logout" v-if="!showPaymentSettings && !showProfileSettings">
                             Sign Out
                         </div>
 
@@ -367,7 +366,6 @@ export default {
             showActions: false,
             showProfileSettings: false,
             showPaymentSettings: false,
-            showAddressSettings: false,
             paymentEditing: false,
             paymentCreate: false,
             show: false,
@@ -427,7 +425,7 @@ export default {
     },
     computed: {
         submenu() {
-            return this.showPaymentSettings? " > Payment Method" : this.showProfileSettings? " > Profile" : this.showAddressSettings? " > Address" :  "";
+            return this.showPaymentSettings? " > Payment Method" : this.showProfileSettings? " > Profile Settings" :  "";
         },
         image() {
             let default_image = 'img/profile-icon-9.png';
@@ -467,7 +465,6 @@ export default {
         stateInitialize() {
             this.showPaymentSettings = false;
             this.showProfileSettings = false;
-            this.showAddressSettings = false;
             this.paymentEditing = false;
         },
         showProfile(flag) {
@@ -482,6 +479,8 @@ export default {
                         this.imgDataUrl = user.photo;
                         this.username = user.username;
                         this.companyName = user.companyName;
+                        that.billingAddress = user.billingAddress;
+                        that.shippingAddress = user.shippingAddress;
                     });
             }
             this.showProfileSettings = !this.showProfileSettings;
@@ -490,21 +489,7 @@ export default {
             this.showPaymentSettings = !this.showPaymentSettings;
             this.listStripePaymentMethods();
         },
-        showAddress(flag) {
-            if(!this.showAddressSettings) {
-                let loader = this.$loading.show();
-                let that = this;
-                this.axios
-                    .get(`/api/getAddress`, commonService.get_api_header())
-                    .then(response => {
-                        loader.hide();
-                        let address = response.data;
-                        that.billingAddress = address.billingAddress;
-                        that.shippingAddress = address.shippingAddress;
-                    });
-            }
-            this.showAddressSettings = !this.showAddressSettings;
-        },
+
         editCard(card = null) {
             this.paymentEditing = true;
 
@@ -840,7 +825,7 @@ export default {
         saveProfile() {
             let loader = this.$loading.show();
             let that = this;
-            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl},commonService.get_api_header())
+            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,billingAddress: this.billingAddress, shippingAddress: this.shippingAddress},commonService.get_api_header())
                 .then(function (response) {
                     loader.hide();
                     that.showProfileSettings = false;
@@ -850,19 +835,7 @@ export default {
                     loader.hide();
                 });
         },
-        saveAddress() {
-            let loader = this.$loading.show();
-            let that = this;
-            this.axios.post('/api/saveAddress', {billingAddress: this.billingAddress, shippingAddress: this.shippingAddress},commonService.get_api_header())
-                .then(function (response) {
-                    loader.hide();
-                    that.showAddressSettings = false;
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                    loader.hide();
-                });
-        }
+ 
     },
 
 }

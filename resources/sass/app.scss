@@ -13,7 +13,7 @@
 
 html {
     height: 100%;
-    font-family: Lato;
+    font-family: Lato !important;
 }
 
 // #bg {
@@ -23,6 +23,7 @@ html {
 body {
         background: transparent linear-gradient(119deg, #B7FFBBC0 0%, #D0D9FFC0 100%) 0% 0% no-repeat padding-box;
         // height: calc(100vh - $navHeight);
+        
     }
 #PageContent {
     margin-top: $navHeight;
@@ -90,7 +91,6 @@ body {
     }
     .car-content {
         padding: 0 20px;
-        height: calc(100vh - 475px);
         overflow: auto;
         .car-right-content {
             // height: 590px;
@@ -205,6 +205,8 @@ body {
                 >a {
                     color: #E4E4E4;
                     text-decoration: none;
+                    position: unset;
+
                 }
             }
             .pagination {
@@ -1500,4 +1502,24 @@ body {
 }
 .cursor-pointer {
     cursor: pointer;
+}
+
+
+// My changhes
+
+.new-address{
+    text-align: end;
+}
+#primary-address{
+    label {
+        font-size: 14px !important;
+    }
+}
+div#bg {
+    background: transparent linear-gradient( 
+119deg
+ , #B7FFBBC0 0%, #D0D9FFC0 100%) 0% 0% no-repeat padding-box;
+}
+.primary{
+    display: grid;
 }

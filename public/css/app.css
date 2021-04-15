@@ -4,6 +4,11 @@
   color: #31AEED;
 }
 
+html {
+  height: 100%;
+  font-family: Lato !important;
+}
+
 #SiteMenubar {
   position: fixed;
   top: 101px;
@@ -355,9 +360,13 @@
   }
 }
 
+html {
+  height: 100%;
+  font-family: Lato !important;
+}
+
 #SiteNavbar {
   color: #363636;
-  position: fixed;
   top: 0;
   width: 100%;
   z-index: 1;
@@ -371,6 +380,11 @@
 #SiteNavbar .navbar-collapse {
   justify-content: space-between;
   height: 100px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  border-bottom: 1px solid #98b99b;
+  background: linear-gradient(119deg, #B7FFBBC0 0%, #D0D9FFC0 100%) 0% 0% no-repeat padding-box;
 }
 
 #SiteNavbar .navbar-userinfo {
@@ -380,21 +394,41 @@
 
 #SiteNavbar .navbar-userinfo .logo-wrapper {
   margin-left: 10px;
-  padding: 5px;
+  padding: 2px;
+}
+
+@media (max-width: 1024px) {
+  #SiteNavbar .navbar-userinfo .logo-wrapper {
+    padding: 0px;
+  }
 }
 
 #SiteNavbar .navbar-userinfo .logo-wrapper img {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
 }
 
+@media (max-width: 1024px) {
+  #SiteNavbar .navbar-userinfo .logo-wrapper img {
+    width: 35px;
+    height: 35px;
+  }
+}
+
 #SiteNavbar .navbar-userinfo .navbar-username {
-  font: normal normal bold 28px/40px Neuzeit Grotesk;
   letter-spacing: 0.19px;
   color: #363636;
   align-items: center;
   display: flex;
+  font-weight: 800;
+  font-size: 25px;
+}
+
+@media (max-width: 1024px) {
+  #SiteNavbar .navbar-userinfo .navbar-username {
+    font-size: 19px;
+  }
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .drop-down {
@@ -402,17 +436,18 @@
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu {
-  position: absolute;
+  position: fixed;
   top: 101px;
   left: 71px;
   width: calc(100vw - 71px);
-  height: calc(100vh - 101px);
+  height: auto;
   background: #fff;
   padding: 50px;
+  height: calc(100% - 102px);
+  overflow: scroll;
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .dropDownMenu-header {
-  font: normal normal bold 40px/56px Neuzeit Grotesk;
   letter-spacing: 0.27px;
   color: #363636;
 }
@@ -423,6 +458,7 @@
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .dropDownMenu-header div:first-child span {
   text-decoration: underline;
+  font-size: 40px;
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .dropDownMenu-header .close {
@@ -437,7 +473,6 @@
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .content div.content-row {
   margin-top: 30px;
-  font: normal normal 300 40px/56px Neuzeit Grotesk;
   letter-spacing: 0.27px;
   position: relative;
 }
@@ -560,7 +595,6 @@
   position: absolute;
   bottom: 50px;
   right: 50px;
-  font: normal normal bold 40px/56px Neuzeit Grotesk;
   letter-spacing: 0.27px;
   color: #FF7777;
   cursor: pointer;
@@ -584,23 +618,36 @@
 }
 
 #SiteNavbar .navbar-nav .nav-link {
-  font: normal normal 300 28px/40px Neuzeit Grotesk;
+  font: normal normal 300 28px/40px Lato;
   letter-spacing: 0.19px;
   color: #363636;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-left: 16px;
+  padding-right: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   float: left;
+  font-size: 24px;
+}
+
+@media (max-width: 1024px) {
+  #SiteNavbar .navbar-nav .nav-link {
+    font-size: 20px;
+  }
 }
 
 #SiteNavbar .navbar-nav .nav-link.active {
-  font: normal normal bold 28px/40px Neuzeit Grotesk;
+  font-size: 24px;
   letter-spacing: 0.19px;
   color: #363636;
   border: 2px solid #707070;
   border-radius: 25px;
+}
+
+@media (max-width: 1024px) {
+  #SiteNavbar .navbar-nav .nav-link.active {
+    font-size: 20px;
+  }
 }
 
 #SiteNavbar .navbar-notification {
@@ -608,8 +655,8 @@
   background: #FFFFFF 0% 0% no-repeat padding-box;
   box-shadow: 0px 10px 10px #00000029;
   font-size: 29px;
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   text-align: center;
   border-radius: 50%;
   padding: 9px;
@@ -699,22 +746,41 @@
   padding: 50px;
 }
 
+@media (max-width: 1280px) {
+  #SiteNavbar .profile-wrapper .main-row {
+    display: block !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  #SiteNavbar .profile-wrapper .profile-col {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  #SiteNavbar .profile-wrapper .addr {
+    max-width: 100% !important;
+  }
+}
+
 #SiteNavbar .input-label {
   width: 100%;
   color: #6D7A87;
-  font-size: 30px;
+  font-size: 16px;
+  margin-bottom: 0px;
   font-weight: 300;
 }
 
 #SiteNavbar input.input {
   border: 0;
-  font: normal normal bold 20px/28px Neuzeit Grotesk;
   letter-spacing: 0.16px;
-  color: #363636;
-  border-bottom: 2px solid #363636;
+  color: #30ABE8;
+  border-bottom: 2px solid #c2efd7;
   outline: none;
-  margin-bottom: 30px;
-  width: 100%;
+  margin-bottom: 0px;
+  width: 90%;
+  font-size: 18px;
 }
 
 #SiteNavbar input.input::-webkit-input-placeholder {
@@ -723,14 +789,26 @@
 
 #SiteNavbar div.input {
   border: 0;
-  font: normal normal bold 20px/40px Neuzeit Grotesk;
+  font-size: 18px;
   letter-spacing: 0.16px;
-  color: #363636;
-  border-bottom: 2px solid #363636;
+  color: #30ABE8;
+  border-bottom: 2px solid #c2efd7;
   outline: none;
-  min-width: 500px;
+  min-width: 357px;
   float: left;
-  margin-left: 2rem;
+}
+
+#SiteNavbar .my-loc-input {
+  min-width: 280px !important;
+}
+
+#SiteNavbar .edit-profile {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+#SiteNavbar .edit-profile a {
+  font-size: 18px;
 }
 
 #SiteNavbar .profile_wrapper {
@@ -740,9 +818,8 @@
   background-color: #C9C0C0;
   background-position: center;
   background-size: cover;
-  float: right;
+  margin: 0 auto;
   padding-top: 200px;
-  font: normal normal bold 32px/40px Neuzeit Grotesk;
   letter-spacing: 0.22px;
   color: #E6E6E6;
   cursor: pointer;
@@ -764,6 +841,21 @@
   text-align: right;
 }
 
+#SiteNavbar .new-address p a {
+  font-size: 20px;
+}
+
+#SiteNavbar .address-add {
+  position: absolute;
+  top: 3px;
+}
+
+@media (max-width: 1280px) {
+  #SiteNavbar .address-add {
+    position: unset;
+  }
+}
+
 #SiteNavbar .tabs-component-tabs {
   list-style: none;
   float: unset;
@@ -774,15 +866,15 @@
 
 #SiteNavbar .tabs-component-tabs li {
   float: left;
-  border: 1px solid #707070;
+  padding-top: 10px;
   background-color: #E4E4E4;
 }
 
 #SiteNavbar .tabs-component-tabs li a {
-  font: normal normal bold 20px/28px Neuzeit Grotesk;
   letter-spacing: 0.16px;
-  color: #6D7A87;
+  color: #fff;
   padding: 2rem 4rem;
+  font-size: 20px;
 }
 
 #SiteNavbar .tabs-component-tabs li a:hover {
@@ -790,11 +882,13 @@
 }
 
 #SiteNavbar .tabs-component-tabs li.is-active {
-  background-color: unset;
+  background-color: #30ABE8;
+  padding: 11px 0px;
 }
 
 #SiteNavbar .tabs-component-tabs li.is-active a {
-  color: #363636;
+  color: #ffff;
+  font-size: 20px;
 }
 
 #SiteNavbar .address_form {
@@ -804,6 +898,8 @@
 
 #SiteNavbar .address_form input {
   margin-bottom: 0;
+  color: #30ABE8;
+  border-bottom: 2px solid #c2efd7;
 }
 
 #SiteNavbar .address_form .form-group {
@@ -814,6 +910,25 @@
   position: absolute;
   right: 0;
   bottom: 0;
+}
+
+.profile-col label {
+  font-size: 12px;
+}
+
+.detail-address .nav-pills {
+  justify-content: flex-end;
+}
+
+.detail-address .nav-pills li {
+  border: 1px solid #CCCFD4;
+  padding: 0px 9px;
+}
+
+.detail-address .nav-pills li a {
+  font-size: 16px;
+  color: #929ca6;
+  font-weight: 400;
 }
 
 /*!
@@ -15168,7 +15283,7 @@ input[type=color].form-control:disabled {
 
 html {
   height: 100%;
-  font-family: Lato;
+  font-family: Lato !important;
 }
 
 body {
@@ -15250,7 +15365,6 @@ body {
 
 .page-content-detail .car-content {
   padding: 0 20px;
-  height: calc(100vh - 475px);
   overflow: auto;
 }
 
@@ -15383,6 +15497,7 @@ body {
 .page-content-detail .car-content .car-body .action-heart > a {
   color: #E4E4E4;
   text-decoration: none;
+  position: unset;
 }
 
 .page-content-detail .car-content .car-body .pagination {
@@ -16796,5 +16911,21 @@ body {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.new-address {
+  text-align: end;
+}
+
+#primary-address label {
+  font-size: 14px !important;
+}
+
+div#bg {
+  background: transparent linear-gradient(119deg, #B7FFBBC0 0%, #D0D9FFC0 100%) 0% 0% no-repeat padding-box;
+}
+
+.primary {
+  display: grid;
 }
 

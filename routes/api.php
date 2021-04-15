@@ -67,9 +67,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/payments/stripe/getPaymentMethod', 'StripePaymentController@getPaymentMethod');
     Route::get('/payments/stripe/unsetPayment', 'StripePaymentController@unsetPayment');
 
-    Route::get('/getProfile', 'UserController@getProfile');
+    Route::get('/getProfile', 'UserController@getProfileSettings');
+    Route::post('/saveProfile', 'UserController@saveProfileSettings');
     Route::post('/uploadPhoto', 'UserController@uploadPhoto');
-    Route::post('/saveProfile', 'UserController@saveProfile');
-    Route::get('/getAddress', 'UserController@getAddress');
-    Route::post('/saveAddress', 'UserController@saveAddress');
 });
