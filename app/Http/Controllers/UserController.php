@@ -39,6 +39,9 @@ class UserController extends Controller
 
         // $user->resetToken();
 
+        if(!$user->api_token){
+            $user->resetToken();
+        }
         Auth::login($user);
         $res = $this->refreshAccountInfo($user);
 
