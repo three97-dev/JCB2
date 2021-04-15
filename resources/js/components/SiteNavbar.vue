@@ -35,7 +35,7 @@
                                             <div>Click to add</div>
                                         </div>
                                         <div class="edit-profile">
-                                            <a href="#">Edit Profile Photo</a>
+                                            <a :style="'cursor: pointer'" @click="clickUploader">Edit Profile Photo</a>
                                         </div>
                                         <div class="form-group">
                                             <label class="input-label">Display Name</label>
@@ -50,7 +50,7 @@
                                     <div class="new-address">
                                         <p><a href="#">+ New Address</a></p>    
                                     </div>
-                                        <tabs class="address-add">
+                            <tabs class="address-add">
                                 <tab name="Primary Address">
                                     <div class="address_form">
 
