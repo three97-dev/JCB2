@@ -281,10 +281,11 @@ class ZohoSerivce {
         if($billingAddress['city']) $record1->addKeyValue('Billing_City', $billingAddress['city']);
         if($billingAddress['state']) $record1->addKeyValue('Billing_State', $billingAddress['state']);
         if($billingAddress['code']) $record1->addKeyValue('Billing_Code', $billingAddress['code']);
+        
         if($shippingAddress['street']) $record1->addKeyValue('Shipping_Street', $shippingAddress['street']);
         if($shippingAddress['city']) $record1->addKeyValue('Shipping_City', $shippingAddress['city']);
         if($shippingAddress['state']) $record1->addKeyValue('Shipping_State', $shippingAddress['state']);
-        if($shippingAddress['code']) $record1->addKeyValue('Shipping_Code', $shippingAddress['code']);
+        if($shippingAddress['code']) $record1->addKeyValue('Shipping_Code', $shippingAddress['code']);       
         $records[] = $record1;
         $body->setData($records);
         $trigger = array("approval", "workflow", "blueprint");

@@ -16929,3 +16929,14 @@ div#bg {
   display: grid;
 }
 
+.new-address {
+  position: absolute;
+  right: 0;
+  z-index: 2;
+}
+
+.new-address a {
+  color: #31AEED !important;
+  font-weight: bold;
+}
+

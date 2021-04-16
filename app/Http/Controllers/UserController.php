@@ -178,22 +178,34 @@ class UserController extends Controller
             "street"=>$account->getKeyValue("Billing_Street"),
             "city"=>$account->getKeyValue("Billing_City"),
             "state"=>$account->getKeyValue("Billing_State"),
-            "code"=>$account->getKeyValue("Billing_Code"),
-            "suite"=>'',
+            "code"=>$account->getKeyValue("Billing_Code"),       
+            "street"=>'',
+            "city"=>'',     
+            "state"=>'',
+            "code"=>'',        
         ];
+        $billingAddress['billing_name'] = Auth::user()->billing_name;
+        $billingAddress['billing_suite'] = Auth::user()->billing_suite;
         $shippingAddress = [
             "street"=>$account->getKeyValue("Shipping_Street"),
             "city"=>$account->getKeyValue("Shipping_City"),
             "state"=>$account->getKeyValue("Shipping_State"),
-            "code"=>$account->getKeyValue("Shipping_Code"),
-            "suite"=>'',
+            "code"=>$account->getKeyValue("Shipping_Code"),            
         ];
+        $shippingAddress['shipping_name'] = Auth::user()->shipping_name;
+        $shippingAddress['shipping_suite'] = Auth::user()->shipping_suite;
+        $shippingAddress['distance'] = Auth::user()->distance;
         return json_encode(['user'=>["username" => $account->getKeyValue("Account_Name"), "companyName" => $account->getKeyValue("Owners_Name"), "photo" => Auth::user()->photo,'billingAddress'=> $billingAddress, 'shippingAddress'=> $shippingAddress ]]);
     }
     public function saveProfileSettings(Request $request) {
         $user = User::where('email', Auth::user()->email)->first();
         $user->name = $request->username;
         $user->photo = $request->photo;
+        $user->billing_name = $request->billingAddress['billing_name'];
+        $user->billing_suite = $request->billingAddress['billing_suite'];
+        $user->shipping_name = $request->shippingAddress['shipping_name'];
+        $user->shipping_suite = $request->shippingAddress['shipping_suite'];
+        $user->distance = $request->shippingAddress['distance'];
         $user->save();
         $zohoService = new ZohoSerivce();
         $account = $zohoService->updateProfileSettings($user->zoho_index, $request->username, $request->companyName,$request->billingAddress, $request->shippingAddress);

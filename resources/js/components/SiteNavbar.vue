@@ -29,7 +29,6 @@
                             <div class="profile-wrapper">
                                 <div class="row main-row">
                                     <div class="col-md-4 profile-col">
-                                       
                                         <input type="file" @change="filesChange($event.target.files)" class="profile_uploader" accept="image/*" ref="myfile"/>
                                         <div class="profile_wrapper" :style="'background-image:' + image" @click="clickUploader">
                                             <div>Click to add</div>
@@ -46,13 +45,16 @@
                                             <input type="text" placeholder="Input" class="input" v-model="companyName" />
                                         </div>
                                     </div>
-                                    <div class="col-md-8 addr">
-                                    <div class="new-address">
-                                        <p><a href="#">+ New Address</a></p>    
+                   
+                                <div class="col-md-8 addr">
+                                    <div class="new-address" @click="showAddress2" v-if="ShowIfbillingAddressNotExist">
+                                        <p><a href="#address2">+ New Address</a></p> 
+                                        
                                     </div>
-                            <tabs class="address-add">
-                                <tab name="Primary Address">
-                                    <div class="address_form">
+                                
+                                 <tabs class="address-add">
+                                   <tab name="Primary Address">
+                                      <div class="address_form">
 
                                         <div class="row">
                                             <div class="col-md-7">
@@ -60,7 +62,7 @@
                                                    <div class="col-md-12">
                                                      <div class="form-group primary">
                                                     <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                    <div class="input" >Primary Address</div>
+                                                    <input type="text" placeholder="Primary Address" class="input" v-model="shippingAddress.shipping_name"  />
                                                    </div>
                                                 </div>
                                                 </div>
@@ -77,7 +79,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.suite" />
+                                                            <input type="text" placeholder="Input" class="input" v-model="shippingAddress.shipping_suite" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -111,23 +113,25 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-5">
-                                                <div class="detail-address mb-3">
+                                                <!-- <div class="detail-address mb-3">
                                                     <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
                                                     <ul class="nav nav-pills nav-justified">
                                                         <li class="active"><a href="#">OFF</a></li>
                                                         <li><a href="#">YES</a></li>
                                                     </ul>
-                                                </div>
+                                                </div> -->
                                                 <div class="form-group">
                                                     <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
-                                                    <div class="input my-loc-input" >ABC Towing Company</div>
+                                                      <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="shippingAddress.distance" />
+
+                                                   
                                                 </div>
                                             </div>
                                         </div>
 
                                     </div>
                                 </tab>
-                                <tab name="Address2">
+                                <tab name="Address2" v-if="ShowbillingAddress">
                                     <div class="address_form">
                                         <div class="row">
                                             <div class="col-md-8">
@@ -135,7 +139,9 @@
                                                     <div class="col-md-12">
                                                     <div class="form-group">
                                                     <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                    <div class="input" >Address2</div>
+                                                     <input type="text" placeholder="Address2" class="input" v-model="billingAddress.billing_name" />
+
+                                          
                                                     </div>
                                                 </div>
                                                 </div>
@@ -152,7 +158,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.suite" />
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.billing_suite" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -352,7 +358,7 @@ import CommonService from '../services/CommonService';
 const commonService = new CommonService();
 import MaskedInput from 'vue-masked-input';
 import 'vuetify/dist/vuetify.min.css'
-
+import VueRouter from 'vue-router';
 export default {
     components:{
         MaskedInput,
@@ -367,6 +373,8 @@ export default {
             showProfileSettings: false,
             showPaymentSettings: false,
             paymentEditing: false,
+            ShowbillingAddress : false,
+            ShowIfbillingAddressNotExist:false,
             paymentCreate: false,
             show: false,
 			params: {
@@ -398,8 +406,8 @@ export default {
             autoSetDefault: false,
             cardType: 'generic',
             cardImageLoc: '/img/card-logos/CreditCardLogos_',
-            billingAddress: {street: '', city: '', state: '', code: '', suite: ''},
-            shippingAddress: {street: '', city: '', state: '', code: '', suite: ''},
+            billingAddress: {billing_name:'',street: '', city: '', state: '', code: '', billing_suite: ''},
+            shippingAddress: {shipping_name:'',street: '', city: '', state: '', code: '', shipping_suite: '',distance:''},
         };
     },
     mounted() {
@@ -460,12 +468,19 @@ export default {
             this.showActions = !this.showActions;
             this.showPaymentSettings = false;
             this.paymentEditing = false;
+            this.ShowbillingAddress = false;
             EventBus.$emit('uncheckAll', !this.showActions);
         },
         stateInitialize() {
             this.showPaymentSettings = false;
             this.showProfileSettings = false;
             this.paymentEditing = false;
+
+        },
+        showAddress2(flag){
+            this.ShowbillingAddress = true;
+            this.ShowIfbillingAddressNotExist = false;
+            
         },
         showProfile(flag) {
             if(!this.showProfileSettings) {
@@ -481,9 +496,19 @@ export default {
                         this.companyName = user.companyName;
                         that.billingAddress = user.billingAddress;
                         that.shippingAddress = user.shippingAddress;
+                        if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street || that.billingAddress.suite){ 
+                           
+                            this.ShowbillingAddress = true;
+                            this.ShowIfbillingAddressNotExist = false;
+                        }else{
+
+                            this.ShowbillingAddress = false;
+                            this.ShowIfbillingAddressNotExist = true;
+                        }
                     });
             }
             this.showProfileSettings = !this.showProfileSettings;
+             this.ShowbillingAddress = !this.ShowbillingAddress;
         },
         showPayment(flag) {
             this.showPaymentSettings = !this.showPaymentSettings;
@@ -822,13 +847,18 @@ export default {
             const elem = this.$refs.myfile
             elem.click()
         },
+       
         saveProfile() {
             let loader = this.$loading.show();
             let that = this;
             this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,billingAddress: this.billingAddress, shippingAddress: this.shippingAddress},commonService.get_api_header())
                 .then(function (response) {
+                    const router = new VueRouter({
+                    mode: 'history'
+                    });
                     loader.hide();
                     that.showProfileSettings = false;
+                    //   this.$router.push("/");
                 }).catch(function (error) {
                     console.log(error);
                     alert(error);

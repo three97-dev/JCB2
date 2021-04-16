@@ -1523,3 +1523,14 @@ div#bg {
 .primary{
     display: grid;
 }
+
+// 16 april 2021
+.new-address{
+     position: absolute;
+    right: 0;
+    z-index: 2;
+    a{
+    color: #31AEED !important;
+    font-weight: bold;
+    }
+}
