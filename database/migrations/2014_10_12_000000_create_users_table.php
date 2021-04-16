@@ -26,15 +26,11 @@ class CreateUsersTable extends Migration
             $table->string('city')->nullable();
             $table->string('street')->nullable();
             $table->string('photo')->nullable();
-            $table->string('billing_name')->nullable();
-            $table->string('shipping_name')->nullable();
-            $table->string('billing_suite')->nullable();
-            $table->string('shipping_suite')->nullable();
-            $table->string('distance')->nullable();
-            
             $table->rememberToken();
             $table->timestamps();
         });
+    
+
     }
 
     /**
