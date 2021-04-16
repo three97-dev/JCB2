@@ -178,11 +178,7 @@ class UserController extends Controller
             "street"=>$account->getKeyValue("Billing_Street"),
             "city"=>$account->getKeyValue("Billing_City"),
             "state"=>$account->getKeyValue("Billing_State"),
-            "code"=>$account->getKeyValue("Billing_Code"),       
-            "street"=>'',
-            "city"=>'',     
-            "state"=>'',
-            "code"=>'',        
+            "code"=>$account->getKeyValue("Billing_Code"),             
         ];
         $billingAddress['billing_name'] = Auth::user()->billing_name;
         $billingAddress['billing_suite'] = Auth::user()->billing_suite;
