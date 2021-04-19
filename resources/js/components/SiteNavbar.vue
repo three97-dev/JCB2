@@ -10,7 +10,7 @@
                     {{username}} <span class="mif-arrow-drop-down drop-down" @click="showDropdown"></span>
                     <div class="dropdown-action-menu" v-if="showActions">
                         <div class="dropDownMenu-header">
-                            <div><span class="cursor-pointer" @click="stateInitialize">Menu</span> {{submenu}}</div>
+                            <div class="sub-m"><span class="cursor-pointer" @click="stateInitialize">Menu</span> {{submenu}}</div>
                             <div class="close" @click="showDropdown"><span class="mif-cross-light"></span></div>
                         </div>
                         <div class="content" v-if="!showPaymentSettings && !showProfileSettings">
@@ -853,12 +853,8 @@ export default {
             let that = this;
             this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,billingAddress: this.billingAddress, shippingAddress: this.shippingAddress},commonService.get_api_header())
                 .then(function (response) {
-                    const router = new VueRouter({
-                    mode: 'history'
-                    });
                     loader.hide();
                     that.showProfileSettings = false;
-                    //   this.$router.push("/");
                 }).catch(function (error) {
                     console.log(error);
                     alert(error);

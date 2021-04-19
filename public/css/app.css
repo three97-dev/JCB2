@@ -1,5 +1,6 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Nunito);@import url(https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;
 
+0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap);@charset "UTF-8";
 .text-blue {
   color: #31AEED;
 }
@@ -423,6 +424,7 @@ html {
   display: flex;
   font-weight: 800;
   font-size: 25px;
+  font: normal normal 800 25px/48px Lato;
 }
 
 @media (max-width: 1024px) {
@@ -436,13 +438,13 @@ html {
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu {
+  padding: 24px 34px;
   position: fixed;
   top: 101px;
   left: 71px;
   width: calc(100vw - 71px);
   height: auto;
   background: #fff;
-  padding: 50px;
   height: calc(100% - 102px);
   overflow: scroll;
 }
@@ -458,7 +460,7 @@ html {
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .dropDownMenu-header div:first-child span {
   text-decoration: underline;
-  font-size: 40px;
+  font-size: 30px;
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .dropDownMenu-header .close {
@@ -467,14 +469,16 @@ html {
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .content {
-  margin-top: 150px;
+  margin-top: 90px;
   cursor: pointer;
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .content div.content-row {
-  margin-top: 30px;
+  margin-top: 5px;
   letter-spacing: 0.27px;
   position: relative;
+  font-size: 25px !important;
+  font-weight: 400 !important;
 }
 
 #SiteNavbar .navbar-userinfo .navbar-username .dropdown-action-menu .content div.content-row .unset-default-btn {
@@ -618,16 +622,16 @@ html {
 }
 
 #SiteNavbar .navbar-nav .nav-link {
-  font: normal normal 300 28px/40px Lato;
   letter-spacing: 0.19px;
   color: #363636;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 28px;
+  padding-right: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   float: left;
-  font-size: 24px;
+  font-weight: 300;
+  font-size: 21px;
 }
 
 @media (max-width: 1024px) {
@@ -637,17 +641,25 @@ html {
 }
 
 #SiteNavbar .navbar-nav .nav-link.active {
-  font-size: 24px;
+  font-size: 21px;
   letter-spacing: 0.19px;
   color: #363636;
   border: 2px solid #707070;
   border-radius: 25px;
+  font-weight: bold;
+  font: normal normal 800 21px/48px Lato;
+  padding: 1px 33px;
 }
 
 @media (max-width: 1024px) {
   #SiteNavbar .navbar-nav .nav-link.active {
     font-size: 20px;
   }
+}
+
+#SiteNavbar .sub-m {
+  font-size: 30px;
+  font-weight: 700;
 }
 
 #SiteNavbar .navbar-notification {
@@ -781,6 +793,7 @@ html {
   margin-bottom: 0px;
   width: 90%;
   font-size: 18px;
+  font-weight: 500;
 }
 
 #SiteNavbar input.input::-webkit-input-placeholder {
@@ -809,6 +822,9 @@ html {
 
 #SiteNavbar .edit-profile a {
   font-size: 18px;
+  font-weight: 600;
+  text-decoration: underline;
+  color: #30abe8;
 }
 
 #SiteNavbar .profile_wrapper {
@@ -828,6 +844,7 @@ html {
 #SiteNavbar .profile_wrapper div {
   margin: 0 auto;
   text-align: center;
+  font-weight: 500;
 }
 
 #SiteNavbar .profile_uploader {
@@ -873,7 +890,7 @@ html {
 #SiteNavbar .tabs-component-tabs li a {
   letter-spacing: 0.16px;
   color: #fff;
-  padding: 2rem 4rem;
+  padding: 2rem 5rem;
   font-size: 20px;
 }
 
@@ -883,7 +900,7 @@ html {
 
 #SiteNavbar .tabs-component-tabs li.is-active {
   background-color: #30ABE8;
-  padding: 11px 0px;
+  padding: 7px 0px;
 }
 
 #SiteNavbar .tabs-component-tabs li.is-active a {
