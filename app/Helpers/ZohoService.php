@@ -91,6 +91,17 @@ class ZohoSerivce {
         $records = $responseHandler->getData();
         return $records[0];
     }
+    public function getSecondaryAddressDetails($parent_account_zoho_crmID =''){
+        $moduleAPIName = "Accounts";
+        $recordOperations2 = new RecordOperations();
+        $paramInstance2 = new ParameterMap();
+        $paramInstance2->add(SearchRecordsParam::criteria(), "(Zoho_CRM_ID:equals:".$parent_account_zoho_crmID.")");
+        $response2 = $recordOperations2->searchRecords($moduleAPIName,$paramInstance2);
+        $responseHandler2 = $response2->getObject();
+        if (!$responseHandler2) return null;
+        $records = $responseHandler2->getData();
+        return $records[0];
+    }
 
     public function getDealInfo($car_id) {
         $moduleAPIName = "Deals";
@@ -267,32 +278,37 @@ class ZohoSerivce {
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
         return $resp;
     }
-    public function updateProfileSettings($id, $username='', $companyName='',$billingAddress=array(), $shippingAddress=array()) {
+    public function updateProfileSettings($id, $username='', $companyName='',$parend_zohoid='',$secondaryAddress=array(),$shippingAddress=array()) {
         $moduleAPIName = "Accounts";
         $recordId =$id;
+        $recordId2 = $parend_zohoid;
         $recordOperations = new RecordOperations();
         $body = new RecordBodyWrapper();
         $records = array();
         $record1 = new Record();
+        $record2 = new Record();
         $record1->setId($recordId);
+        $record2->setId($recordId2);
         $record1->addKeyValue('Account_Name', $username);
-        $record1->addKeyValue('Owners_Name', $companyName);
-        if($billingAddress['street']) $record1->addKeyValue('Billing_Street', $billingAddress['street']);
-        if($billingAddress['city']) $record1->addKeyValue('Billing_City', $billingAddress['city']);
-        if($billingAddress['state']) $record1->addKeyValue('Billing_State', $billingAddress['state']);
-        if($billingAddress['code']) $record1->addKeyValue('Billing_Code', $billingAddress['code']);
-        
+        $record1->addKeyValue('Owners_Name', $companyName);    
         if($shippingAddress['street']) $record1->addKeyValue('Shipping_Street', $shippingAddress['street']);
         if($shippingAddress['city']) $record1->addKeyValue('Shipping_City', $shippingAddress['city']);
         if($shippingAddress['state']) $record1->addKeyValue('Shipping_State', $shippingAddress['state']);
         if($shippingAddress['code']) $record1->addKeyValue('Shipping_Code', $shippingAddress['code']);       
         $records[] = $record1;
+
+        if($secondaryAddress['street']) $record2->addKeyValue('Shipping_Street', $secondaryAddress['street']);
+        if($secondaryAddress['city']) $record2->addKeyValue('Shipping_City', $secondaryAddress['city']);
+        if($secondaryAddress['state']) $record2->addKeyValue('Shipping_State', $secondaryAddress['state']);
+        if($secondaryAddress['code']) $record2->addKeyValue('Shipping_Code', $secondaryAddress['code']);
+        $records[] = $record2;
         $body->setData($records);
         $trigger = array("approval", "workflow", "blueprint");
         $body->setTrigger($trigger);
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
         return $resp;
     }
+
     public function refreshUserData() {
         $records = $this->getAllUsers();
         foreach ($records as $record) {

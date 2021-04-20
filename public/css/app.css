@@ -911,6 +911,7 @@ html {
 #SiteNavbar .address_form {
   padding: 2rem;
   border: 1px solid #707070;
+  max-width: 100%;
 }
 
 #SiteNavbar .address_form input {

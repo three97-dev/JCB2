@@ -4,7 +4,8 @@
         <div class="collapse navbar-collapse">
             <div class="navbar-userinfo">
                 <div class="navbar-notification logo-wrapper">
-                    <img v-bind:src="avatar" alt="logo">
+                    <!-- <img v-bind:src="avatar" alt="logo"> -->
+                     <img v-bind:src="getProfilePicture()" alt="logo">
                 </div>
                 <div class="navbar-username">
                     {{username}} <span class="mif-arrow-drop-down drop-down" @click="showDropdown"></span>
@@ -31,7 +32,7 @@
                                     <div class="col-md-4 profile-col">
                                         <input type="file" @change="filesChange($event.target.files)" class="profile_uploader" accept="image/*" ref="myfile"/>
                                         <div class="profile_wrapper" :style="'background-image:' + image" @click="clickUploader">
-                                            <div>Click to add</div>
+                                            <div v-if="showClickToAdd">Click to add</div>
                                         </div>
                                         <div class="edit-profile">
                                             <a :style="'cursor: pointer'" @click="clickUploader">Edit Profile Photo</a>
@@ -112,21 +113,22 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-5">
-                                                <!-- <div class="detail-address mb-3">
+                                           
+                                            <!-- <div class="col-md-5">
+                                                 <div class="detail-address mb-3">
                                                     <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
                                                     <ul class="nav nav-pills nav-justified">
                                                         <li class="active"><a href="#">OFF</a></li>
                                                         <li><a href="#">YES</a></li>
                                                     </ul>
-                                                </div> -->
+                                                </div> 
                                                 <div class="form-group">
                                                     <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
                                                       <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="shippingAddress.distance" />
 
                                                    
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
 
                                     </div>
@@ -134,7 +136,7 @@
                                 <tab name="Address2" v-if="ShowbillingAddress">
                                     <div class="address_form">
                                         <div class="row">
-                                            <div class="col-md-8">
+                                            <div class="col-md-7">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                     <div class="form-group">
@@ -191,8 +193,20 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                              <div class="col-md-4">
-                                                
+                                             <div class="col-md-5">
+                                                <!-- <div class="detail-address mb-3">
+                                                    <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
+                                                    <ul class="nav nav-pills nav-justified">
+                                                        <li class="active"><a href="#">OFF</a></li>
+                                                        <li><a href="#">YES</a></li>
+                                                    </ul>
+                                                </div> -->
+                                                <div class="form-group">
+                                                    <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
+                                                      <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="shippingAddress.distance" />
+
+                                                   
+                                                </div>
                                             </div>
                                        
                                         </div>
@@ -322,7 +336,8 @@
         </div>
         <div class="navbar-mobile d-lg-none w-100">
             <div class="navbar-mobile-content">
-                <img class="user-avatar" v-bind:src="avatar" alt="logo">
+                <!-- <img class="user-avatar v-bind:src="avatar" alt="logo"> -->
+                <img class="user-avatar" v-bind:src="getProfilePicture()" alt="logo">
 
                 <div class="nav-mobile-title" v-if="$route.name=='home'">All Cars</div>
                 <div class="nav-mobile-title" v-if="$route.name=='bids'">Your Bids</div>
@@ -369,6 +384,7 @@ export default {
             username: '',
             companyName: '',
             avatar : '/img/avatar.png',
+            profile_pic :'',
             showActions: false,
             showProfileSettings: false,
             showPaymentSettings: false,
@@ -376,6 +392,7 @@ export default {
             ShowbillingAddress : false,
             ShowIfbillingAddressNotExist:false,
             paymentCreate: false,
+            showClickToAdd:true,
             show: false,
 			params: {
 				token: '123456798',
@@ -412,7 +429,7 @@ export default {
     },
     mounted() {
         this.username = commonService.get_auth_name();
-        this.avatar = commonService.get_auth_avatar();
+        // this.avatar = commonService.get_auth_avatar();
         this.showActions = false;
 
         const stripeApiKey = this.stripeApiKey;
@@ -449,6 +466,17 @@ export default {
         },
     },
     methods: {
+        getProfilePicture(){
+            this.axios
+                    .get(`/api/getProfile`, commonService.get_api_header())
+                    .then(response => {                 
+                        let user = response.data.user;
+                        this.profile_pic = user.photo;
+                     
+                    });
+            return !this.profile_pic? commonService.get_auth_avatar() : "img/profiles/" + this.profile_pic;;
+        },
+       
         toggleShow() {
 
             this.show = !this.show;
@@ -496,6 +524,9 @@ export default {
                         this.companyName = user.companyName;
                         that.billingAddress = user.billingAddress;
                         that.shippingAddress = user.shippingAddress;
+                        if(this.imgDataUrl){
+                             that.showClickToAdd = false;
+                        }
                         if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street || that.billingAddress.suite){ 
                            
                             this.ShowbillingAddress = true;
@@ -827,7 +858,7 @@ export default {
             return image
         },
         filesChange(file) {
-            console.log(file)
+            console.log('file',file)
             const formData = new FormData();
             if(!file || !file.length) return;
             formData.append("form", file[0]);
@@ -837,6 +868,7 @@ export default {
                 .then(function (response) {
                     loader.hide();
                     that.imgDataUrl = response.data;
+                    that.showClickToAdd = false;
                 }).catch(function (error) {
                     console.log(error);
                     alert(error);
@@ -845,7 +877,8 @@ export default {
         },
         clickUploader() {
             const elem = this.$refs.myfile
-            elem.click()
+            elem.click();
+       
         },
        
         saveProfile() {

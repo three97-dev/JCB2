@@ -495,9 +495,16 @@ html {
             // }
         }
     }
+    // section#primary-address .address_form {
+    //   width: 100% !important;
+    // }
+    // section#address2 .address_form {
+    //   width: 85%;
+    // }
     .address_form {
         padding: 2rem;
         border: 1px solid #707070;
+        max-width: 100%;
         input {
             margin-bottom: 0;
             color: #30ABE8;
