@@ -456,6 +456,7 @@ html {
     }
     .address-add {
         position: absolute;
+        width: 100%;
         top: 3px;
         @media(max-width: 1280px){
             position: unset;
