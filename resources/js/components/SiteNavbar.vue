@@ -58,7 +58,7 @@
                                       <div class="address_form">
 
                                         <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-md-7">
                                                 <div class="row">
                                                    <div class="col-md-12">
                                                      <div class="form-group primary">
@@ -114,26 +114,24 @@
                                                 </div>
                                             </div>
                                            
-                                            <!-- <div class="col-md-5">
-                                                 <div class="detail-address mb-3">
+                                            <div class="col-md-5">
+                                                <!--<div class="detail-address mb-3">
                                                     <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
                                                     <ul class="nav nav-pills nav-justified">
                                                         <li class="active"><a href="#">OFF</a></li>
                                                         <li><a href="#">YES</a></li>
                                                     </ul>
-                                                </div> 
+                                                </div>--> 
                                                 <div class="form-group">
                                                     <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
                                                       <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="shippingAddress.distance" />
-
-                                                   
                                                 </div>
-                                            </div> -->
+                                            </div>
                                         </div>
 
                                     </div>
                                 </tab>
-                                <tab name="Address2" v-if="ShowbillingAddress">
+                                <tab name="Alt Address" v-if="ShowbillingAddress">
                                     <div class="address_form">
                                         <div class="row">
                                             <div class="col-md-7">
