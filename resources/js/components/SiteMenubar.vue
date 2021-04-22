@@ -90,12 +90,13 @@
          <div class="location-filter" v-if="open_location_filter">
             <div class="filter-item">
                <label for="" class="filter-label">{{filter_labels.radius_distance}}</label>
-                <select name="" v-model="radius_filter.radius_distance">
-                    <option value="">Select Radius</option>
-                    <option>Primary Address</option>
-                    <option>Alt Address</option>
+               
+
+                 <select name="" v-model="radius_filter.radius_distance">
+                    <option :selected="radius_filter.radius_distance =='primary'" value="primary">Primary Address</option>
+                    <option :selected="radius_filter.radius_distance =='secondary'" value="secondary">Alt Address</option>
                    
-                </select>
+                </select> 
             </div>
            
             <div class="filter-buttons loc-button">
@@ -237,6 +238,7 @@ var commonService = new CommonService();
     export default {
         data() {
             return {
+                // selectedAddress: '',
                 open_cars_filter: false,
                 open_location_filter :false,
                 open_filter_save_step:false,
@@ -316,6 +318,16 @@ var commonService = new CommonService();
                 this.open_payments_filter = false;
                 this.resetFitlerParams();
             }
+        },
+         mounted () {
+            this.axios
+                    .get(`/api/getProfile`, commonService.get_api_header())
+                    .then(response => {                 
+                        let user = response.data.user;
+                        this.radius_filter.radius_distance = user.default_address;
+                         
+                    });   
+
         },
         created() {
             const thiz = this;
@@ -522,7 +534,6 @@ var commonService = new CommonService();
             applyLocationFilter() {
                 const params = this.get_filter_param(this.radius_filter);
                 params['filter_string'] = this.getFilterString(params);
-                console.log('this',params['filter_string']);
                 EventBus.$emit('update-radius-filter', params);
                 this.open_location_filter = false;
 

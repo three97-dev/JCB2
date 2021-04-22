@@ -468,9 +468,6 @@ export default {
         },
     },
     methods: {
-         onChangeEventHandler(){
-          alert('hi');
-      },
         getProfilePicture(){
             this.axios
                     .get(`/api/getProfile`, commonService.get_api_header())
@@ -479,7 +476,7 @@ export default {
                         this.profile_pic = user.photo;
                      
                     });
-            return !this.profile_pic? commonService.get_auth_avatar() : "img/profiles/" + this.profile_pic;;
+            return !this.profile_pic? commonService.get_auth_avatar() : "img/profiles/" + this.profile_pic;
         },
        
         toggleShow() {

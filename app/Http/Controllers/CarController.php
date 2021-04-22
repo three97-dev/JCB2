@@ -146,17 +146,17 @@ class CarController extends Controller
                 if ($request->distance) {
                     $distance = $request->distance;
                 }             
-                if($request->radius_distance == 'Primary Address'){
+                if($request->radius_distance == 'primary'){
                     $distance = Auth::user()->primary_radius;
                    
-                }else if($request->radius_distance == 'Alt Address'){
+                }else if($request->radius_distance == 'secondary'){
                     $distance = Auth::user()->secondary_radius;
                     
                 }
                 else{
                     if (Auth::user()->default_address == 'primary') {
                         $distance = Auth::user()->primary_radius;
-                    }else{
+                    }else if(Auth::user()->default_address == 'secondary' && Auth::user()->secondary_radius !=''){
                         $distance = Auth::user()->secondary_radius;
                     }
                 }
