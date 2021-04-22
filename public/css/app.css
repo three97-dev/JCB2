@@ -132,6 +132,24 @@ html {
   padding: 10px 0;
 }
 
+#SiteMenubar .site-menubar-filter .loc-button {
+  display: flex;
+  margin: 20px 0 0;
+  padding: 10px;
+  margin-top: auto;
+  justify-content: flex-end;
+}
+
+#SiteMenubar .site-menubar-filter .loc-button .btn {
+  max-width: 50%;
+}
+
+#SiteMenubar .site-menubar-filter .location-filter {
+  height: 630px;
+  flex-direction: column;
+  display: flex;
+}
+
 #SiteMenubar .site-menubar-filter .filter-save-step {
   height: 100%;
   display: flex;

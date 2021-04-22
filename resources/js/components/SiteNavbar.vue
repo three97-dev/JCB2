@@ -49,7 +49,7 @@
                    
                                 <div class="col-md-8 addr">
                                     <div class="new-address" @click="showAddress2" v-if="ShowIfbillingAddressNotExist">
-                                        <p><a href="#address2">+ New Address</a></p> 
+                                        <p><a href="#alt-address">+ New Address</a></p> 
                                         
                                     </div>
                                 
@@ -107,6 +107,7 @@
                                                             <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
                                                             <input type="text" placeholder="Input" class="input" v-model="shippingAddress.code" />
                                                         </div>
+                                                      
                                                     </div>
                                                     <div class="col-md-6">
 
@@ -115,16 +116,20 @@
                                             </div>
                                            
                                             <div class="col-md-5">
-                                                <!--<div class="detail-address mb-3">
-                                                    <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
-                                                    <ul class="nav nav-pills nav-justified">
-                                                        <li class="active"><a href="#">OFF</a></li>
-                                                        <li><a href="#">YES</a></li>
-                                                    </ul>
-                                                </div>--> 
+                                                <div class="detail-address mb-3">
+                                                <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
+                                                <button class="btn btn-action btn-action-off" v-bind:class="{'btn-primary': default_address =='secondary' , 'btn-light': default_address !='secondary'}"  v-on:click="default_address='secondary'">OFF</button>
+
+                                                <button class="btn btn-action btn-action-runs" v-bind:class="{'btn-primary': default_address =='primary', 'btn-light': default_address !='primary'}" v-on:click="default_address='primary'">Yes</button>
+                    
+                                                </div> 
                                                 <div class="form-group">
                                                     <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
-                                                      <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="shippingAddress.distance" />
+                                                      <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="shippingAddress.primary_radius" />
+                                                    <div v-if="error2" class="primary_error" style="font-size:13px;max-width:390px;color:#FF0000;">
+                                                            {{error2}}
+                                                    </div>
+                                                   
                                                 </div>
                                             </div>
                                         </div>
@@ -191,18 +196,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                             <div class="col-md-5">
-                                                <!-- <div class="detail-address mb-3">
-                                                    <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
-                                                    <ul class="nav nav-pills nav-justified">
-                                                        <li class="active"><a href="#">OFF</a></li>
-                                                        <li><a href="#">YES</a></li>
-                                                    </ul>
-                                                </div> -->
+                                             <div class="col-md-5">                                
                                                 <div class="form-group">
                                                     <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
-                                                      <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="shippingAddress.distance" />
-
+                                                      <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="billingAddress.secondary_radius" />
+                                                         <div v-if="error3" class="secondary_error"  style="font-size:13px;max-width:390px;color:#FF0000;">
+                                                            {{error3}}
+                                                        </div>
                                                    
                                                 </div>
                                             </div>
@@ -379,8 +379,11 @@ export default {
     },
     data() {
         return {
+            //  file: '',
             username: '',
             companyName: '',
+            error2: '',
+            error3: '',
             avatar : '/img/avatar.png',
             profile_pic :'',
             showActions: false,
@@ -416,13 +419,14 @@ export default {
             customer_id: '',
             payments: [],
             default_id: '',
+            default_address:'',
             editingCard: '',
             sel_payment: {},
             autoSetDefault: false,
             cardType: 'generic',
             cardImageLoc: '/img/card-logos/CreditCardLogos_',
-            billingAddress: {billing_name:'',street: '', city: '', state: '', code: '', billing_suite: ''},
-            shippingAddress: {shipping_name:'',street: '', city: '', state: '', code: '', shipping_suite: '',distance:''},
+            billingAddress: {billing_name:'',street: '', city: '', state: '', code: '', billing_suite: '',secondary_radius:''},
+            shippingAddress: {shipping_name:'',street: '', city: '', state: '', code: '', shipping_suite: '',primary_radius:''},
         };
     },
     mounted() {
@@ -464,6 +468,9 @@ export default {
         },
     },
     methods: {
+         onChangeEventHandler(){
+          alert('hi');
+      },
         getProfilePicture(){
             this.axios
                     .get(`/api/getProfile`, commonService.get_api_header())
@@ -520,6 +527,7 @@ export default {
                         this.imgDataUrl = user.photo;
                         this.username = user.username;
                         this.companyName = user.companyName;
+                        this.default_address = user.default_address;
                         that.billingAddress = user.billingAddress;
                         that.shippingAddress = user.shippingAddress;
                         if(this.imgDataUrl){
@@ -880,11 +888,16 @@ export default {
         },
        
         saveProfile() {
+            
             let loader = this.$loading.show();
             let that = this;
-            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,billingAddress: this.billingAddress, shippingAddress: this.shippingAddress},commonService.get_api_header())
+    
+            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,billingAddress: this.billingAddress, shippingAddress: this.shippingAddress,default_address: this.default_address,},commonService.get_api_header())
                 .then(function (response) {
                     loader.hide();
+                    if (response.data.error2) return that.error2 = response.data.error2;
+                    if (response.data.error3) return that.error3 =response.data.error3;
+                   
                     that.showProfileSettings = false;
                 }).catch(function (error) {
                     console.log(error);

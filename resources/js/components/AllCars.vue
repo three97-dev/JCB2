@@ -203,12 +203,19 @@ var commonService = new CommonService();
                 thiz.filter_param = {};
                 thiz.refreshPage(1);
             });
-
+            EventBus.$on('update-radius-filter', function(filter_param) {              
+                thiz.filter_param = filter_param;
+                thiz.filter_string = thiz.filter_param['filter_string'];
+                delete thiz.filter_param['filter_string'];
+                thiz.refreshPage(1);
+            });
             console.log('created');
         },
         beforeDestroy () {
             EventBus.$off('update-car-filter')
+            EventBus.$off('update-radius-filter')
             EventBus.$off('update-car-filter-like')
+
         },
         mounted() {
             this.refreshPage(1);
@@ -250,6 +257,7 @@ var commonService = new CommonService();
         },
         methods: {
             refreshPage(page) {
+                console.log('tt');
                 if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
                 this.page = page;
@@ -323,6 +331,7 @@ var commonService = new CommonService();
             },
             resetFilter() {
                 EventBus.$emit('reset-car-filter');
+                EventBus.$emit('reset-radius-filter');
             },
             replaceIfEmpty(value) {
                 // return value;

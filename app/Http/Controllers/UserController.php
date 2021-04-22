@@ -186,6 +186,7 @@ class UserController extends Controller
         }
         $SecondaryAddress['billing_name'] = Auth::user()->billing_name;
         $SecondaryAddress['billing_suite'] = Auth::user()->billing_suite;
+        $SecondaryAddress['secondary_radius'] = Auth::user()->secondary_radius;
         $shippingAddress = [
             "street"=>$account->getKeyValue("Shipping_Street"),
             "city"=>$account->getKeyValue("Shipping_City"),
@@ -194,18 +195,36 @@ class UserController extends Controller
         ];
         $shippingAddress['shipping_name'] = Auth::user()->shipping_name;
         $shippingAddress['shipping_suite'] = Auth::user()->shipping_suite;
-        $shippingAddress['distance'] = Auth::user()->distance;
-        return json_encode(['user'=>["username" => $account->getKeyValue("Account_Name"), "companyName" => $account->getKeyValue("Owners_Name"), "photo" => Auth::user()->photo,'billingAddress'=> $SecondaryAddress, 'shippingAddress'=> $shippingAddress ]]);
+        $shippingAddress['primary_radius'] = Auth::user()->primary_radius;
+        return json_encode(['user'=>["username" => $account->getKeyValue("Account_Name"), "companyName" => $account->getKeyValue("Owners_Name"), "photo" => Auth::user()->photo,'default_address'=>Auth::user()->default_address,'billingAddress'=> $SecondaryAddress, 'shippingAddress'=> $shippingAddress ]]);
     }
     public function saveProfileSettings(Request $request) {
         $user = User::where('email', Auth::user()->email)->first();
         $user->name = $request->username;
         $user->photo = $request->photo;
+        $user->default_address = $request->default_address;
+        // if(!empty($request->shippingAddress)){
+        //     if (!$request->shippingAddress['primary_radius'])
+        //      return ['error2' => 'Please select Radius from location'];
+        //     if ($request->shippingAddress['primary_radius'] == '0')
+        //      return ['error2' => 'Please select Radius greater than 1'];
+        //     if ($request->shippingAddress['primary_radius'] > '150')
+        //      return ['error2' => 'Please select Radius less than 150'];
+        // }
+        // if(!empty($request->billingAddress)){
+        //     if (!$request->billingAddress['secondary_radius'])
+        //      return ['error3' => 'Please select Radius from location'];
+        //     if ($request->billingAddress['secondary_radius'] == 0)
+        //      return ['error3' => 'Please select Radius greater than 1'];
+        //     if ($request->billingAddress['secondary_radius'] > 150)
+        //      return ['error3' => 'Please select Radius less than 150'];
+        // }
         $user->billing_name = $request->billingAddress['billing_name'];
         $user->billing_suite = $request->billingAddress['billing_suite'];
+        $user->secondary_radius = $request->billingAddress['secondary_radius'];
         $user->shipping_name = $request->shippingAddress['shipping_name'];
         $user->shipping_suite = $request->shippingAddress['shipping_suite'];
-        $user->distance = $request->shippingAddress['distance'];
+        $user->primary_radius = $request->shippingAddress['primary_radius'];
         $user->save();
         $zohoService = new ZohoSerivce();
         $account = $zohoService->getAccount(Auth::user()->email);

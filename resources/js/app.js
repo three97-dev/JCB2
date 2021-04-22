@@ -18,10 +18,10 @@ import 'vue2-timepicker/dist/VueTimepicker.css'
 import VueApexCharts from 'vue-apexcharts'
 import myUpload from 'vue-image-crop-upload'
 import {Tabs, Tab} from 'vue-tabs-component';
-
+// import ToggleButton from 'vue-js-toggle-button'
 
 Vue.component('input-mask', InputMask)
-
+// Vue.use(ToggleButton);
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
@@ -33,6 +33,7 @@ Vue.use(VueApexCharts)
 Vue.use(myUpload)
 Vue.component('tabs', Tabs);
 Vue.component('tab', Tab);
+
 
 Vue.component('apexchart', VueApexCharts)
 Vue.component('my-upload', myUpload)

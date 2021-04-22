@@ -11,6 +11,9 @@
             <li class="site-menu-item">
                 <a href="javascript:;" v-on:click="openSavedFilter()" > <span class="mif-floppy-disk" v-bind:class="{'text-selected': open_saved_filter}"></span> </a>
             </li>
+             <li class="site-menu-item">
+                <a href="javascript:;" v-on:click="openLocationFilter()" > <span class="mif-location" v-bind:class="{'text-selected': open_location_filter}"></span> </a>
+            </li>
         </ul>
         <ul class="site-menu" v-if="$route.name=='bids'">
             <li class="site-menu-item">
@@ -29,7 +32,7 @@
         </ul>
     </div>
     <div class="site-menubar-filter">
-        <a href="javascript:;" class="btn-close-filter" v-on:click="open_cars_filter = open_saved_filter = open_bids_filter = open_schedulings_filter = open_payments_filter = false">
+        <a href="javascript:;" class="btn-close-filter" v-on:click="open_cars_filter = open_location_filter = open_saved_filter = open_bids_filter = open_schedulings_filter = open_payments_filter = false">
             <span class="mif-cross-light"></span>
         </a>
         <div class="all-cars-filter" v-if="open_cars_filter && !open_filter_save_step">
@@ -82,6 +85,21 @@
             <div class="filter-buttons">
                 <button class="btn btn-save" v-on:click="openSaveStep()">SAVE SEARCH</button>
                 <button class="btn btn-apply" v-on:click="applyCarsFilter()">APPLY</button>
+            </div>
+        </div>
+         <div class="location-filter" v-if="open_location_filter">
+            <div class="filter-item">
+               <label for="" class="filter-label">{{filter_labels.radius_distance}}</label>
+                <select name="" v-model="radius_filter.radius_distance">
+                    <option value="">Select Radius</option>
+                    <option>Primary Address</option>
+                    <option>Alt Address</option>
+                   
+                </select>
+            </div>
+           
+            <div class="filter-buttons loc-button">
+                <button class="btn btn-apply" v-on:click="applyLocationFilter()">APPLY</button>
             </div>
         </div>
         <div class="filter-save-step" v-if="open_cars_filter && open_filter_save_step">
@@ -220,6 +238,7 @@ var commonService = new CommonService();
         data() {
             return {
                 open_cars_filter: false,
+                open_location_filter :false,
                 open_filter_save_step:false,
                 open_saved_filter:false,
                 open_bids_filter:false,
@@ -253,6 +272,9 @@ var commonService = new CommonService();
                     Make: '',
                     Model: ''
                 },
+                radius_filter:{
+                    radius_distance :'',                 
+                },
                 payment_filter: {
                     status: '',
                     Reference_Number: '',
@@ -275,6 +297,8 @@ var commonService = new CommonService();
                     Year: 'Year',
                     Make: 'Make',
                     Model: 'Model',
+                    radius_distance : 'Current Location',
+                    
                 },
                 damage_types: [
                     "Engine Damage", "Exterior Burn", "Flood", "Fresh Water", "Front & Rear", "Front End", "Hail", "Interior Burn", "Left & Right Side", "Left Front", "Left Rear", "Left Side", "Mechanical", "None", "Rear", "Repossession", "Right Front", "Right Rear", "Right Side", "Rollover", "Roof", "Saltwater", "Storm Damage", "Stripped", "Suspension", "Theft", "Total Burn", "Transmission Damage", "Undercarriage", "Unknown"
@@ -284,6 +308,7 @@ var commonService = new CommonService();
         watch: {
             $route (to_route, from_route){
                 this.open_cars_filter = false;
+                this.open_location_filter = false;
                 this.open_filter_save_step = false;
                 this.open_saved_filter = false;
                 this.open_bids_filter = false;
@@ -310,10 +335,14 @@ var commonService = new CommonService();
                 thiz.resetFitlerParams();
                 thiz.applyPaymentsFilter();
             })
+            EventBus.$on('reset-radius-filter', function() {
+                thiz.resetFitlerParams();
+                thiz.applyLocationFilter();
+            })
         },
         computed: {
             openPopup() {
-                return this.open_cars_filter || this.open_saved_filter || this.open_bids_filter || this.open_schedulings_filter || this.open_payments_filter;
+                return this.open_cars_filter || this.open_saved_filter || this.open_bids_filter || this.open_schedulings_filter || this.open_payments_filter || this.open_location_filter;
             }
         },
         methods: {
@@ -348,6 +377,9 @@ var commonService = new CommonService();
                     Make: '',
                     Model: ''
                 };
+                this.radius_filter={
+                    radius_distance :'',
+                };
             },
             get_filter_param(filter) {
                 const params = {};
@@ -371,6 +403,17 @@ var commonService = new CommonService();
                 if (this.open_cars_filter) {
                     this.open_filter_save_step = false;
                     this.open_saved_filter = false;
+                    this.open_location_filter = false;
+                }
+            },
+            openLocationFilter() {
+  
+                this.open_location_filter = !this.open_location_filter;
+
+                if (this.open_location_filter) {
+                    this.open_filter_save_step = false;
+                    this.open_saved_filter = false;
+                    this.open_cars_filter = false;
                 }
             },
             checkPopupOpen() {
@@ -409,6 +452,7 @@ var commonService = new CommonService();
                 this.open_saved_filter = !this.open_saved_filter;
                 if (this.open_saved_filter) {
                     this.open_cars_filter = false;
+                    this.open_location_filter = false;
                     let loader = this.$loading.show();
                     this.saved_filters = [];
                     this.axios
@@ -473,6 +517,14 @@ var commonService = new CommonService();
 
                 EventBus.$emit('update-car-filter', params);
                 this.open_cars_filter = false;
+
+            },
+            applyLocationFilter() {
+                const params = this.get_filter_param(this.radius_filter);
+                params['filter_string'] = this.getFilterString(params);
+                console.log('this',params['filter_string']);
+                EventBus.$emit('update-radius-filter', params);
+                this.open_location_filter = false;
 
             },
             applyLikeFilter() {

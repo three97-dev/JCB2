@@ -142,9 +142,26 @@ class CarController extends Controller
                 $zoho_cars_zip_array = $this->getQueryResult($cities_query)['data'];
                 // return json_encode(['res'=>$zoho_cars_zip_array]);
                 $distance = 250;
+
                 if ($request->distance) {
                     $distance = $request->distance;
+                }             
+                if($request->radius_distance == 'Primary Address'){
+                    $distance = Auth::user()->primary_radius;
+                   
+                }else if($request->radius_distance == 'Alt Address'){
+                    $distance = Auth::user()->secondary_radius;
+                    
                 }
+                else{
+                    if (Auth::user()->default_address == 'primary') {
+                        $distance = Auth::user()->primary_radius;
+                    }else{
+                        $distance = Auth::user()->secondary_radius;
+                    }
+                }
+                // echo $distance;die('tets');
+
                 foreach($zoho_cars_zip_array as $zip) {
                     $zip_code = Location::where('zip_code', $zip['Zip_Code'])->first();
                     if($zip_code) {
