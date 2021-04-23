@@ -181,7 +181,7 @@ class UserController extends Controller
                 "street"=>$getSecondaryAddressDetails->getKeyValue("Shipping_Street"),
                 "city"=>$getSecondaryAddressDetails->getKeyValue("Shipping_City"),
                 "state"=>$getSecondaryAddressDetails->getKeyValue("Shipping_State"),
-                "code"=>$getSecondaryAddressDetails->getKeyValue("Shipping_Code"),     
+                "code"=>$getSecondaryAddressDetails->getKeyValue("Shipping_Code"),   
             ];
         }
         $SecondaryAddress['billing_name'] = Auth::user()->billing_name;
@@ -203,22 +203,22 @@ class UserController extends Controller
         $user->name = $request->username;
         $user->photo = $request->photo;
         $user->default_address = $request->default_address;
-        // if(!empty($request->shippingAddress)){
-        //     if (!$request->shippingAddress['primary_radius'])
-        //      return ['error2' => 'Please select Radius from location'];
-        //     if ($request->shippingAddress['primary_radius'] == '0')
-        //      return ['error2' => 'Please select Radius greater than 1'];
-        //     if ($request->shippingAddress['primary_radius'] > '150')
-        //      return ['error2' => 'Please select Radius less than 150'];
-        // }
-        // if(!empty($request->billingAddress)){
-        //     if (!$request->billingAddress['secondary_radius'])
-        //      return ['error3' => 'Please select Radius from location'];
-        //     if ($request->billingAddress['secondary_radius'] == 0)
-        //      return ['error3' => 'Please select Radius greater than 1'];
-        //     if ($request->billingAddress['secondary_radius'] > 150)
-        //      return ['error3' => 'Please select Radius less than 150'];
-        // }
+        if(!empty($request->selectedtabid) && $request->selectedtabid =='Primary Address'){
+            if (!$request->shippingAddress['primary_radius'])
+             return ['error2' => 'Please select Radius from location'];
+            if ($request->shippingAddress['primary_radius'] == '0')
+             return ['error2' => 'Please select Radius greater than 1'];
+            if ($request->shippingAddress['primary_radius'] > '150')
+             return ['error2' => 'Please select Radius less than 150'];
+        }
+        if(!empty($request->billingAddress)  && $request->selectedtabid =='Alt Address'){
+            if (!$request->billingAddress['secondary_radius'])
+             return ['error3' => 'Please select Radius from location'];
+            if ($request->billingAddress['secondary_radius'] == 0)
+             return ['error3' => 'Please select Radius greater than 1'];
+            if ($request->billingAddress['secondary_radius'] > 150)
+             return ['error3' => 'Please select Radius less than 150'];
+        }
         $user->billing_name = $request->billingAddress['billing_name'];
         $user->billing_suite = $request->billingAddress['billing_suite'];
         $user->secondary_radius = $request->billingAddress['secondary_radius'];

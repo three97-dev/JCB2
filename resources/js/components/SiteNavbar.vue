@@ -53,7 +53,8 @@
                                         
                                     </div>
                                 
-                                 <tabs class="address-add">
+                                 <tabs class="address-add" @clicked="tabClicked" @changed="tabChanged">
+                                     <input type="hidden" v-model="selectedtabid">
                                    <tab name="Primary Address">
                                       <div class="address_form">
 
@@ -427,6 +428,7 @@ export default {
             cardImageLoc: '/img/card-logos/CreditCardLogos_',
             billingAddress: {billing_name:'',street: '', city: '', state: '', code: '', billing_suite: '',secondary_radius:''},
             shippingAddress: {shipping_name:'',street: '', city: '', state: '', code: '', shipping_suite: '',primary_radius:''},
+            selectedtabid:''
         };
     },
     mounted() {
@@ -468,6 +470,13 @@ export default {
         },
     },
     methods: {
+        tabClicked (selectedTab) {
+            this.selectedtabid = selectedTab.tab.name;
+
+        },
+        tabChanged (selectedTab) {
+            this.selectedtabid = selectedTab.tab.name;
+        },
         getProfilePicture(){
             this.axios
                     .get(`/api/getProfile`, commonService.get_api_header())
@@ -499,6 +508,7 @@ export default {
             this.showPaymentSettings = false;
             this.paymentEditing = false;
             this.ShowbillingAddress = false;
+            this.showProfileSettings = false;
             EventBus.$emit('uncheckAll', !this.showActions);
         },
         stateInitialize() {
@@ -530,7 +540,7 @@ export default {
                         if(this.imgDataUrl){
                              that.showClickToAdd = false;
                         }
-                        if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street || that.billingAddress.suite){ 
+                        if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
                            
                             this.ShowbillingAddress = true;
                             this.ShowIfbillingAddressNotExist = false;
@@ -888,10 +898,11 @@ export default {
             
             let loader = this.$loading.show();
             let that = this;
-    
-            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,billingAddress: this.billingAddress, shippingAddress: this.shippingAddress,default_address: this.default_address,},commonService.get_api_header())
+            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,billingAddress: this.billingAddress, shippingAddress: this.shippingAddress,default_address: this.default_address,selectedtabid:this.selectedtabid},commonService.get_api_header())
                 .then(function (response) {
                     loader.hide();
+                    that.error2 ='';
+                    that.error3='';
                     if (response.data.error2) return that.error2 = response.data.error2;
                     if (response.data.error3) return that.error3 =response.data.error3;
                    
