@@ -155,6 +155,7 @@ var commonService = new CommonService();
         data() {
             return {
                 cars: [],
+                split_array:[],
                 page: 1,
                 records_per_page: 8,
                 total: '-',
@@ -205,16 +206,13 @@ var commonService = new CommonService();
             });
             EventBus.$on('update-radius-filter', function(filter_param) {              
                 thiz.filter_param = filter_param;
-                // console.log('t',thiz.filter_param['filter_string']);
-                // console.log('tt',filter_param);
-
                 thiz.filter_string = thiz.filter_param['filter_string'];
-                // if(thiz.filter_param['filter_string'] == 'secondary'){
-                //     thiz.filter_string = 'Distance from My Location: Alt Address'
-                // }else{
-                //     thiz.filter_string = 'Distance from My Location:Primary Address'
-                // }
-                //
+                this.split_array = thiz.filter_string.split(':');
+                if(this.split_array[1].trim() =='secondary'){
+                    thiz.filter_string = 'Distance from My Location: Alt Address';
+                }else{
+                     thiz.filter_string = 'Distance from My Location:Primary Address';
+                }
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
             });

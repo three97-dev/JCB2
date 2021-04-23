@@ -192,6 +192,7 @@ html {
             }
         }
     }
+
     .popup-wrapper {
         position: absolute;
         width: calc(100vw - 100%);
@@ -317,4 +318,10 @@ html {
             }
         }
     }
+}
+.position-relative svg {
+    width: 11px;
+    position: absolute;
+    top: 11px;
+    right: 0;
 }

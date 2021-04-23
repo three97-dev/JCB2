@@ -542,7 +542,7 @@ export default {
                     });
             }
             this.showProfileSettings = !this.showProfileSettings;
-             this.ShowbillingAddress = !this.ShowbillingAddress;
+            this.ShowbillingAddress = !this.ShowbillingAddress;
         },
         showPayment(flag) {
             this.showPaymentSettings = !this.showPaymentSettings;
@@ -895,7 +895,7 @@ export default {
                     if (response.data.error2) return that.error2 = response.data.error2;
                     if (response.data.error3) return that.error3 =response.data.error3;
                    
-                    that.showProfileSettings = false;
+                    // that.showProfileSettings = false;
                 }).catch(function (error) {
                     console.log(error);
                     alert(error);

@@ -379,6 +379,13 @@ html {
   }
 }
 
+.position-relative svg {
+  width: 11px;
+  position: absolute;
+  top: 11px;
+  right: 0;
+}
+
 html {
   height: 100%;
   font-family: Lato !important;
@@ -16975,5 +16982,9 @@ div#bg {
 .new-address a {
   color: #31AEED !important;
   font-weight: bold;
+}
+
+.filter-content .mif-cancel {
+  position: unset;
 }
 
