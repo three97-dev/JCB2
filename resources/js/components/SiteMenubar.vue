@@ -95,7 +95,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="svg-inline--fa fa-caret-down fa-w-10 fa-2x"><path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z" class=""></path></svg>
                  <select name="" v-model="radius_filter.radius_distance">
                     <option :selected="radius_filter.radius_distance =='primary'" value="primary">Primary Address</option>
-                    <option :selected="radius_filter.radius_distance =='secondary'" value="secondary">Alt Address</option>
+                    <option :selected="radius_filter.radius_distance =='secondary'" value="secondary" v-if="hidesecondaryaddress">Alt Address</option>
                 </select> 
               </div>
 
@@ -240,7 +240,7 @@ var commonService = new CommonService();
     export default {
         data() {
             return {
-                // selectedAddress: '',
+                hidesecondaryaddress : false,
                 open_cars_filter: false,
                 open_location_filter :false,
                 open_filter_save_step:false,
@@ -321,16 +321,6 @@ var commonService = new CommonService();
                 this.resetFitlerParams();
             }
         },
-         mounted () {
-            this.axios
-                    .get(`/api/getProfile`, commonService.get_api_header())
-                    .then(response => {               
-                        let user = response.data.user;
-                        this.radius_filter.radius_distance = user.default_address;
-                         
-                    });   
-
-        },
         created() {
             const thiz = this;
             EventBus.$on('reset-car-filter', function() {
@@ -356,8 +346,10 @@ var commonService = new CommonService();
         },
         computed: {
             openPopup() {
+                
                 return this.open_cars_filter || this.open_saved_filter || this.open_bids_filter || this.open_schedulings_filter || this.open_payments_filter || this.open_location_filter;
             }
+            
         },
         methods: {
             resetFitlerParams() {
@@ -421,7 +413,19 @@ var commonService = new CommonService();
                 }
             },
             openLocationFilter() {
-  
+                let that = this;
+                this.axios
+                    .get(`/api/getProfile`, commonService.get_api_header())
+                    .then(response => {               
+                        let user = response.data.user;
+                        that.billingAddress = user.billingAddress;
+                        console.log('yess',user.default_address);
+                        if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
+                            this.hidesecondaryaddress = true;
+                        }
+                        this.radius_filter.radius_distance = user.default_address;
+                         
+                    }); 
                 this.open_location_filter = !this.open_location_filter;
 
                 if (this.open_location_filter) {

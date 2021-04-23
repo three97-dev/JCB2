@@ -181,7 +181,7 @@ class UserController extends Controller
                 "street"=>$getSecondaryAddressDetails->getKeyValue("Shipping_Street"),
                 "city"=>$getSecondaryAddressDetails->getKeyValue("Shipping_City"),
                 "state"=>$getSecondaryAddressDetails->getKeyValue("Shipping_State"),
-                "code"=>$getSecondaryAddressDetails->getKeyValue("Shipping_Code"),   
+                "code"=>$getSecondaryAddressDetails->getKeyValue("Shipping_Code"),
             ];
         }
         $SecondaryAddress['billing_name'] = Auth::user()->billing_name;
