@@ -318,7 +318,7 @@ var commonService = new CommonService();
                 this.open_bids_filter = false;
                 this.open_schedulings_filter = false;
                 this.open_payments_filter = false;
-                this.resetFitlerParams();
+                this.resetFitlerParams();               
             }
         },
         created() {
@@ -341,17 +341,32 @@ var commonService = new CommonService();
             })
             EventBus.$on('reset-radius-filter', function() {
                 thiz.resetFitlerParams();
-                thiz.applyLocationFilter();
+                thiz.setselecteddropdownValue();
             })
-        },
+        },  
         computed: {
             openPopup() {
-                
                 return this.open_cars_filter || this.open_saved_filter || this.open_bids_filter || this.open_schedulings_filter || this.open_payments_filter || this.open_location_filter;
             }
             
         },
         methods: {
+            setselecteddropdownValue(){
+           
+                let that = this;
+                this.axios
+                    .get(`/api/getProfile`, commonService.get_api_header())
+                    .then(response => {               
+                        let user = response.data.user;
+                        that.billingAddress = user.billingAddress;
+                        // console.log('yess',user.default_address);
+                        if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
+                            this.hidesecondaryaddress = true;
+                        }
+                        this.radius_filter.radius_distance = user.default_address;
+                         
+                    });   
+            },
             resetFitlerParams() {
                 this.car_filter =  {
                     distance: '',
@@ -412,20 +427,8 @@ var commonService = new CommonService();
                     this.open_location_filter = false;
                 }
             },
-            openLocationFilter() {
-                let that = this;
-                this.axios
-                    .get(`/api/getProfile`, commonService.get_api_header())
-                    .then(response => {               
-                        let user = response.data.user;
-                        that.billingAddress = user.billingAddress;
-                        console.log('yess',user.default_address);
-                        if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
-                            this.hidesecondaryaddress = true;
-                        }
-                        this.radius_filter.radius_distance = user.default_address;
-                         
-                    }); 
+            openLocationFilter() { 
+                this.setselecteddropdownValue();                         
                 this.open_location_filter = !this.open_location_filter;
 
                 if (this.open_location_filter) {

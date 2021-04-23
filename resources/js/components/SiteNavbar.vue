@@ -472,6 +472,7 @@ export default {
         },
     },
     methods: {
+   
         tabClicked (selectedTab) {
             this.selectedtabid = selectedTab.tab.name;
 
@@ -511,6 +512,8 @@ export default {
             this.paymentEditing = false;
             this.ShowbillingAddress = false;
             this.showProfileSettings = false;
+            EventBus.$emit('reset-radius-filter',!this.showActions);
+
             EventBus.$emit('uncheckAll', !this.showActions);
         },
         stateInitialize() {
@@ -552,7 +555,7 @@ export default {
 
                             this.ShowbillingAddress = false;
                             this.ShowIfbillingAddressNotExist = true;
-                              this.hideIfbillingAddressNotExist = false;
+                            this.hideIfbillingAddressNotExist = false;
                         }
                     });
             }
@@ -910,7 +913,7 @@ export default {
                     that.error3='';
                     if (response.data.error2) return that.error2 = response.data.error2;
                     if (response.data.error3) return that.error3 =response.data.error3;
-                   
+                  
                     // that.showProfileSettings = false;
                 }).catch(function (error) {
                     console.log(error);
