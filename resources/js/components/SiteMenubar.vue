@@ -309,6 +309,9 @@ var commonService = new CommonService();
                 ]
             }
         },
+        // beforeMount(){
+        //     this.setselecteddropdownValue();
+        // },
         watch: {
             $route (to_route, from_route){
                 this.open_cars_filter = false;
@@ -323,6 +326,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
+            thiz.setselecteddropdownValue();
             EventBus.$on('reset-car-filter', function() {
                 thiz.resetFitlerParams();
                 thiz.applyCarsFilter();
@@ -352,7 +356,7 @@ var commonService = new CommonService();
         },
         methods: {
             setselecteddropdownValue(){
-           
+                console.log('test');
                 let that = this;
                 this.axios
                     .get(`/api/getProfile`, commonService.get_api_header())
@@ -428,7 +432,7 @@ var commonService = new CommonService();
                 }
             },
             openLocationFilter() { 
-                this.setselecteddropdownValue();                         
+                                
                 this.open_location_filter = !this.open_location_filter;
 
                 if (this.open_location_filter) {
