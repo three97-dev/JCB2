@@ -120,7 +120,7 @@
                                                 <div class="detail-address mb-3">
                                                 <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
                                                 
-                                                <button class="btn btn-action btn-action-off" v-bind:class="{'btn-primary': default_address =='secondary' , 'btn-light': default_address !='secondary'}"  v-on:click="default_address='secondary'" v-if="hideIfbillingAddressNotExist">OFF</button>
+                                                <button class="btn btn-action btn-action-off" v-bind:class="{'btn-primary': default_address =='secondary' , 'btn-light': default_address !='secondary'}"  v-on:click="default_address='secondary'" v-if="hideIfbillingAddressNotExist">No</button>
 
                                                 <button class="btn btn-action btn-action-runs" v-bind:class="{'btn-primary': default_address =='primary', 'btn-light': default_address !='primary'}" v-on:click="default_address='primary'">Yes</button>
                     
