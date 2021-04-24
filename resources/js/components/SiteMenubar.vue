@@ -356,7 +356,6 @@ var commonService = new CommonService();
         },
         methods: {
             setselecteddropdownValue(){
-                console.log('test');
                 let that = this;
                 this.axios
                     .get(`/api/getProfile`, commonService.get_api_header())
