@@ -48,7 +48,7 @@
                                     </div>
                    
                                 <div class="col-md-8 addr">
-                                    <div class="new-address" @click="showAddress2" v-if="ShowIfbillingAddressNotExist">
+                                    <div class="new-address" @click="showAddress2" v-if="ShowIfbillingAddressNotExist && ParentIDExist">
                                         <p><a href="#alt-address">+ New Address</a></p> 
                                         
                                     </div>
@@ -393,6 +393,7 @@ export default {
             showPaymentSettings: false,
             paymentEditing: false,
             ShowbillingAddress : false,
+            ParentIDExist : false,
             ShowIfbillingAddressNotExist:false,
             hideIfbillingAddressNotExist:true,
             paymentCreate: false,
@@ -540,11 +541,18 @@ export default {
                         this.imgDataUrl = user.photo;
                         this.username = user.username;
                         this.companyName = user.companyName;
+                        this.parent_account_zoho_crmID = user.parent_account_zoho_crmID;
                         this.default_address = user.default_address;
                         that.billingAddress = user.billingAddress;
                         that.shippingAddress = user.shippingAddress;
                         if(this.imgDataUrl){
                              that.showClickToAdd = false;
+                        }
+                        if(!this.parent_account_zoho_crmID){
+                              this.ParentIDExist = false;
+                        }
+                        else{
+                            this.ParentIDExist = true;
                         }
                         if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
                            
