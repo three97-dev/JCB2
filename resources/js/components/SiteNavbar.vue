@@ -48,7 +48,7 @@
                                     </div>
                    
                                 <div class="col-md-8 addr">
-                                    <div class="new-address" @click="showAddress2" v-if="ShowIfbillingAddressNotExist && ParentIDExist">
+                                    <div class="new-address" @click="showAddress2" v-if="ShowIfbillingAddressNotExist">
                                         <p><a href="#alt-address">+ New Address</a></p> 
                                         
                                     </div>
@@ -156,7 +156,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label class="input-label" style="float: left; width: unset;">Street Address </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.street" />
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.secondary_street" />
                                                         </div>
                                                     </div>
 
@@ -176,13 +176,13 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="input-label" style="float: left; width: unset;">City/Town </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.city" />
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.secondary_city" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="input-label" style="float: left; width: unset;">State/Province </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.state" />
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.secondary_state" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -190,7 +190,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
-                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.code" />
+                                                            <input type="text" placeholder="Input" class="input" v-model="billingAddress.secondary_code" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -393,7 +393,6 @@ export default {
             showPaymentSettings: false,
             paymentEditing: false,
             ShowbillingAddress : false,
-            ParentIDExist : false,
             ShowIfbillingAddressNotExist:false,
             hideIfbillingAddressNotExist:true,
             paymentCreate: false,
@@ -429,7 +428,7 @@ export default {
             autoSetDefault: false,
             cardType: 'generic',
             cardImageLoc: '/img/card-logos/CreditCardLogos_',
-            billingAddress: {billing_name:'',street: '', city: '', state: '', code: '', billing_suite: '',secondary_radius:''},
+            billingAddress: {billing_name:'',secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:''},
             shippingAddress: {shipping_name:'',street: '', city: '', state: '', code: '', shipping_suite: '',primary_radius:''},
             selectedtabid:''
         };
@@ -548,13 +547,8 @@ export default {
                         if(this.imgDataUrl){
                              that.showClickToAdd = false;
                         }
-                        if(!this.parent_account_zoho_crmID){
-                              this.ParentIDExist = false;
-                        }
-                        else{
-                            this.ParentIDExist = true;
-                        }
-                        if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
+                        
+                        if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.secondary_city || that.billingAddress.secondary_state || that.billingAddress.secondary_code || that.billingAddress.secondary_street){ 
                            
                             this.ShowbillingAddress = true;
                             this.ShowIfbillingAddressNotExist = false;

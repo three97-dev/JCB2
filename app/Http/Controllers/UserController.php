@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Helpers\ZohoSerivce;
-
 use Hash;
 use Auth;
 use Mail;
@@ -173,24 +172,14 @@ class UserController extends Controller
     }
     public function getProfileSettings() {
         $zohoService = new ZohoSerivce();
-        $account = $zohoService->getAccount(Auth::user()->email);
-        $parent_account_zoho_crmID = '';
-        if(isset($account) && !empty($account->getKeyValue("Parent_Account"))){
-           $parent_account_zoho_crmID =  $account->getKeyValue("Parent_Account")->getKeyValue("id");
-        }
-        
-        if($parent_account_zoho_crmID){
-            $getSecondaryAddressDetails =$zohoService->getSecondaryAddressDetails($parent_account_zoho_crmID);
-            $SecondaryAddress = [
-                "street"=>$getSecondaryAddressDetails->getKeyValue("Shipping_Street"),
-                "city"=>$getSecondaryAddressDetails->getKeyValue("Shipping_City"),
-                "state"=>$getSecondaryAddressDetails->getKeyValue("Shipping_State"),
-                "code"=>$getSecondaryAddressDetails->getKeyValue("Shipping_Code"), 
-            ];
-        }
+        $account = $zohoService->getAccount(Auth::user()->email);      
         $SecondaryAddress['billing_name'] = Auth::user()->billing_name;
         $SecondaryAddress['billing_suite'] = Auth::user()->billing_suite;
         $SecondaryAddress['secondary_radius'] = Auth::user()->secondary_radius;
+        $SecondaryAddress['secondary_street'] = Auth::user()->secondary_street;
+        $SecondaryAddress['secondary_city'] = Auth::user()->secondary_city;
+        $SecondaryAddress['secondary_state'] = Auth::user()->secondary_state;
+        $SecondaryAddress['secondary_code'] = Auth::user()->secondary_code;
         $shippingAddress = [
             "street"=>$account->getKeyValue("Shipping_Street"),
             "city"=>$account->getKeyValue("Shipping_City"),
@@ -200,7 +189,7 @@ class UserController extends Controller
         $shippingAddress['shipping_name'] = Auth::user()->shipping_name;
         $shippingAddress['shipping_suite'] = Auth::user()->shipping_suite;
         $shippingAddress['primary_radius'] = Auth::user()->primary_radius;
-        return json_encode(['user'=>["username" => $account->getKeyValue("Account_Name"), "companyName" => $account->getKeyValue("Owners_Name"), "photo" => Auth::user()->photo,'default_address'=>Auth::user()->default_address,'billingAddress'=> $SecondaryAddress, 'shippingAddress'=> $shippingAddress,'parent_account_zoho_crmID'=>$parent_account_zoho_crmID ]]);
+        return json_encode(['user'=>["username" => $account->getKeyValue("Account_Name"), "companyName" => $account->getKeyValue("Owners_Name"), "photo" => Auth::user()->photo,'default_address'=>Auth::user()->default_address,'billingAddress'=> $SecondaryAddress, 'shippingAddress'=> $shippingAddress ]]);
     }
     public function saveProfileSettings(Request $request) {
         $user = User::where('email', Auth::user()->email)->first();
@@ -229,16 +218,16 @@ class UserController extends Controller
         $user->shipping_name = $request->shippingAddress['shipping_name'];
         $user->shipping_suite = $request->shippingAddress['shipping_suite'];
         $user->primary_radius = $request->shippingAddress['primary_radius'];
+        $user->secondary_street = $request->billingAddress['secondary_street'];
+        $user->secondary_city = $request->billingAddress['secondary_city'];
+        $user->secondary_state = $request->billingAddress['secondary_state'];
+        $user->secondary_code = $request->billingAddress['secondary_code'];
+
         $user->save();
+    
+    
         $zohoService = new ZohoSerivce();
-        $account = $zohoService->getAccount(Auth::user()->email);
-        $parent_account_zoho_crmID = '';
-        if(isset($account) && !empty($account->getKeyValue("Parent_Account"))){
-        // if(!empty($account->getKeyValue("Parent_Account")->getKeyValue("id"))){
-            $parent_account_zoho_crmID =  $account->getKeyValue("Parent_Account")->getKeyValue("id");
-        }
-   
-        $updateProfileSettings = $zohoService->updateProfileSettings($user->zoho_index, $request->username, $request->companyName,$parent_account_zoho_crmID, $request->billingAddress,$request->shippingAddress);
+        $updateProfileSettings = $zohoService->updateProfileSettings($user->zoho_index, $request->username, $request->companyName,$request->shippingAddress);
         return json_encode(['res'=>"success"]);
     }
   

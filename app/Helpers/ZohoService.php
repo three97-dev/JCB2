@@ -278,7 +278,7 @@ class ZohoSerivce {
         $resp = $recordOperations->updateRecords($moduleAPIName, $body);
         return $resp;
     }
-    public function updateProfileSettings($id, $username='', $companyName='',$parend_zohoid='',$secondaryAddress=array(),$shippingAddress=array()) {
+    public function updateProfileSettings($id, $username='', $companyName='',$shippingAddress=array()) {
         $moduleAPIName = "Accounts";
         $recordId =$id;       
         $recordOperations = new RecordOperations();
@@ -296,18 +296,6 @@ class ZohoSerivce {
         if($shippingAddress['state']) $record1->addKeyValue('Shipping_State', $shippingAddress['state']);
         if($shippingAddress['code']) $record1->addKeyValue('Shipping_Code', $shippingAddress['code']);       
         $records[] = $record1;
-
-        if(!empty($parend_zohoid)){
-            $record2 = new Record();
-            $recordId2 = $parend_zohoid;
-            $record2->setId($recordId2);
-            if($secondaryAddress['street']) $record2->addKeyValue('Shipping_Street', $secondaryAddress['street']);
-            if($secondaryAddress['city']) $record2->addKeyValue('Shipping_City', $secondaryAddress['city']);
-            if($secondaryAddress['state']) $record2->addKeyValue('Shipping_State', $secondaryAddress['state']);
-            if($secondaryAddress['code']) $record2->addKeyValue('Shipping_Code', $secondaryAddress['code']);
-            $records[] = $record2;
-        }
-
         $body->setData($records);
         $trigger = array("approval", "workflow", "blueprint");
         $body->setTrigger($trigger);
