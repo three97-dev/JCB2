@@ -362,7 +362,6 @@
             </b-collapse>
         </div>
     </nav>
-
 </div>
 </template>
 

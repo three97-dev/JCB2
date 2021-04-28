@@ -20,7 +20,6 @@ class AddSecondaryAddressFieldsToUserTable extends Migration
             $table->string('secondary_code')->nullable();
         });
     }
-
     /**
      * Reverse the migrations.
      *

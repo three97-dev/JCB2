@@ -35,7 +35,6 @@ use App\Models\Car;
 use App\Models\User;
 use App\Models\Location;
 use Illuminate\Support\Facades\Http;
-
 use com\zoho\crm\api\modules\ModulesOperations;
 use com\zoho\crm\api\modules\GetModulesHeader;
 use com\zoho\crm\api\util\Choice;

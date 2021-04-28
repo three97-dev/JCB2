@@ -222,10 +222,7 @@ class UserController extends Controller
         $user->secondary_city = $request->billingAddress['secondary_city'];
         $user->secondary_state = $request->billingAddress['secondary_state'];
         $user->secondary_code = $request->billingAddress['secondary_code'];
-
         $user->save();
-    
-    
         $zohoService = new ZohoSerivce();
         $updateProfileSettings = $zohoService->updateProfileSettings($user->zoho_index, $request->username, $request->companyName,$request->shippingAddress);
         return json_encode(['res'=>"success"]);
