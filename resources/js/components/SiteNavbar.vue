@@ -50,7 +50,7 @@
                                 <div class="col-md-8 addr">                               
                                         <b-card no-body>
                                         <b-tabs card v-model="tabIndex">
-                                            <b-tab  :title="'Primary Address'" active>
+                                             <b-tab  :title="'Primary Address'" active>
                                                <div class="address_form">
 
                                                     <div class="row">
@@ -132,28 +132,35 @@
                                                     </div>
 
                                                 </div>
-                                                <!-- <b-button size="sm" variant="danger" class="float-right" @click="closeTab(i)">
-                                                Close tab
-                                                </b-button> -->
-                                            </b-tab>
+                                                
+                                            </b-tab> 
 
                                         <!-- Render Tabs, supply a unique `key` to each tab -->
-                                            <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + i" :title="'Alt Address ' + i" active >
+                                        <!-- SecondaryAddress[i].tab_id == i
+                                        SecondaryAddress[i].billing_name -->
+                                       
+                                            <!-- <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + i" :title="'Alt Address ' + i"   active  > -->
+                                                
+                                             <!-- <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + `${i+1}`" 
+                                                :title="tabTitle()" active > -->
+                                                <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + `${i-1}`" 
+                                                :title="SecondaryAddress[i-1].billing_name" active >
                                                 <!-- Tab contents {{ i }} -->
-                                                <div class="address_form" :v-for="(address,i) in SecondaryAddress" :key="address.id">
+                                                
+                                                <div class="address_form">
                                                     <div class="row">
                                                         <div class="col-md-7">
                                                             <div class="row">
                                                                 <div class="col-md-12">
-                                                                <div class="form-group">
-                                                                <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                                <input type="text" :placeholder="'Address'+ i" class="input" v-model="SecondaryAddress[i].billing_name" />
+                                                                    <div class="form-group">
+                                                                    <label class="input-label" style="float: left; width: unset;">Address Name: </label>
+                                                                    <input type="text" :placeholder="'Address'+ `${i-1}`" class="input" v-model="SecondaryAddress[i-1].billing_name" />
 
-                                                    
+                                                        
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            </div>
-                                                            <div class="row">
+                                                             <div class="row">
                                                                 <div class="col-md-12">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">Street Address </label>
@@ -161,8 +168,8 @@
                                                                     </div>
                                                                 </div>
 
-                                                            </div>
-                                                            <div class="row">
+                                                            </div> 
+                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
@@ -172,20 +179,20 @@
                                                                 <div class="col-md-6">
 
                                                                 </div>
-                                                            </div>
+                                                            </div> 
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">City/Town </label>
                                                                         <input type="text" placeholder="Input" class="input" v-model="SecondaryAddress[i].secondary_city" />
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-md-6">
+                                                                </div> 
+                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">State/Province </label>
                                                                         <input type="text" placeholder="Input" class="input" v-model="SecondaryAddress[i].secondary_state" />
                                                                     </div>
-                                                                </div>
+                                                                </div> 
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-6">
@@ -199,7 +206,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-5">                                
+                                                         <div class="col-md-5">                                
                                                             <div class="form-group">
                                                                 <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
                                                                 <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="SecondaryAddress[i].secondary_radius" />
@@ -213,9 +220,9 @@
                                                     </div>
 
                                                 </div>
-                                                <!-- <b-button size="sm" variant="danger" class="float-right" @click="closeTab(i)">
+                                                <b-button size="sm" variant="danger" class="float-right" @click="closeTab(i)">
                                                 Close tab
-                                                </b-button> -->
+                                                </b-button> 
                                             </b-tab>
 
                                                 <!-- New Tab Button (Using tabs-end slot) -->
@@ -402,6 +409,7 @@ export default {
     data() {
         return {
             //  file: '',
+            // tabTitle :'',
             username: '',
             companyName: '',
             error2: '',
@@ -449,11 +457,12 @@ export default {
             autoSetDefault: false,
             cardType: 'generic',
             cardImageLoc: '/img/card-logos/CreditCardLogos_',
-            // SecondaryAddress:[],
-             SecondaryAddress: [{billing_name:'',secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:'',id:''}],
+            SecondaryAddress: [
+                {billing_name:'',secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:'',id:''}
+            ],
             shippingAddress: {shipping_name:'',street: '', city: '', state: '', code: '', shipping_suite: '',primary_radius:''},
             tabIndex: 0,
-            address :{},
+            // address :{},
         };
     },
     mounted() {
@@ -497,6 +506,7 @@ export default {
         },
     },
     methods: {
+       
         closeTab(x) {
         for (let i = 0; i < this.tabs.length; i++) {
             if (this.tabs[i] === x) {
@@ -505,7 +515,11 @@ export default {
         }
         },
         newTab() {
-        this.tabs.push(this.tabCounter++)
+        
+            this.tabs.push(this.tabCounter++);
+            let alt_address_name = `Alt Address ${this.tabCounter}`;
+            console.log('newtab',this.tabCounter);
+            this.SecondaryAddress.push({billing_name:alt_address_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:'',id:''});
         },
         // tabClicked (selectedTab) {
         
@@ -577,14 +591,31 @@ export default {
                         this.username = user.username;
                         this.companyName = user.companyName;
                         this.default_address = user.default_address;
-                        that.SecondaryAddress = user.SecondaryAddress;
+                        // that.SecondaryAddress = user.SecondaryAddress;
                         that.shippingAddress = user.shippingAddress;
                         if(this.imgDataUrl){
                              that.showClickToAdd = false;
                         }
-                        console.log('billing',that.SecondaryAddress);
-                        if(that.SecondaryAddress){ 
-                           
+                        that.tabCounter = user.SecondaryAddress.length;
+                        console.log('tabindex',that.tabIndex);
+                        console.log('tabCounter',that.tabCounter);
+                         
+                        // for (let index = 1; index < user.SecondaryAddress.length; index++) {
+                        //     that.tabs.push(index);
+                        // }
+                        let user_address = [];
+                        for (let index = 0; index < user.SecondaryAddress.length; index++) {
+                            const element = user.SecondaryAddress[index];
+                            that.tabs.push(index+1);
+                            
+                            user_address.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
+
+                            // that.SecondaryAddress.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
+                            
+                        }
+                        that.SecondaryAddress = user_address;
+                        console.log('secondary',that.SecondaryAddress);                       
+                        if(that.SecondaryAddress){                                                      
                             this.ShowSecondaryAddress = true;
                             this.ShowIfSecondaryAddressNotExist = false;
                             this.hideIfSecondaryAddressNotExist = true;
