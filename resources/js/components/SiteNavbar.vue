@@ -141,10 +141,9 @@
                                        
                                             <!-- <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + i" :title="'Alt Address ' + i"   active  > -->
                                                 
-                                             <!-- <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + `${i+1}`" 
-                                                :title="tabTitle()" active > -->
-                                                <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + `${i-1}`" 
-                                                :title="SecondaryAddress[i-1].billing_name" active >
+                                            
+                                             <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + `${i+1}`" 
+                                                 :title="SecondaryAddress[i].billing_name" active > 
                                                 <!-- Tab contents {{ i }} -->
                                                 
                                                 <div class="address_form">
@@ -154,7 +153,7 @@
                                                                 <div class="col-md-12">
                                                                     <div class="form-group">
                                                                     <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                                    <input type="text" :placeholder="'Address'+ `${i-1}`" class="input" v-model="SecondaryAddress[i-1].billing_name" />
+                                                                    <input type="text" :placeholder="'Address'+ `${i}`" class="input" v-model="SecondaryAddress[i].billing_name" />
 
                                                         
                                                                     </div>
@@ -515,10 +514,10 @@ export default {
         }
         },
         newTab() {
-        
+           
             this.tabs.push(this.tabCounter++);
+             console.log('tabcounter',this.tabCounter);
             let alt_address_name = `Alt Address ${this.tabCounter}`;
-            console.log('newtab',this.tabCounter);
             this.SecondaryAddress.push({billing_name:alt_address_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:'',id:''});
         },
         // tabClicked (selectedTab) {
@@ -596,24 +595,24 @@ export default {
                         if(this.imgDataUrl){
                              that.showClickToAdd = false;
                         }
-                        that.tabCounter = user.SecondaryAddress.length;
+                        this.tabCounter = user.SecondaryAddress.length;
                         console.log('tabindex',that.tabIndex);
-                        console.log('tabCounter',that.tabCounter);
+                        console.log('tabCounter',this.tabCounter);
                          
                         // for (let index = 1; index < user.SecondaryAddress.length; index++) {
                         //     that.tabs.push(index);
                         // }
-                        let user_address = [];
+                        // let user_address = [];
                         for (let index = 0; index < user.SecondaryAddress.length; index++) {
                             const element = user.SecondaryAddress[index];
                             that.tabs.push(index+1);
                             
-                            user_address.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
+                            // user_address.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
 
-                            // that.SecondaryAddress.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
+                            that.SecondaryAddress.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
                             
                         }
-                        that.SecondaryAddress = user_address;
+                        // that.SecondaryAddress = user_address;
                         console.log('secondary',that.SecondaryAddress);                       
                         if(that.SecondaryAddress){                                                      
                             this.ShowSecondaryAddress = true;
