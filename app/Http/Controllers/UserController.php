@@ -211,8 +211,9 @@ class UserController extends Controller
         $user->shipping_suite = $request->shippingAddress['shipping_suite'];
         $user->primary_radius = $request->shippingAddress['primary_radius'];
         $user->save();
-        $get_address = Address::where('user_id', $user->id)->where('tab_id', $request->tab_id)->first();
         
+       
+        // echo "<pre>";print_r($request->SecondaryAddress);die;
         // if(!empty($request->selectedtabid) && $request->selectedtabid =='Primary Address'){
         //     if (!$request->shippingAddress['primary_radius'])
         //      return ['error2' => 'Please select Radius from location'];
@@ -230,28 +231,33 @@ class UserController extends Controller
         //      return ['error3' => 'Please select Radius less than 150'];
         // }
         $address = array();
-        foreach($request->SecondaryAddress as $secondary){
-            $address = array(
-                'user_id' => Auth::user()->id,
-                'tab_id' => $request->tab_id,
-                'billing_name' => $secondary['billing_name'],
-                'billing_suite' => $secondary['billing_suite'],
-                'secondary_radius' => $secondary['secondary_radius'],
-                'secondary_street' => $secondary['secondary_street'],
-                'secondary_city' => $secondary['secondary_city'],
-                'secondary_state' => $secondary['secondary_state'],
-                'secondary_code' => $secondary['secondary_code']
 
-            );
+       
+        if(isset($request->SecondaryAddress) && !empty($request->SecondaryAddress)){
+            Address::where('user_id',Auth::user()->id)->delete();
+            foreach($request->SecondaryAddress as $secondary){
+                // $get_address = Address::where('user_id', $user->id)->where('tab_id', $secondary['tab_id'])->first();
+                
+                $address = array(
+                    'user_id' => Auth::user()->id,
+                    'tab_id' => $secondary['tab_id'],
+                    'billing_name' => $secondary['billing_name'],
+                    'billing_suite' => $secondary['billing_suite'],
+                    'secondary_radius' => $secondary['secondary_radius'],
+                    'secondary_street' => $secondary['secondary_street'],
+                    'secondary_city' => $secondary['secondary_city'],
+                    'secondary_state' => $secondary['secondary_state'],
+                    'secondary_code' => $secondary['secondary_code']
+
+                );
+                Address::insert($address);
+                
+                //Address::where('tab_id', $secondary['tab_id'])->update($address); 
+               
+               
+            }
         }
-        // echo "<pre>";print_r($request->SecondaryAddress);die;
-        // echo "<pre>";print_r($address);die;
-        if (!$get_address) {
-            Address::insert($address);
-        }
-        else{
-             Address::where('tab_id', $request->tab_id)->update($address); 
-        }
+
         $zohoService = new ZohoSerivce();
         $updateProfileSettings = $zohoService->updateProfileSettings($user->zoho_index, $request->username, $request->companyName,$request->shippingAddress);
         return json_encode(['res'=>"success"]);
