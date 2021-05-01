@@ -69,5 +69,6 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::get('/getProfile', 'UserController@getProfileSettings');
     Route::post('/saveProfile', 'UserController@saveProfileSettings');
+    Route::post('/deleteAddress', 'UserController@deleteAddress');
     Route::post('/uploadPhoto', 'UserController@uploadPhoto');
 });

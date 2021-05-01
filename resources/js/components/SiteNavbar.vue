@@ -1,993 +1,1163 @@
 <template>
-<div id="SiteNavbar">
+  <div id="SiteNavbar">
     <nav class="navbar navbar-expand-lg">
-        <div class="collapse navbar-collapse">
-            <div class="navbar-userinfo">
-                <div class="navbar-notification logo-wrapper">
-                    <!-- <img v-bind:src="avatar" alt="logo"> -->
-                     <img v-bind:src="getProfilePicture()" alt="logo">
+      <div class="collapse navbar-collapse">
+        <div class="navbar-userinfo">
+          <div class="navbar-notification logo-wrapper">
+            <!-- <img v-bind:src="avatar" alt="logo"> -->
+            <img v-bind:src="getProfilePicture()" alt="logo" />
+          </div>
+          <div class="navbar-username">
+            {{ username }} <span class="mif-arrow-drop-down drop-down" @click="showDropdown"></span>
+            <div class="dropdown-action-menu" v-if="showActions">
+              <div class="dropDownMenu-header">
+                <div class="sub-m"><span class="cursor-pointer" @click="stateInitialize">Menu</span> {{ submenu }}</div>
+                <div class="close" @click="showDropdown"><span class="mif-cross-light"></span></div>
+              </div>
+              <div class="content" v-if="!showPaymentSettings && !showProfileSettings">
+                <div class="content-row" @click="showProfile"><span class="mif-user"></span> &nbsp;&nbsp;Profile Settings</div>
+                <div class="content-row" @click="showPayment">
+                  <span class="mif-credit-card"></span> &nbsp;&nbsp;Payment Method
                 </div>
-                <div class="navbar-username">
-                    {{username}} <span class="mif-arrow-drop-down drop-down" @click="showDropdown"></span>
-                    <div class="dropdown-action-menu" v-if="showActions">
-                        <div class="dropDownMenu-header">
-                            <div class="sub-m"><span class="cursor-pointer" @click="stateInitialize">Menu</span> {{submenu}}</div>
-                            <div class="close" @click="showDropdown"><span class="mif-cross-light"></span></div>
-                        </div>
-                        <div class="content" v-if="!showPaymentSettings && !showProfileSettings">
-                            <div class="content-row" @click="showProfile">
-                                <span class="mif-user"></span>
-                                &nbsp;&nbsp;Profile Settings
-                            </div>
-                            <div class="content-row" @click="showPayment">
-                                <span class="mif-credit-card"></span>
-                                &nbsp;&nbsp;Payment Method
-                            </div>
-                            
-                        </div>
-                        <div class="content" v-if="showProfileSettings" style="cursor: unset;">
+              </div>
+              <div class="content" v-if="showProfileSettings" style="cursor: unset;">
+                <div class="profile-wrapper">
+                  <div class="row main-row">
+                    <div class="col-md-4 profile-col">
+                      <input
+                        type="file"
+                        @change="filesChange($event.target.files)"
+                        class="profile_uploader"
+                        accept="image/*"
+                        ref="myfile"
+                      />
+                      <div class="profile_wrapper" :style="'background-image:' + image" @click="clickUploader">
+                        <div v-if="showClickToAdd">Click to add</div>
+                      </div>
+                      <div class="edit-profile">
+                        <a :style="'cursor: pointer'" @click="clickUploader">Edit Profile Photo</a>
+                      </div>
+                      <div class="form-group">
+                        <label class="input-label">Display Name</label>
+                        <input type="text" placeholder="Input" class="input" v-model="username" />
+                      </div>
+                      <div class="form-group">
+                        <label class="input-label">Company Name</label>
+                        <input type="text" placeholder="Input" class="input" v-model="companyName" />
+                      </div>
+                    </div>
 
-                            <div class="profile-wrapper">
-                                <div class="row main-row">
-                                    <div class="col-md-4 profile-col">
-                                        <input type="file" @change="filesChange($event.target.files)" class="profile_uploader" accept="image/*" ref="myfile"/>
-                                        <div class="profile_wrapper" :style="'background-image:' + image" @click="clickUploader">
-                                            <div v-if="showClickToAdd">Click to add</div>
-                                        </div>
-                                        <div class="edit-profile">
-                                            <a :style="'cursor: pointer'" @click="clickUploader">Edit Profile Photo</a>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="input-label">Display Name</label>
-                                            <input type="text" placeholder="Input" class="input" v-model="username" />
-                                        </div>                      
-                                        <div class="form-group">
-                                            <label class="input-label">Company Name</label>
-                                            <input type="text" placeholder="Input" class="input" v-model="companyName" />
-                                        </div>
+                    <div class="col-md-8 addr">
+                      <b-card no-body>
+                        <b-tabs card v-model="tabIndex">
+                          <b-tab :title="'Primary Address'" active>
+                            <div class="address_form">
+                              <div class="row">
+                                <div class="col-md-7">
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                      <div class="form-group primary">
+                                        <label class="input-label" style="float: left; width: unset;">Address Name: </label>
+                                        <input
+                                          type="text"
+                                          placeholder="Primary Address"
+                                          class="input"
+                                          v-model="shippingAddress.shipping_name"
+                                        />
+                                      </div>
                                     </div>
-                   
-                                <div class="col-md-8 addr">                               
-                                        <b-card no-body>
-                                        <b-tabs card v-model="tabIndex">
-                                             <b-tab  :title="'Primary Address'" active>
-                                               <div class="address_form">
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">Street Address </label>
+                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.street" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;"
+                                          >Suite/Apt/P.O. Box
+                                        </label>
+                                        <input
+                                          type="text"
+                                          placeholder="Input"
+                                          class="input"
+                                          v-model="shippingAddress.shipping_suite"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">City/Town </label>
+                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.city" />
+                                      </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">State/Province </label>
+                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.state" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
+                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.code" />
+                                      </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                  </div>
+                                </div>
 
-                                                    <div class="row">
-                                                        <div class="col-md-7">
-                                                            <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="form-group primary">
-                                                                <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                                <input type="text" placeholder="Primary Address" class="input" v-model="shippingAddress.shipping_name"  />
-                                                            </div>
-                                                            </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">Street Address </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.street" />
-                                                                    </div>
-                                                                </div>
+                                <div class="col-md-5">
+                                  <div class="detail-address mb-3" v-if="hideIfSecondaryAddressNotExist">
+                                    <label class="input-label" style="float: left; width: unset;"
+                                      >Set as default Address;
+                                    </label>
+                                    <select
+                                      v-model="default_address"
+                                      class="form-control"
+                                    >
+                                      <option :selected="default_address == 0" v-on:click="default_address = 0" :value="0" >Primary Address</option>
+                                      <option
+                                        :selected="default_address == address.id"
+                                        v-for="(address, index) in SecondaryAddress"
+                                        :value="address.id"
+                                        :key="'default-addr-' + index"
+                                        >{{ address.billing_name }}</option
+                                      >
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label class="input-label" style="float: left; width: unset;"
+                                      >Search Radius from My Location
+                                    </label>
+                                    <input
+                                      type="text"
+                                      placeholder="Maximum 150 Miles"
+                                      class="input"
+                                      v-model="shippingAddress.primary_radius"
+                                    />
+                                    <div
+                                      v-if="error2"
+                                      class="primary_error"
+                                      style="font-size:13px;max-width:390px;color:#FF0000;"
+                                    >
+                                      {{ error2 }}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </b-tab>
 
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.shipping_suite" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">City/Town </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.city" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">State/Province </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.state" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="shippingAddress.code" />
-                                                                    </div>
-                                                                
-                                                                </div>
-                                                                <div class="col-md-6">
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    
-                                                        <div class="col-md-5">
-                                                            <div class="detail-address mb-3" v-if="hideIfSecondaryAddressNotExist">
-                                                            <label class="input-label" style="float: left; width: unset;">Set as default Address; </label>
-                                                            
-                                                            <button class="btn btn-action btn-action-off" v-bind:class="{'btn-primary': default_address =='secondary' , 'btn-light': default_address !='secondary'}"  v-on:click="default_address='secondary'">No</button>
-
-                                                            <button class="btn btn-action btn-action-runs" v-bind:class="{'btn-primary': default_address =='primary', 'btn-light': default_address !='primary'}" v-on:click="default_address='primary'" >Yes</button>
-                                
-                                                            </div> 
-                                                            <div class="form-group">
-                                                                <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
-                                                                <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="shippingAddress.primary_radius" />
-                                                                <div v-if="error2" class="primary_error" style="font-size:13px;max-width:390px;color:#FF0000;">
-                                                                        {{error2}}
-                                                                </div>
-                                                            
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                
-                                            </b-tab> 
-
-                                        <!-- Render Tabs, supply a unique `key` to each tab -->
-                                        <!-- SecondaryAddress[i].tab_id == i
+                          <!-- Render Tabs, supply a unique `key` to each tab -->
+                          <!-- SecondaryAddress[i].tab_id == i
                                         SecondaryAddress[i].billing_name -->
-                                       
-                                            <!-- <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + i" :title="'Alt Address ' + i"   active  > -->
-                                                
-                                            
-                                             <b-tab :v-if="ShowSecondaryAddress" v-for="(addressData, index) in SecondaryAddress"  :key="'dyn-tab-' + index" 
-                                                 :title="addressData.billing_name" active > 
-                                                <!-- Tab contents {{ i }} -->
-                                                <div class="address_form">
-                                                    <div class="row">
-                                                        <div class="col-md-7">
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                    <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                                    <input type="text" :placeholder="'Address '+ `${index + 1}`" class="input" v-model="addressData.billing_name" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                             <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">Street Address </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.secondary_street" />
-                                                                    </div>
-                                                                </div>
 
-                                                            </div> 
-                                                             <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.billing_suite" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
+                          <!-- <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + i" :title="'Alt Address ' + i"   active  > -->
 
-                                                                </div>
-                                                            </div> 
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">City/Town </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.secondary_city" />
-                                                                    </div>
-                                                                </div> 
-                                                                 <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">State/Province </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.secondary_state" />
-                                                                    </div>
-                                                                </div> 
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.secondary_code" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
+                          <b-tab
+                            :v-if="ShowSecondaryAddress"
+                            v-for="(addressData, index) in SecondaryAddress"
+                            :key="'dyn-tab-' + index"
+                            :title="addressData.billing_name"
+                            active
+                          >
+                            <!-- Tab contents {{ i }} -->
+                            <div class="address_form">
+                              <div class="row">
+                                <div class="col-md-7">
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">Address Name: </label>
+                                        <input
+                                          type="text"
+                                          :placeholder="'Address ' + `${index + 1}`"
+                                          class="input"
+                                          v-model="addressData.billing_name"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">Street Address </label>
+                                        <input
+                                          type="text"
+                                          placeholder="Input"
+                                          class="input"
+                                          v-model="addressData.secondary_street"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;"
+                                          >Suite/Apt/P.O. Box
+                                        </label>
+                                        <input
+                                          type="text"
+                                          placeholder="Input"
+                                          class="input"
+                                          v-model="addressData.billing_suite"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">City/Town </label>
+                                        <input
+                                          type="text"
+                                          placeholder="Input"
+                                          class="input"
+                                          v-model="addressData.secondary_city"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">State/Province </label>
+                                        <input
+                                          type="text"
+                                          placeholder="Input"
+                                          class="input"
+                                          v-model="addressData.secondary_state"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
+                                        <input
+                                          type="text"
+                                          placeholder="Input"
+                                          class="input"
+                                          v-model="addressData.secondary_code"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                  </div>
+                                </div>
+                                <div class="col-md-5">
+                                  <div class="form-group">
+                                    <label class="input-label" style="float: left; width: unset;"
+                                      >Search Radius from My Location
+                                    </label>
+                                    <input
+                                      type="text"
+                                      placeholder="Maximum 150 Miles"
+                                      class="input"
+                                      v-model="addressData.secondary_radius"
+                                    />
+                                    <div
+                                      v-if="error3"
+                                      class="secondary_error"
+                                      style="font-size:13px;max-width:390px;color:#FF0000;"
+                                    >
+                                      {{ error3 }}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <b-button size="sm" variant="danger" class="float-right" @click="closeTab(index)">
+                              Close tab
+                            </b-button>
+                          </b-tab>
 
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                         <div class="col-md-5">                                
-                                                            <div class="form-group">
-                                                                <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
-                                                                <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="addressData.secondary_radius" />
-                                                                    <div v-if="error3" class="secondary_error"  style="font-size:13px;max-width:390px;color:#FF0000;">
-                                                                        {{error3}}
-                                                                    </div>
-                                                            
-                                                            </div>
-                                                        </div>
-                                                
-                                                    </div>
-
-                                                </div>
-                                                <b-button size="sm" variant="danger" class="float-right" @click="closeTab(index)">
-                                                Close tab
-                                                </b-button> 
-                                            </b-tab>
-
-                                                <!-- New Tab Button (Using tabs-end slot) -->
-                                                <!-- <div class="new-address" @click="showAddress2" v-if="ShowIfSecondaryAddressNotExist">
+                          <!-- New Tab Button (Using tabs-end slot) -->
+                          <!-- <div class="new-address" @click="showAddress2" v-if="ShowIfSecondaryAddressNotExist">
                                                     <p><a href="#alt-address">+ New Address</a></p> 
                                                     
                                                 </div> -->
-                                                <template v-slot:tabs-end>
-                                                    <b-nav-item role="presentation" class="new-address1" @click.prevent="newTab" href="#"><b>+ New Address</b></b-nav-item>
-                                                </template>
+                          <template v-slot:tabs-end>
+                            <b-nav-item role="presentation" class="new-address1" @click.prevent="newTab" href="#"
+                              ><b>+ New Address</b></b-nav-item
+                            >
+                          </template>
 
-                                                <!-- Render this if no tabs -->
-                                                <!-- <template v-slot:empty>
+                          <!-- Render this if no tabs -->
+                          <!-- <template v-slot:empty>
                                                     <div class="text-center text-muted">
                                                     There are no open tabs<br>
                                                     Open a new tab using the <b>+</b> button above.
                                                     </div>
                                                 </template> -->
-                                                </b-tabs>
-                                            </b-card>
-                                    </div>
-                                    
-                                    <div class="accountActionBtn">
-                                        <button class="btn btn-primary action-button" @click="saveProfile">SAVE</button>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="content" v-if="showPaymentSettings" style="cursor: unset;">
-                            <div class="content-row">
-                                <div>Payment Method</div>
-                                <!-- <button class="card-action-btn action-button unset-default-btn" @click="unsetPayment" v-if="default_id && !paymentEditing">Unset Payment Method</button> -->
-                            </div>
-                            <br>
-                            <div class="row" v-if="!paymentEditing">
-                                <div class="col-md-10">
-                                    <div class="row">
-                                        <div class="col-md-6" v-for="(payment, i) in payments" :key="i">
-                                            <div class="card-info" :class="{'selected' : default_id == payment.id}">
-                                                <div class="row card-content">
-                                                    <div class="col-md-5">
-                                                        <div class="card-placeholder-image">
-                                                            <img :src="cardImageLoc + lower(payment.card.brand) + '.png'" alt="">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-7">
-                                                        <div class="card-last-4number">
-                                                            {{ upper(payment.card.brand) }} {{payment.card.last4}}
-                                                        </div>
-                                                        <div class="card-expire">
-                                                            Expires {{payment.card.exp_month | monthFilter}} / {{payment.card.exp_year}}
-                                                        </div>
-                                                    </div>
-                                                    <div class="markup-default" v-if="default_id == payment.id">Default Payment</div>
-                                                </div>
-                                                <hr class="card-divider"/>
-                                                <div class="card-action">
-                                                    <button class="card-action-btn" @click="setDefaultPayment(payment.id)" v-if="default_id != payment.id">Set as Default</button>
-                                                    <button class="card-action-btn" @click="deletePayment(payment.id)">Remove</button>
-                                                    <button class="card-action-btn" @click="editCard(payment.id)">Edit</button>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="card-info add-card" @click="editCard(null)">
-                                                <div style="margin: auto 0; text-align: center">
-                                                    <span class="mif-plus" style="font-weight: 300"></span> &nbsp;Add Payment Method
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" v-if="paymentEditing">
-                                <div class="col-md-12">
-                                    <div class="payment-editing">
-                                        <div class="card-placeholder-image">
-                                            <img :src="cardImageLoc + lower(cardType) + '.png'" alt="">
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="row">
-                                                    <div class="col-md-12 field-item">
-                                                        <div class="item-label">Card Number</div>
-                                                        <div id="example1-card-number" class="input empty stripe-elements-div" v-if="paymentCreate"></div>
-                                                        <input type="text" class="item-value disabled" disabled v-model="pay_info.card_no" placeholder="1234 1234 1234 1234" v-else />
-                                                        <div role="alert" class="stripe-elements-error-message-div">{{stripe_card_errors}}</div>
-                                                    </div>
-                                                    <div class="col-md-12 field-item">
-                                                        <div class="item-label">Cardholder Name</div>
-                                                        <input type="text" class="item-value" v-model="pay_info.card_name" placeholder="Your name"  onkeypress="return /[a-z ]/i.test(event.key)" />
-                                                    </div>
-                                                    <div class="col-md-6 field-item">
-                                                        <div class="item-label">Card Expiry</div>
-                                                        <div id="example1-card-expiry" class="input empty stripe-elements-div" v-if="paymentCreate"></div>
-                                                        <masked-input class="item-value" v-model="pay_info.exp" mask="11/11" placeholder="MM/YY"  v-else/>
-                                                        <div role="alert" class="stripe-elements-error-message-div">{{stripe_expiry_errors}}</div>
-                                                    </div>
-                                                    <div class="col-md-6 field-item">
-                                                        <div class="item-label">CVC</div>
-                                                        <div id="example1-card-cvc" class="input empty stripe-elements-div" v-if="paymentCreate"></div>
-                                                        <input type="text" class="item-value disabled" disabled v-model="pay_info.cvc" placeholder="XXX" v-else/>
-                                                        <div role="alert" class="stripe-elements-error-message-div">{{stripe_cvc_errors}}</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-              
-                        <div class="signout" @click="logout" v-if="!showPaymentSettings && !showProfileSettings">
-                            Sign Out
-                        </div>
-
-                        <div class="signout" v-if="paymentEditing">
-                            <button class="btn action-button cancel-button" @click="cancelEditing">Cancel</button>
-                            <button class="btn btn-primary action-button" @click="submitPaymentTest">SAVE</button>
-                        </div>
+                        </b-tabs>
+                      </b-card>
                     </div>
+
+                    <div class="accountActionBtn">
+                      <button class="btn btn-primary action-button" @click="saveProfile">SAVE</button>
+                    </div>
+                  </div>
                 </div>
-
-            </div>
-            <div class="navbar-nav">
-                <div class="nav-wrapper">
-                <router-link to="/" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'home'}">All Cars</router-link>
-                <router-link to="/bids" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'bids'}">Bids</router-link>
-                <router-link to="/schedulings" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'schedulings'}">Scheduling</router-link>
-                <router-link to="/payments" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'payments'}">Payment</router-link>
-                <router-link to="/reports" class="nav-item nav-link" @click="dropDownMenu = false" v-bind:class="{'active': $route.name == 'reports'}">Reports</router-link>
+              </div>
+              <div class="content" v-if="showPaymentSettings" style="cursor: unset;">
+                <div class="content-row">
+                  <div>Payment Method</div>
+                  <!-- <button class="card-action-btn action-button unset-default-btn" @click="unsetPayment" v-if="default_id && !paymentEditing">Unset Payment Method</button> -->
                 </div>
+                <br />
+                <div class="row" v-if="!paymentEditing">
+                  <div class="col-md-10">
+                    <div class="row">
+                      <div class="col-md-6" v-for="(payment, i) in payments" :key="i">
+                        <div class="card-info" :class="{ selected: default_id == payment.id }">
+                          <div class="row card-content">
+                            <div class="col-md-5">
+                              <div class="card-placeholder-image">
+                                <img :src="cardImageLoc + lower(payment.card.brand) + '.png'" alt="" />
+                              </div>
+                            </div>
+                            <div class="col-md-7">
+                              <div class="card-last-4number">{{ upper(payment.card.brand) }} {{ payment.card.last4 }}</div>
+                              <div class="card-expire">
+                                Expires {{ payment.card.exp_month | monthFilter }} / {{ payment.card.exp_year }}
+                              </div>
+                            </div>
+                            <div class="markup-default" v-if="default_id == payment.id">Default Payment</div>
+                          </div>
+                          <hr class="card-divider" />
+                          <div class="card-action">
+                            <button
+                              class="card-action-btn"
+                              @click="setDefaultPayment(payment.id)"
+                              v-if="default_id != payment.id"
+                            >
+                              Set as Default
+                            </button>
+                            <button class="card-action-btn" @click="deletePayment(payment.id)">Remove</button>
+                            <button class="card-action-btn" @click="editCard(payment.id)">Edit</button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="card-info add-card" @click="editCard(null)">
+                          <div style="margin: auto 0; text-align: center">
+                            <span class="mif-plus" style="font-weight: 300"></span> &nbsp;Add Payment Method
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" v-if="paymentEditing">
+                  <div class="col-md-12">
+                    <div class="payment-editing">
+                      <div class="card-placeholder-image"><img :src="cardImageLoc + lower(cardType) + '.png'" alt="" /></div>
+                      <div class="row">
+                        <div class="col-md-5">
+                          <div class="row">
+                            <div class="col-md-12 field-item">
+                              <div class="item-label">Card Number</div>
+                              <div id="example1-card-number" class="input empty stripe-elements-div" v-if="paymentCreate"></div>
+                              <input
+                                type="text"
+                                class="item-value disabled"
+                                disabled
+                                v-model="pay_info.card_no"
+                                placeholder="1234 1234 1234 1234"
+                                v-else
+                              />
+                              <div role="alert" class="stripe-elements-error-message-div">{{ stripe_card_errors }}</div>
+                            </div>
+                            <div class="col-md-12 field-item">
+                              <div class="item-label">Cardholder Name</div>
+                              <input
+                                type="text"
+                                class="item-value"
+                                v-model="pay_info.card_name"
+                                placeholder="Your name"
+                                onkeypress="return /[a-z ]/i.test(event.key)"
+                              />
+                            </div>
+                            <div class="col-md-6 field-item">
+                              <div class="item-label">Card Expiry</div>
+                              <div id="example1-card-expiry" class="input empty stripe-elements-div" v-if="paymentCreate"></div>
+                              <masked-input class="item-value" v-model="pay_info.exp" mask="11/11" placeholder="MM/YY" v-else />
+                              <div role="alert" class="stripe-elements-error-message-div">{{ stripe_expiry_errors }}</div>
+                            </div>
+                            <div class="col-md-6 field-item">
+                              <div class="item-label">CVC</div>
+                              <div id="example1-card-cvc" class="input empty stripe-elements-div" v-if="paymentCreate"></div>
+                              <input
+                                type="text"
+                                class="item-value disabled"
+                                disabled
+                                v-model="pay_info.cvc"
+                                placeholder="XXX"
+                                v-else
+                              />
+                              <div role="alert" class="stripe-elements-error-message-div">{{ stripe_cvc_errors }}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="signout" @click="logout" v-if="!showPaymentSettings && !showProfileSettings">Sign Out</div>
+
+              <div class="signout" v-if="paymentEditing">
+                <button class="btn action-button cancel-button" @click="cancelEditing">Cancel</button>
+                <button class="btn btn-primary action-button" @click="submitPaymentTest">SAVE</button>
+              </div>
             </div>
-            <div class="navbar-notification"><span class="mif-bell"></span></div>
+          </div>
         </div>
-        <div class="navbar-mobile d-lg-none w-100">
-            <div class="navbar-mobile-content">
-                <!-- <img class="user-avatar v-bind:src="avatar" alt="logo"> -->
-                <img class="user-avatar" v-bind:src="getProfilePicture()" alt="logo">
-
-                <div class="nav-mobile-title" v-if="$route.name=='home'">All Cars</div>
-                <div class="nav-mobile-title" v-if="$route.name=='bids'">Your Bids</div>
-                <div class="nav-mobile-title" v-if="$route.name=='schedulings'">Scheduling</div>
-                <div class="nav-mobile-title" v-if="$route.name=='payments'">Your Payments</div>
-                <div class="nav-mobile-title" v-if="$route.name=='reports'">Reports</div>
-
-                <b-navbar-toggle target="navbar-toggle-collapse" class="btn-mobile-menu">
-                    <span class="mif-menu"></span>
-                </b-navbar-toggle>
-            </div>
-
-
-            <b-collapse id="navbar-toggle-collapse" is-nav >
-                <b-navbar-nav class="ml-auto">
-                    <b-nav-item href="/"  v-bind:class="{'active': $route.name == 'home'}">All Cars</b-nav-item>
-                    <b-nav-item href="/bids"  v-bind:class="{'active': $route.name == 'bids'}">Bids</b-nav-item>
-                    <b-nav-item href="/schedulings"  v-bind:class="{'active': $route.name == 'schedulings'}">Scheduling</b-nav-item>
-                    <b-nav-item href="/payments"  v-bind:class="{'active': $route.name == 'payments'}">Payment</b-nav-item>
-                    <b-nav-item href="/reports"  v-bind:class="{'active': $route.name == 'reports'}">Reports</b-nav-item>
-                </b-navbar-nav>
-            </b-collapse>
+        <div class="navbar-nav">
+          <div class="nav-wrapper">
+            <router-link
+              to="/"
+              class="nav-item nav-link"
+              @click="dropDownMenu = false"
+              v-bind:class="{ active: $route.name == 'home' }"
+              >All Cars</router-link
+            >
+            <router-link
+              to="/bids"
+              class="nav-item nav-link"
+              @click="dropDownMenu = false"
+              v-bind:class="{ active: $route.name == 'bids' }"
+              >Bids</router-link
+            >
+            <router-link
+              to="/schedulings"
+              class="nav-item nav-link"
+              @click="dropDownMenu = false"
+              v-bind:class="{ active: $route.name == 'schedulings' }"
+              >Scheduling</router-link
+            >
+            <router-link
+              to="/payments"
+              class="nav-item nav-link"
+              @click="dropDownMenu = false"
+              v-bind:class="{ active: $route.name == 'payments' }"
+              >Payment</router-link
+            >
+            <router-link
+              to="/reports"
+              class="nav-item nav-link"
+              @click="dropDownMenu = false"
+              v-bind:class="{ active: $route.name == 'reports' }"
+              >Reports</router-link
+            >
+          </div>
         </div>
+        <div class="navbar-notification"><span class="mif-bell"></span></div>
+      </div>
+      <div class="navbar-mobile d-lg-none w-100">
+        <div class="navbar-mobile-content">
+          <!-- <img class="user-avatar v-bind:src="avatar" alt="logo"> -->
+          <img class="user-avatar" v-bind:src="getProfilePicture()" alt="logo" />
+
+          <div class="nav-mobile-title" v-if="$route.name == 'home'">All Cars</div>
+          <div class="nav-mobile-title" v-if="$route.name == 'bids'">Your Bids</div>
+          <div class="nav-mobile-title" v-if="$route.name == 'schedulings'">Scheduling</div>
+          <div class="nav-mobile-title" v-if="$route.name == 'payments'">Your Payments</div>
+          <div class="nav-mobile-title" v-if="$route.name == 'reports'">Reports</div>
+
+          <b-navbar-toggle target="navbar-toggle-collapse" class="btn-mobile-menu">
+            <span class="mif-menu"></span>
+          </b-navbar-toggle>
+        </div>
+
+        <b-collapse id="navbar-toggle-collapse" is-nav>
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item href="/" v-bind:class="{ active: $route.name == 'home' }">All Cars</b-nav-item>
+            <b-nav-item href="/bids" v-bind:class="{ active: $route.name == 'bids' }">Bids</b-nav-item>
+            <b-nav-item href="/schedulings" v-bind:class="{ active: $route.name == 'schedulings' }">Scheduling</b-nav-item>
+            <b-nav-item href="/payments" v-bind:class="{ active: $route.name == 'payments' }">Payment</b-nav-item>
+            <b-nav-item href="/reports" v-bind:class="{ active: $route.name == 'reports' }">Reports</b-nav-item>
+          </b-navbar-nav>
+        </b-collapse>
+      </div>
     </nav>
-</div>
+     <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  </div>
 </template>
 
 <script>
-import EventBus from '../event-bus';
-import ImageUpload from './ImageUpload'
-import CommonService from '../services/CommonService';
+import EventBus from "../event-bus";
+import ImageUpload from "./ImageUpload";
+import CommonService from "../services/CommonService";
 const commonService = new CommonService();
-import MaskedInput from 'vue-masked-input';
-import 'vuetify/dist/vuetify.min.css'
-import VueRouter from 'vue-router';
+import MaskedInput from "vue-masked-input";
+import "vuetify/dist/vuetify.min.css";
+import VueRouter from "vue-router";
+import ConfirmDialogue from '../components/ConfirmDialogue.vue'
 export default {
-    components:{
-        MaskedInput,
-        ImageUpload
-    },
-    data() {
-        return {
-            //  file: '',
-            // tabTitle :'',
-            username: '',
-            companyName: '',
-            error2: '',
-            error3: '',
-            avatar : '/img/avatar.png',
-            profile_pic :'',
-            showActions: false,
-            showProfileSettings: false,
-            showPaymentSettings: false,
-            paymentEditing: false,
-            ShowSecondaryAddress : false,
-            ShowIfSecondaryAddressNotExist:false,
-            hideIfSecondaryAddressNotExist:true,
-            paymentCreate: false,
-            showClickToAdd:true,
-            show: false,
-			params: {
-				token: '123456798',
-				name: 'avatar'
-			},
-			headers: {
-				smail: '*_~'
-			},
-			imgDataUrl: '',
-            tabs: [],
-            tabCounter: 0,
-            // stripe
-            pay_info : {},
-            stripe: '',
-            Card: '',
-            submit_payment1: false,
-            stripe_card_errors: '',
-            stripe_expiry_errors: '',
-            stripe_cvc_errors: '',
-            preventPayButton: true,
-            initPreventPay: true,
-            initialized: false,
-            stripeApiKey: process.env.MIX_Stripe_Api_PublishKey,
-            customer_id: '',
-            payments: [],
-            default_id: '',
-            default_address:'',
-            editingCard: '',
-            sel_payment: {},
-            autoSetDefault: false,
-            cardType: 'generic',
-            cardImageLoc: '/img/card-logos/CreditCardLogos_',
-            SecondaryAddress: [],
-            shippingAddress: {shipping_name:'',street: '', city: '', state: '', code: '', shipping_suite: '',primary_radius:''},
-            tabIndex: 0,
-            // address :{},
-        };
-    },
-    mounted() {
-        this.username = commonService.get_auth_name();
-        // this.avatar = commonService.get_auth_avatar();
-        this.showActions = false;
+  components: {
+    MaskedInput,
+    ImageUpload,
+    ConfirmDialogue
+  },
+  data() {
+    return {
+      //  file: '',
+      // tabTitle :'',
+      username: "",
+      companyName: "",
+      error2: "",
+      error3: "",
+      avatar: "/img/avatar.png",
+      profile_pic: "",
+      showActions: false,
+      showProfileSettings: false,
+      showPaymentSettings: false,
+      paymentEditing: false,
+      ShowSecondaryAddress: false,
+      ShowIfSecondaryAddressNotExist: false,
+      hideIfSecondaryAddressNotExist: true,
+      paymentCreate: false,
+      showClickToAdd: true,
+      show: false,
+      params: {
+        token: "123456798",
+        name: "avatar"
+      },
+      headers: {
+        smail: "*_~"
+      },
+      imgDataUrl: "",
+      tabs: [],
+      tabCounter: 0,
+      // stripe
+      pay_info: {},
+      stripe: "",
+      Card: "",
+      submit_payment1: false,
+      stripe_card_errors: "",
+      stripe_expiry_errors: "",
+      stripe_cvc_errors: "",
+      preventPayButton: true,
+      initPreventPay: true,
+      initialized: false,
+      stripeApiKey: process.env.MIX_Stripe_Api_PublishKey,
+      customer_id: "",
+      payments: [],
+      default_id: "",
+      default_address: 0,
+      editingCard: "",
+      sel_payment: {},
+      autoSetDefault: false,
+      cardType: "generic",
+      cardImageLoc: "/img/card-logos/CreditCardLogos_",
+      SecondaryAddress: [],
+      shippingAddress: { shipping_name: "", street: "", city: "", state: "", code: "", shipping_suite: "", primary_radius: "" },
+      tabIndex: 0
+      // address :{},
+    };
+  },
+  mounted() {
+    this.username = commonService.get_auth_name();
+    // this.avatar = commonService.get_auth_avatar();
+    this.showActions = false;
 
-        const stripeApiKey = this.stripeApiKey;
-        let stripeScript = document.createElement('script');
-        stripeScript.setAttribute('src', 'https://js.stripe.com/v3/');
-        stripeScript.onload = () => {
-            this.stripe = Stripe(stripeApiKey);
-        };
+    const stripeApiKey = this.stripeApiKey;
+    let stripeScript = document.createElement("script");
+    stripeScript.setAttribute("src", "https://js.stripe.com/v3/");
+    stripeScript.onload = () => {
+      this.stripe = Stripe(stripeApiKey);
+    };
 
-        document.head.appendChild(stripeScript);
-        this.tabIndex = this.tabs.findIndex(tab => tab === this.$route.hash);
-      
+    document.head.appendChild(stripeScript);
+    this.tabIndex = this.tabs.findIndex(tab => tab === this.$route.hash);
+  },
+  watch: {
+    $route(to_route, from_route) {
+      this.username = commonService.get_auth_name();
+      this.avatar = commonService.get_auth_avatar();
+    }
+  },
+  computed: {
+    submenu() {
+      return this.showPaymentSettings ? " > Payment Method" : this.showProfileSettings ? " > Profile Settings" : "";
     },
-    watch: {
-        $route (to_route, from_route) {
-            this.username = commonService.get_auth_name();
-            this.avatar = commonService.get_auth_avatar();
-        }
-    },
-    computed: {
-        submenu() {
-            return this.showPaymentSettings? " > Payment Method" : this.showProfileSettings? " > Profile Settings" :  "";
-        },
-        image() {
-            let default_image = 'img/profile-icon-9.png';
-            let image = !this.imgDataUrl? default_image : "img/profiles/" + this.imgDataUrl;
-            return "url('"+image + "')";
-        }
-
-    },
-    filters: {
-        monthFilter: function(month) {
-            if(month<10) return "0"+ month;
-            return month;
-        },
-    },
-    methods: {
-       
-        closeTab(x) {
-            let AltAddress = this.SecondaryAddress;
-            AltAddress.splice(x, 1)
-            this.SecondaryAddress = AltAddress;
-        },
-        newTab() {
-            this.tabCounter = this.SecondaryAddress.length;
-            let alt_address_name = `Alt Address ${++this.tabCounter}`;
-            this.SecondaryAddress.push({billing_name:alt_address_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:this.tabCounter,id:''});
-        },
-        // tabClicked (selectedTab) {
-        
-        //     this.tab_id = selectedTab.tab.name;
-
-        // },
-        // tabChanged (selectedTab) {
-        //     console.log(selectedTab);
-        //     this.tab_id = selectedTab.tab.name;
-        // },
-        getProfilePicture(){
-            this.axios
-                    .get(`/api/getProfile`, commonService.get_api_header())
-                    .then(response => {                 
-                        let user = response.data.user;
-                        this.profile_pic = user.photo;
-                     
-                    });
-            return !this.profile_pic? commonService.get_auth_avatar() : "img/profiles/" + this.profile_pic;
-        },
-       
-        toggleShow() {
-
-            this.show = !this.show;
-        },
-
-        logout() {
-            console.log("logout")
-            let loader = this.$loading.show();
-            this.axios
-                .get(`/api/logout`)
-                .then(response => {
+    image() {
+      let default_image = "img/profile-icon-9.png";
+      let image = !this.imgDataUrl ? default_image : "img/profiles/" + this.imgDataUrl;
+      return "url('" + image + "')";
+    }
+  },
+  filters: {
+    monthFilter: function(month) {
+      if (month < 10) return "0" + month;
+      return month;
+    }
+  },
+  methods: {
+    async closeTab(x) {
+        const ok = await this.$refs.confirmDialogue.show({
+            title: 'Are you sure',
+            message: 'You want to delete this address?',
+            okButton: 'Yes',
+        })
+        if (ok) {
+           let loader = this.$loading.show();
+            let id = this.SecondaryAddress[x].id;
+            let that = this;
+            if(id != ''){
+                this.axios
+                .post(
+                "/api/deleteAddress",
+                {
+                    id: id
+                },
+                commonService.get_api_header()
+                )
+                .then(function(response) {
                     loader.hide();
-                    this.$router.push('/logout');
+                    let AltAddress = that.SecondaryAddress;
+                    AltAddress.splice(x, 1);
+                    that.SecondaryAddress = AltAddress;
+                    that.error2 = "";
+                    that.error3 = "";
+                    if (response.data.error2) return (that.error2 = response.data.error2);
+                    if (response.data.error3) return (that.error3 = response.data.error3);
+
+                    // that.showProfileSettings = false;
+                })
+                .catch(function(error) {
+                    console.log(error);
+                    alert(error);
+                    loader.hide();
                 });
-        },
-        showDropdown(flag) {
-            this.showActions = !this.showActions;
-            this.showPaymentSettings = false;
-            this.paymentEditing = false;
-            this.ShowSecondaryAddress = false;
-            this.showProfileSettings = false;
-            EventBus.$emit('reset-radius-filter',!this.showActions);
+            }else{
+                let AltAddress = this.SecondaryAddress;
+                AltAddress.splice(x, 1);
+                this.SecondaryAddress = AltAddress;
+            }
+        } 
+    },
+    newTab() {
+      if (this.SecondaryAddress.length < 9) {
+        this.tabCounter = this.SecondaryAddress.length;
+        let alt_address_name = `Alt Address ${++this.tabCounter}`;
+        this.SecondaryAddress.push({
+          billing_name: alt_address_name,
+          secondary_street: "",
+          secondary_city: "",
+          secondary_state: "",
+          secondary_code: "",
+          billing_suite: "",
+          secondary_radius: "",
+          tab_id: this.tabCounter,
+          id: ""
+        });
+      }
+    },
+    // tabClicked (selectedTab) {
 
-            EventBus.$emit('uncheckAll', !this.showActions);
-        },
-        stateInitialize() {
-            this.showPaymentSettings = false;
-            this.showProfileSettings = false;
-            this.paymentEditing = false;
+    //     this.tab_id = selectedTab.tab.name;
 
-        },
-        showAddress2(flag){
+    // },
+    // tabChanged (selectedTab) {
+    //     console.log(selectedTab);
+    //     this.tab_id = selectedTab.tab.name;
+    // },
+    getProfilePicture() {
+      this.axios.get(`/api/getProfile`, commonService.get_api_header()).then(response => {
+        let user = response.data.user;
+        this.profile_pic = user.photo;
+      });
+      return !this.profile_pic ? commonService.get_auth_avatar() : "img/profiles/" + this.profile_pic;
+    },
+    toggleShow() {
+      this.show = !this.show;
+    },
+
+    logout() {
+      console.log("logout");
+      let loader = this.$loading.show();
+      this.axios.get(`/api/logout`).then(response => {
+        loader.hide();
+        this.$router.push("/logout");
+      });
+    },
+    showDropdown(flag) {
+      this.showActions = !this.showActions;
+      this.showPaymentSettings = false;
+      this.paymentEditing = false;
+      this.ShowSecondaryAddress = false;
+      this.showProfileSettings = false;
+      EventBus.$emit("reset-radius-filter", !this.showActions);
+
+      EventBus.$emit("uncheckAll", !this.showActions);
+    },
+    stateInitialize() {
+      this.showPaymentSettings = false;
+      this.showProfileSettings = false;
+      this.paymentEditing = false;
+    },
+    showAddress2(flag) {
+      this.ShowSecondaryAddress = true;
+      this.ShowIfSecondaryAddressNotExist = false;
+      this.hideIfSecondaryAddressNotExist = true;
+    },
+    showProfile(flag) {
+      if (!this.showProfileSettings) {
+        let loader = this.$loading.show();
+        let that = this;
+        this.axios.get(`/api/getProfile`, commonService.get_api_header()).then(response => {
+          loader.hide();
+          let user = response.data.user;
+          this.imgDataUrl = user.photo;
+          this.username = user.username;
+          this.companyName = user.companyName;
+          this.default_address = user.default_address;
+          console.log(this.default_address,'user.default_address');
+          // console.log(user.SecondaryAddress,'user.SecondaryAddress');
+          that.SecondaryAddress = user.SecondaryAddress;
+          that.shippingAddress = user.shippingAddress;
+          if (this.imgDataUrl) {
+            that.showClickToAdd = false;
+          }
+          // this.tabCounter = user.SecondaryAddress.length;
+          // for (let index = 0; index < user.SecondaryAddress.length; index++) {
+          //     const element = user.SecondaryAddress[index];
+          //     that.tabs.push(index+1);
+
+          //     // user_address.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
+
+          //     that.SecondaryAddress.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
+
+          // }
+          // that.SecondaryAddress = user_address;
+          if (that.SecondaryAddress) {
             this.ShowSecondaryAddress = true;
             this.ShowIfSecondaryAddressNotExist = false;
             this.hideIfSecondaryAddressNotExist = true;
-            
-        },
-        showProfile(flag) {
-            if(!this.showProfileSettings) {
-                let loader = this.$loading.show();
-                let that = this;
-                this.axios
-                    .get(`/api/getProfile`, commonService.get_api_header())
-                    .then(response => {
-                        loader.hide();
-                        let user = response.data.user;
-                        this.imgDataUrl = user.photo;
-                        this.username = user.username;
-                        this.companyName = user.companyName;
-                        this.default_address = user.default_address;
-                        // console.log(user.SecondaryAddress,'user.SecondaryAddress');
-                        that.SecondaryAddress = user.SecondaryAddress;
-                        that.shippingAddress = user.shippingAddress;
-                        if(this.imgDataUrl){
-                             that.showClickToAdd = false;
-                        }
-                        // this.tabCounter = user.SecondaryAddress.length;
-                        // for (let index = 0; index < user.SecondaryAddress.length; index++) {
-                        //     const element = user.SecondaryAddress[index];
-                        //     that.tabs.push(index+1);
-                            
-                        //     // user_address.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
-
-                        //     that.SecondaryAddress.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
-                            
-                        // }
-                        // that.SecondaryAddress = user_address;                      
-                        if(that.SecondaryAddress){                                                      
-                            this.ShowSecondaryAddress = true;
-                            this.ShowIfSecondaryAddressNotExist = false;
-                            this.hideIfSecondaryAddressNotExist = true;
-                        }else{
-
-                            this.ShowSecondaryAddress = false;
-                            this.ShowIfSecondaryAddressNotExist = true;
-                            this.hideIfSecondaryAddressNotExist = false;
-                        }
-                    });
-            }
-            this.showProfileSettings = !this.showProfileSettings;
-            this.ShowSecondaryAddress = !this.ShowSecondaryAddress;
-        },
-        showPayment(flag) {
-            this.showPaymentSettings = !this.showPaymentSettings;
-            this.listStripePaymentMethods();
-        },
-
-        editCard(card = null) {
-            this.paymentEditing = true;
-
-            if(card == null)
-            {
-                this.paymentCreate = true;
-                setTimeout(() => {
-                    this.initialize();
-                    this.initStripe();
-                }, 100);
-                this.cardType = "generic";
-            }
-            else {
-                this.paymentCreate = false;
-                this.editingCard = card;
-                let payment = this.payments.filter(payment => payment.id == card);
-                payment = payment[0];
-                let exp_month = payment.card.exp_month < 10? "0" + payment.card.exp_month: payment.card.exp_month;
-                this.cardType = payment.card.brand;
-                this.pay_info = {
-                    card_no : "**** **** **** " + payment.card.last4,
-                    card_name : payment.billing_details.name,
-                    exp : exp_month + "/" + (payment.card.exp_year-2000),
-                    cvc: "XXX"
-                };
-            }
-
-        },
-
-        cancelEditing() {
-            this.paymentEditing = false;
-            this.stripe_card_errors = this.stripe_cvc_errors = this.stripe_expiry_errors = '';
-        },
-
-        initialize() {
-            this.pay_info = {card_name: "", card_no: "", cvc: "", exp: ""};
-        },
-        listStripePaymentMethods() {
-            let that = this;
-            let loader = this.$loading.show();
-            this.axios.post('/api/payments/stripe/listPayments', {},commonService.get_api_header())
-                .then(function (response) {
-                    that.payments = response.data.methods.data;
-                    that.default_id = response.data.methods.payment_method;
-                    // if(response.data.methods.data.length == 1)
-                    //     that.setDefaultPayment(response.data.methods.data[0].id);
-                    if(that.autoSetDefault)
-                        that.setDefaultPayment(response.data.methods.data[0].id);
-                    that.autoSetDefault = false;
-                    loader.hide();
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                });
-        },
-        setDefaultPayment(payment) {
-            this.default_id = payment;
-            let that = this;
-            this.axios.post('/api/payments/stripe/setDefaultPayment', {payment: payment},commonService.get_api_header())
-                .then(function (response) {
-
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                });
-        },
-        preventPay: function() {
-            if (this.stripe_card_errors || this.stripe_cvc_errors || this.stripe_expiry_errors) {
-                this.preventPayButton = true;
-            } else {
-                this.preventPayButton = false;
-            }
-        },
-        initStripe: function() {
-            let elements = this.stripe.elements();
-            let Style = {
-                    base: {
-                    color: '#32325d',
-                    paddingLeft: "5px",
-                        '::placeholder': {
-                        color: '#B9B9B9',
-                    },
-                }
-            };
-
-            var elementStyles = {
-                base: {
-                    // fontSize: '14px',
-                    border:"none",
-                    borderBottom: "1px solid #269A8E",
-                    fontWeight: 500,
-                    padding: "5px 0",
-                    outline: "none",
-                    width:"100%",
-                    font: "normal normal normal 14px/17px Lato",
-                    color: '#363636',
-                    fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
-                    fontSize: '16px',
-                    // backgroundColor: "#e3e3e3",
-                    fontSmoothing: 'antialiased',
-                    '::placeholder': {
-                        color: '#B9B9B9',
-                    },
-                    ':-webkit-autofill': {
-                        color: '#B9B9B9',
-                    },
-                },
-                invalid: {
-                    color: '#E25950',
-                    '::placeholder': {
-                        color: '#FF1744',
-                    },
-                },
-            };
-
-            var elementClasses = {
-                focus: 'focused',
-                empty: 'empty',
-                invalid: 'invalid',
-            };
-            let that = this;
-            this.Card = elements.create('cardNumber', {
-                style: elementStyles,
-                classes: elementClasses,
-            });
-            this.Card.mount('#example1-card-number');
-            this.Card.on('change', ({error}) => {
-                if (error) {
-                    that.stripe_card_errors = error.message;
-                } else {
-                    that.stripe_card_errors = '';
-                }
-                that.preventPay();
-            });
-            var cardExpiry = elements.create('cardExpiry', {
-                style: elementStyles,
-                classes: elementClasses,
-            });
-            cardExpiry.mount('#example1-card-expiry');
-            cardExpiry.on('change', ({error}) => {
-                if (error) {
-                    that.stripe_expiry_errors = error.message;
-                } else {
-                    that.stripe_expiry_errors = '';
-                }
-                that.preventPay();
-            });
-            var cardCvc = elements.create('cardCvc', {
-                style: elementStyles,
-                classes: elementClasses,
-            });
-            cardCvc.mount('#example1-card-cvc');
-            cardCvc.on('change', ({error}) => {
-                if (error) {
-                    that.stripe_cvc_errors = error.message;
-                } else {
-                    that.stripe_cvc_errors = '';
-                }
-                that.preventPay();
-            });
-        },
-        submitPaymentTest() {
-            let that = this;
-            if(!this.pay_info.card_name) {
-                alert('card name is empty');
-                return;
-            }
-            if(!this.paymentCreate) {
-                var str = this.pay_info.exp;
-                let total = 0;
-                for (var i = 0; i < str.length; i++) {
-                    if(str.charAt(i) == "_") total++;
-                }
-                if(total>0 || str == '') return alert('card expiry date is not valid');
-                var dt = str.split('/');
-
-                if(parseInt(dt[0]) > 12) return alert('expiry month format error');
-                if(parseInt(dt[1]) < 21) return alert('expiry year error');
-                this.updatePayment();
-            }
-
-            else {
-                let loader = this.$loading.show();
-                this.axios.post('/api/payments/stripe/createCustomer', {},commonService.get_api_header())
-                    .then(function (response) {
-                        that.customer_id = response.data.customer_id;
-                        that.axios.post('/api/payments/stripe/setupIntent', {
-                            'customer' : response.data.customer_id,
-                        },commonService.get_api_header())
-                        .then(function (response) {
-                            loader.hide();
-                            that.confirmCardSetup(response.data.Intent.Secret);
-                        }).catch(function (error) {
-                            console.log(error);
-                            alert(error);
-                            loader.hide();
-                        });
-                    }).catch(function (error) {
-                        console.log(error);
-                        alert(error);
-                        loader.hide();
-                    });
-            }
-
-            // this.submit_payment1 = true;
-
-
-        },
-        confirmCardSetup(clientSecret) {
-            let loader = this.$loading.show();
-            let that = this;
-            this.stripe.confirmCardSetup(clientSecret, {
-                payment_method: {
-                    card: this.Card,
-                    billing_details: {
-                        name: this.pay_info.card_name,
-                    },
-                },
-                // setup_future_usage: 'off_session'
-                }).then(function(result) {
-                loader.hide();
-                console.log(result)
-                if (result.error) {
-                    // console.log('payment error' + result.error.message);
-                    alert("Card Information isn't correct!");
-                } else {
-                    if (result.setupIntent.status === 'succeeded') {
-                        loader.hide();
-                        var conf = confirm("Would you like to make this your default payment method?");
-                        if(conf){
-                            that.autoSetDefault = true;
-                        }
-                        that.listStripePaymentMethods();
-                        that.paymentEditing = false;
-
-                    } else {
-                        console.log('payment error');
-                    }
-                }
-            });
-        },
-        inputExp(value) {
-            console.log(value)
-        },
-        updatePayment() {
-            let that = this;
-            let loader = this.$loading.show();
-            this.axios.post('/api/payments/stripe/updatePayment', {payment: this.editingCard, name: this.pay_info.card_name, exp: this.pay_info.exp },commonService.get_api_header())
-                .then(function (response) {
-                    that.paymentEditing = false;
-                    that.listStripePaymentMethods();
-                    loader.hide();
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                    loader.hide();
-                });
-        },
-        deletePayment(payment) {
-            var r = confirm("Are you really gonna delete payment method?");
-            if(r) {
-                let that = this;
-                let loader = this.$loading.show();
-                this.axios.post('/api/payments/stripe/deletePayment', {payment: payment},commonService.get_api_header())
-                    .then(function (response) {
-                        that.listStripePaymentMethods();
-                        loader.hide();
-                    }).catch(function (error) {
-                        console.log(error);
-                        alert(error);
-                        loader.hide();
-                    });
-            }
-        },
-        unsetPayment() {
-            this.default_id = '';
-            this.axios.get('/api/payments/stripe/unsetPayment', commonService.get_api_header())
-                .then(function (response) {
-
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                    loader.hide();
-                });
-        },
-        lower(cardType) {
-            let card = cardType.toLowerCase();
-            if(card != 'amex' && card != 'discover' && card != 'mastercard' && card != 'visa')
-                return 'generic';
-            return card;
-        },
-        upper(cardType) {
-            let card = this.lower(cardType);
-            if(card == 'amex') return "AMEX";
-            if(card == 'discover') return "DISC";
-            if(card == 'mastercard') return "MAST";
-            if(card == 'visa') return "VISA";
-            return "OTHER";
-        },
-        async setImage(image) {
-            const res = await this.$axios.patch('/profile', { image })
-            if (res) {
-                this.$awn.success('Profile picture updated successfully')
-            } else {
-                this.$awn.warning('Unable to upload profile picture!')
-            }
-            this.image = image
-        },
-        getImageUrl(image) {
-            return image
-        },
-        filesChange(file) {
-            console.log('file',file)
-            const formData = new FormData();
-            if(!file || !file.length) return;
-            formData.append("form", file[0]);
-            let loader = this.$loading.show();
-            let that = this;
-            this.axios.post('/api/uploadPhoto', formData,commonService.get_api_header())
-                .then(function (response) {
-                    loader.hide();
-                    that.imgDataUrl = response.data;
-                    that.showClickToAdd = false;
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                    loader.hide();
-                });
-        },
-        clickUploader() {
-            const elem = this.$refs.myfile
-            elem.click();
-       
-        },
-       
-        saveProfile() {
-            let loader = this.$loading.show();
-            let that = this;
-            let AltAddressList = [];
-            for (let index = 0; index < this.SecondaryAddress.length; index++) {
-                const address = this.SecondaryAddress[index];
-                AltAddressList.push(
-                    {
-                        billing_name: address.billing_name,
-                        secondary_street: address.secondary_street, 
-                        secondary_city: address.secondary_city, 
-                        secondary_state: address.secondary_state, 
-                        secondary_code: address.secondary_code, 
-                        billing_suite: address.billing_suite,
-                        secondary_radius:address.secondary_radius,
-                        tab_id:index+1,
-                    }
-                )
-            }
-            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,SecondaryAddress: AltAddressList, shippingAddress: this.shippingAddress,default_address: this.default_address,tab_id:this.tabIndex},commonService.get_api_header())
-                .then(function (response) {
-                    loader.hide();
-                    that.error2 ='';
-                    that.error3='';
-                    if (response.data.error2) return that.error2 = response.data.error2;
-                    if (response.data.error3) return that.error3 =response.data.error3;
-                  
-                    // that.showProfileSettings = false;
-                }).catch(function (error) {
-                    console.log(error);
-                    alert(error);
-                    loader.hide();
-                });
-        },
- 
+          } else {
+            this.ShowSecondaryAddress = false;
+            this.ShowIfSecondaryAddressNotExist = true;
+            this.hideIfSecondaryAddressNotExist = false;
+          }
+        });
+      }
+      this.showProfileSettings = !this.showProfileSettings;
+      this.ShowSecondaryAddress = !this.ShowSecondaryAddress;
+    },
+    showPayment(flag) {
+      this.showPaymentSettings = !this.showPaymentSettings;
+      this.listStripePaymentMethods();
     },
 
-}
+    editCard(card = null) {
+      this.paymentEditing = true;
+
+      if (card == null) {
+        this.paymentCreate = true;
+        setTimeout(() => {
+          this.initialize();
+          this.initStripe();
+        }, 100);
+        this.cardType = "generic";
+      } else {
+        this.paymentCreate = false;
+        this.editingCard = card;
+        let payment = this.payments.filter(payment => payment.id == card);
+        payment = payment[0];
+        let exp_month = payment.card.exp_month < 10 ? "0" + payment.card.exp_month : payment.card.exp_month;
+        this.cardType = payment.card.brand;
+        this.pay_info = {
+          card_no: "**** **** **** " + payment.card.last4,
+          card_name: payment.billing_details.name,
+          exp: exp_month + "/" + (payment.card.exp_year - 2000),
+          cvc: "XXX"
+        };
+      }
+    },
+
+    cancelEditing() {
+      this.paymentEditing = false;
+      this.stripe_card_errors = this.stripe_cvc_errors = this.stripe_expiry_errors = "";
+    },
+
+    initialize() {
+      this.pay_info = { card_name: "", card_no: "", cvc: "", exp: "" };
+    },
+    listStripePaymentMethods() {
+      let that = this;
+      let loader = this.$loading.show();
+      this.axios
+        .post("/api/payments/stripe/listPayments", {}, commonService.get_api_header())
+        .then(function(response) {
+          that.payments = response.data.methods.data;
+          that.default_id = response.data.methods.payment_method;
+          // if(response.data.methods.data.length == 1)
+          //     that.setDefaultPayment(response.data.methods.data[0].id);
+          if (that.autoSetDefault) that.setDefaultPayment(response.data.methods.data[0].id);
+          that.autoSetDefault = false;
+          loader.hide();
+        })
+        .catch(function(error) {
+          console.log(error);
+          alert(error);
+        });
+    },
+    setDefaultPayment(payment) {
+      this.default_id = payment;
+      let that = this;
+      this.axios
+        .post("/api/payments/stripe/setDefaultPayment", { payment: payment }, commonService.get_api_header())
+        .then(function(response) {})
+        .catch(function(error) {
+          console.log(error);
+          alert(error);
+        });
+    },
+    preventPay: function() {
+      if (this.stripe_card_errors || this.stripe_cvc_errors || this.stripe_expiry_errors) {
+        this.preventPayButton = true;
+      } else {
+        this.preventPayButton = false;
+      }
+    },
+    initStripe: function() {
+      let elements = this.stripe.elements();
+      let Style = {
+        base: {
+          color: "#32325d",
+          paddingLeft: "5px",
+          "::placeholder": {
+            color: "#B9B9B9"
+          }
+        }
+      };
+
+      var elementStyles = {
+        base: {
+          // fontSize: '14px',
+          border: "none",
+          borderBottom: "1px solid #269A8E",
+          fontWeight: 500,
+          padding: "5px 0",
+          outline: "none",
+          width: "100%",
+          font: "normal normal normal 14px/17px Lato",
+          color: "#363636",
+          fontFamily: "Source Code Pro, Consolas, Menlo, monospace",
+          fontSize: "16px",
+          // backgroundColor: "#e3e3e3",
+          fontSmoothing: "antialiased",
+          "::placeholder": {
+            color: "#B9B9B9"
+          },
+          ":-webkit-autofill": {
+            color: "#B9B9B9"
+          }
+        },
+        invalid: {
+          color: "#E25950",
+          "::placeholder": {
+            color: "#FF1744"
+          }
+        }
+      };
+
+      var elementClasses = {
+        focus: "focused",
+        empty: "empty",
+        invalid: "invalid"
+      };
+      let that = this;
+      this.Card = elements.create("cardNumber", {
+        style: elementStyles,
+        classes: elementClasses
+      });
+      this.Card.mount("#example1-card-number");
+      this.Card.on("change", ({ error }) => {
+        if (error) {
+          that.stripe_card_errors = error.message;
+        } else {
+          that.stripe_card_errors = "";
+        }
+        that.preventPay();
+      });
+      var cardExpiry = elements.create("cardExpiry", {
+        style: elementStyles,
+        classes: elementClasses
+      });
+      cardExpiry.mount("#example1-card-expiry");
+      cardExpiry.on("change", ({ error }) => {
+        if (error) {
+          that.stripe_expiry_errors = error.message;
+        } else {
+          that.stripe_expiry_errors = "";
+        }
+        that.preventPay();
+      });
+      var cardCvc = elements.create("cardCvc", {
+        style: elementStyles,
+        classes: elementClasses
+      });
+      cardCvc.mount("#example1-card-cvc");
+      cardCvc.on("change", ({ error }) => {
+        if (error) {
+          that.stripe_cvc_errors = error.message;
+        } else {
+          that.stripe_cvc_errors = "";
+        }
+        that.preventPay();
+      });
+    },
+    submitPaymentTest() {
+      let that = this;
+      if (!this.pay_info.card_name) {
+        alert("card name is empty");
+        return;
+      }
+      if (!this.paymentCreate) {
+        var str = this.pay_info.exp;
+        let total = 0;
+        for (var i = 0; i < str.length; i++) {
+          if (str.charAt(i) == "_") total++;
+        }
+        if (total > 0 || str == "") return alert("card expiry date is not valid");
+        var dt = str.split("/");
+
+        if (parseInt(dt[0]) > 12) return alert("expiry month format error");
+        if (parseInt(dt[1]) < 21) return alert("expiry year error");
+        this.updatePayment();
+      } else {
+        let loader = this.$loading.show();
+        this.axios
+          .post("/api/payments/stripe/createCustomer", {}, commonService.get_api_header())
+          .then(function(response) {
+            that.customer_id = response.data.customer_id;
+            that.axios
+              .post(
+                "/api/payments/stripe/setupIntent",
+                {
+                  customer: response.data.customer_id
+                },
+                commonService.get_api_header()
+              )
+              .then(function(response) {
+                loader.hide();
+                that.confirmCardSetup(response.data.Intent.Secret);
+              })
+              .catch(function(error) {
+                console.log(error);
+                alert(error);
+                loader.hide();
+              });
+          })
+          .catch(function(error) {
+            console.log(error);
+            alert(error);
+            loader.hide();
+          });
+      }
+
+      // this.submit_payment1 = true;
+    },
+    confirmCardSetup(clientSecret) {
+      let loader = this.$loading.show();
+      let that = this;
+      this.stripe
+        .confirmCardSetup(clientSecret, {
+          payment_method: {
+            card: this.Card,
+            billing_details: {
+              name: this.pay_info.card_name
+            }
+          }
+          // setup_future_usage: 'off_session'
+        })
+        .then(function(result) {
+          loader.hide();
+          console.log(result);
+          if (result.error) {
+            // console.log('payment error' + result.error.message);
+            alert("Card Information isn't correct!");
+          } else {
+            if (result.setupIntent.status === "succeeded") {
+              loader.hide();
+              var conf = confirm("Would you like to make this your default payment method?");
+              if (conf) {
+                that.autoSetDefault = true;
+              }
+              that.listStripePaymentMethods();
+              that.paymentEditing = false;
+            } else {
+              console.log("payment error");
+            }
+          }
+        });
+    },
+    inputExp(value) {
+      console.log(value);
+    },
+    updatePayment() {
+      let that = this;
+      let loader = this.$loading.show();
+      this.axios
+        .post(
+          "/api/payments/stripe/updatePayment",
+          { payment: this.editingCard, name: this.pay_info.card_name, exp: this.pay_info.exp },
+          commonService.get_api_header()
+        )
+        .then(function(response) {
+          that.paymentEditing = false;
+          that.listStripePaymentMethods();
+          loader.hide();
+        })
+        .catch(function(error) {
+          console.log(error);
+          alert(error);
+          loader.hide();
+        });
+    },
+    deletePayment(payment) {
+      var r = confirm("Are you really gonna delete payment method?");
+      if (r) {
+        let that = this;
+        let loader = this.$loading.show();
+        this.axios
+          .post("/api/payments/stripe/deletePayment", { payment: payment }, commonService.get_api_header())
+          .then(function(response) {
+            that.listStripePaymentMethods();
+            loader.hide();
+          })
+          .catch(function(error) {
+            console.log(error);
+            alert(error);
+            loader.hide();
+          });
+      }
+    },
+    unsetPayment() {
+      this.default_id = "";
+      this.axios
+        .get("/api/payments/stripe/unsetPayment", commonService.get_api_header())
+        .then(function(response) {})
+        .catch(function(error) {
+          console.log(error);
+          alert(error);
+          loader.hide();
+        });
+    },
+    lower(cardType) {
+      let card = cardType.toLowerCase();
+      if (card != "amex" && card != "discover" && card != "mastercard" && card != "visa") return "generic";
+      return card;
+    },
+    upper(cardType) {
+      let card = this.lower(cardType);
+      if (card == "amex") return "AMEX";
+      if (card == "discover") return "DISC";
+      if (card == "mastercard") return "MAST";
+      if (card == "visa") return "VISA";
+      return "OTHER";
+    },
+    async setImage(image) {
+      const res = await this.$axios.patch("/profile", { image });
+      if (res) {
+        this.$awn.success("Profile picture updated successfully");
+      } else {
+        this.$awn.warning("Unable to upload profile picture!");
+      }
+      this.image = image;
+    },
+    getImageUrl(image) {
+      return image;
+    },
+    filesChange(file) {
+      console.log("file", file);
+      const formData = new FormData();
+      if (!file || !file.length) return;
+      formData.append("form", file[0]);
+      let loader = this.$loading.show();
+      let that = this;
+      this.axios
+        .post("/api/uploadPhoto", formData, commonService.get_api_header())
+        .then(function(response) {
+          loader.hide();
+          that.imgDataUrl = response.data;
+          that.showClickToAdd = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          alert(error);
+          loader.hide();
+        });
+    },
+    clickUploader() {
+      const elem = this.$refs.myfile;
+      elem.click();
+    },
+
+    saveProfile() {
+      let loader = this.$loading.show();
+      let that = this;
+      let AltAddressList = [];
+      for (let index = 0; index < this.SecondaryAddress.length; index++) {
+        const address = this.SecondaryAddress[index];
+        AltAddressList.push({
+          id: address.id,
+          billing_name: address.billing_name,
+          secondary_street: address.secondary_street,
+          secondary_city: address.secondary_city,
+          secondary_state: address.secondary_state,
+          secondary_code: address.secondary_code,
+          billing_suite: address.billing_suite,
+          secondary_radius: address.secondary_radius,
+          tab_id: index + 1
+        });
+      }
+      this.axios
+        .post(
+          "/api/saveProfile",
+          {
+            username: this.username,
+            companyName: this.companyName,
+            photo: this.imgDataUrl,
+            SecondaryAddress: AltAddressList,
+            shippingAddress: this.shippingAddress,
+            default_address: this.default_address,
+            tab_id: this.tabIndex
+          },
+          commonService.get_api_header()
+        )
+        .then(function(response) {
+          loader.hide();
+          that.SecondaryAddress = response.data.data;
+          that.error2 = "";
+          that.error3 = "";
+          if (response.data.error2) return (that.error2 = response.data.error2);
+          if (response.data.error3) return (that.error3 = response.data.error3);
+
+          // that.showProfileSettings = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          alert(error);
+          loader.hide();
+        });
+    }
+  }
+};
 </script>

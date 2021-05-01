@@ -179,6 +179,7 @@ class UserController extends Controller
         foreach($get_address as $address){
             // $SecondaryAddress[$address->tab_id] = [
             $SecondaryAddress[] = [
+                'id'=> $address->id,
                 'user_id' => Auth::user()->id,
                 'tab_id' => $address->tab_id,
                 'billing_name' => $address->billing_name,
@@ -234,10 +235,9 @@ class UserController extends Controller
 
        
         if(isset($request->SecondaryAddress) && !empty($request->SecondaryAddress)){
-            Address::where('user_id',Auth::user()->id)->delete();
+            // Address::where('user_id',Auth::user()->id)->delete();
             foreach($request->SecondaryAddress as $secondary){
                 // $get_address = Address::where('user_id', $user->id)->where('tab_id', $secondary['tab_id'])->first();
-                
                 $address = array(
                     'user_id' => Auth::user()->id,
                     'tab_id' => $secondary['tab_id'],
@@ -250,8 +250,11 @@ class UserController extends Controller
                     'secondary_code' => $secondary['secondary_code']
 
                 );
-                Address::insert($address);
-                
+                if(isset($secondary['id']) != ''){
+                    Address::where('id', $secondary['id'])->update($address);
+                }else{
+                    Address::insert($address);
+                }
                 //Address::where('tab_id', $secondary['tab_id'])->update($address); 
                
                
@@ -260,7 +263,13 @@ class UserController extends Controller
 
         $zohoService = new ZohoSerivce();
         $updateProfileSettings = $zohoService->updateProfileSettings($user->zoho_index, $request->username, $request->companyName,$request->shippingAddress);
-        return json_encode(['res'=>"success"]);
+        $altAddress = Address::select('id','user_id','tab_id','billing_name','billing_suite','secondary_radius','secondary_street','secondary_city','secondary_state','secondary_code')->where('user_id',Auth::user()->id)->get();
+        if($altAddress){
+            $addressData = $altAddress->toArray();
+        }else{
+            $addressData = [];
+        }
+        return json_encode(['res'=>"success", 'data'=>$addressData]);
     }
   
     public function uploadPhoto(Request $request) {
@@ -268,6 +277,12 @@ class UserController extends Controller
         $imageName = time().'.'.$request->form->extension();
         $request->form->move(public_path('img/profiles'), $imageName);
         return $imageName;
+    }
+    public function deleteAddress(Request $request) {
+        $id = $request->id;
+        if (!$id) return ['error' => 'Address id required'];
+        Address::where('id',$id)->delete();
+        return json_encode(['res'=>"success"]);
     }
 
 
