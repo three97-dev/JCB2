@@ -142,8 +142,8 @@
                                             <!-- <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + i" :title="'Alt Address ' + i"   active  > -->
                                                 
                                             
-                                             <b-tab :v-if="ShowSecondaryAddress" v-for="i in tabs"  :key="'dyn-tab-' + `${i+1}`" 
-                                                 :title="SecondaryAddress[i].billing_name" active > 
+                                             <b-tab :v-if="ShowSecondaryAddress" v-for="(addressData, index) in SecondaryAddress"  :key="'dyn-tab-' + index" 
+                                                 :title="'Alt Address '+`${index + 1}`" active > 
                                                 <!-- Tab contents {{ i }} -->
                                                 
                                                 <div class="address_form">
@@ -153,9 +153,7 @@
                                                                 <div class="col-md-12">
                                                                     <div class="form-group">
                                                                     <label class="input-label" style="float: left; width: unset;">Address Name: </label>
-                                                                    <input type="text" :placeholder="'Address'+ `${i}`" class="input" v-model="SecondaryAddress[i].billing_name" />
-
-                                                        
+                                                                    <input type="text" :placeholder="'Address '+ `${index + 1}`" class="input" v-model="addressData.billing_name" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -163,7 +161,7 @@
                                                                 <div class="col-md-12">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">Street Address </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="SecondaryAddress[i].secondary_street" />
+                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.secondary_street" />
                                                                     </div>
                                                                 </div>
 
@@ -172,7 +170,7 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">Suite/Apt/P.O. Box </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="SecondaryAddress[i].billing_suite" />
+                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.billing_suite" />
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
@@ -183,13 +181,13 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">City/Town </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="SecondaryAddress[i].secondary_city" />
+                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.secondary_city" />
                                                                     </div>
                                                                 </div> 
                                                                  <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">State/Province </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="SecondaryAddress[i].secondary_state" />
+                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.secondary_state" />
                                                                     </div>
                                                                 </div> 
                                                             </div>
@@ -197,7 +195,7 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label class="input-label" style="float: left; width: unset;">Zip/Postal Code </label>
-                                                                        <input type="text" placeholder="Input" class="input" v-model="SecondaryAddress[i].secondary_code" />
+                                                                        <input type="text" placeholder="Input" class="input" v-model="addressData.secondary_code" />
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
@@ -208,7 +206,7 @@
                                                          <div class="col-md-5">                                
                                                             <div class="form-group">
                                                                 <label class="input-label" style="float: left; width: unset;">Search Radius from My Location </label>
-                                                                <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="SecondaryAddress[i].secondary_radius" />
+                                                                <input type="text" placeholder="Maximum 150 Miles" class="input" v-model="addressData.secondary_radius" />
                                                                     <div v-if="error3" class="secondary_error"  style="font-size:13px;max-width:390px;color:#FF0000;">
                                                                         {{error3}}
                                                                     </div>
@@ -456,9 +454,7 @@ export default {
             autoSetDefault: false,
             cardType: 'generic',
             cardImageLoc: '/img/card-logos/CreditCardLogos_',
-            SecondaryAddress: [
-                {billing_name:'',secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:'',id:''}
-            ],
+            SecondaryAddress: [],
             shippingAddress: {shipping_name:'',street: '', city: '', state: '', code: '', shipping_suite: '',primary_radius:''},
             tabIndex: 0,
             // address :{},
@@ -470,7 +466,6 @@ export default {
         this.showActions = false;
 
         const stripeApiKey = this.stripeApiKey;
-        console.log(stripeApiKey);
         let stripeScript = document.createElement('script');
         stripeScript.setAttribute('src', 'https://js.stripe.com/v3/');
         stripeScript.onload = () => {
@@ -514,9 +509,8 @@ export default {
         }
         },
         newTab() {
-           
-            this.tabs.push(this.tabCounter++);
-             console.log('tabcounter',this.tabCounter);
+            this.tabCounter = this.SecondaryAddress.length;
+            this.tabs.push(this.tabCounter);
             let alt_address_name = `Alt Address ${this.tabCounter}`;
             this.SecondaryAddress.push({billing_name:alt_address_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:'',id:''});
         },
@@ -590,30 +584,23 @@ export default {
                         this.username = user.username;
                         this.companyName = user.companyName;
                         this.default_address = user.default_address;
-                        // that.SecondaryAddress = user.SecondaryAddress;
+                        // console.log(user.SecondaryAddress,'user.SecondaryAddress');
+                        that.SecondaryAddress = user.SecondaryAddress;
                         that.shippingAddress = user.shippingAddress;
                         if(this.imgDataUrl){
                              that.showClickToAdd = false;
                         }
-                        this.tabCounter = user.SecondaryAddress.length;
-                        console.log('tabindex',that.tabIndex);
-                        console.log('tabCounter',this.tabCounter);
-                         
-                        // for (let index = 1; index < user.SecondaryAddress.length; index++) {
-                        //     that.tabs.push(index);
-                        // }
-                        // let user_address = [];
-                        for (let index = 0; index < user.SecondaryAddress.length; index++) {
-                            const element = user.SecondaryAddress[index];
-                            that.tabs.push(index+1);
+                        // this.tabCounter = user.SecondaryAddress.length;
+                        // for (let index = 0; index < user.SecondaryAddress.length; index++) {
+                        //     const element = user.SecondaryAddress[index];
+                        //     that.tabs.push(index+1);
                             
-                            // user_address.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
+                        //     // user_address.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
 
-                            that.SecondaryAddress.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
+                        //     that.SecondaryAddress.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
                             
-                        }
-                        // that.SecondaryAddress = user_address;
-                        console.log('secondary',that.SecondaryAddress);                       
+                        // }
+                        // that.SecondaryAddress = user_address;                      
                         if(that.SecondaryAddress){                                                      
                             this.ShowSecondaryAddress = true;
                             this.ShowIfSecondaryAddressNotExist = false;
