@@ -143,9 +143,8 @@
                                                 
                                             
                                              <b-tab :v-if="ShowSecondaryAddress" v-for="(addressData, index) in SecondaryAddress"  :key="'dyn-tab-' + index" 
-                                                 :title="'Alt Address '+`${index + 1}`" active > 
+                                                 :title="addressData.billing_name" active > 
                                                 <!-- Tab contents {{ i }} -->
-                                                
                                                 <div class="address_form">
                                                     <div class="row">
                                                         <div class="col-md-7">
@@ -217,7 +216,7 @@
                                                     </div>
 
                                                 </div>
-                                                <b-button size="sm" variant="danger" class="float-right" @click="closeTab(i)">
+                                                <b-button size="sm" variant="danger" class="float-right" @click="closeTab(index)">
                                                 Close tab
                                                 </b-button> 
                                             </b-tab>
@@ -502,17 +501,14 @@ export default {
     methods: {
        
         closeTab(x) {
-        for (let i = 0; i < this.tabs.length; i++) {
-            if (this.tabs[i] === x) {
-            this.tabs.splice(i, 1)
-            }
-        }
+            let AltAddress = this.SecondaryAddress;
+            AltAddress.splice(x, 1)
+            this.SecondaryAddress = AltAddress;
         },
         newTab() {
             this.tabCounter = this.SecondaryAddress.length;
-            this.tabs.push(this.tabCounter);
-            let alt_address_name = `Alt Address ${this.tabCounter}`;
-            this.SecondaryAddress.push({billing_name:alt_address_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:'',id:''});
+            let alt_address_name = `Alt Address ${++this.tabCounter}`;
+            this.SecondaryAddress.push({billing_name:alt_address_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:this.tabCounter,id:''});
         },
         // tabClicked (selectedTab) {
         
@@ -957,12 +953,27 @@ export default {
         },
        
         saveProfile() {
-            
             let loader = this.$loading.show();
             let that = this;
             console.log('tabindex',this.tabIndex);
             console.log('billing',this.SecondaryAddress);
-            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,SecondaryAddress: this.SecondaryAddress, shippingAddress: this.shippingAddress,default_address: this.default_address,tab_id:this.tabIndex},commonService.get_api_header())
+            let AltAddressList = [];
+            for (let index = 0; index < this.SecondaryAddress.length; index++) {
+                const address = this.SecondaryAddress[index];
+                AltAddressList.push(
+                    {
+                        billing_name: address.billing_name,
+                        secondary_street: address.secondary_street, 
+                        secondary_city: address.secondary_city, 
+                        secondary_state: address.secondary_state, 
+                        secondary_code: address.secondary_code, 
+                        billing_suite: address.billing_suite,
+                        secondary_radius:address.secondary_radius,
+                        tab_id:index+1,
+                    }
+                )
+            }
+            this.axios.post('/api/saveProfile', {username: this.username, companyName: this.companyName, photo: this.imgDataUrl,SecondaryAddress: AltAddressList, shippingAddress: this.shippingAddress,default_address: this.default_address,tab_id:this.tabIndex},commonService.get_api_header())
                 .then(function (response) {
                     loader.hide();
                     that.error2 ='';
