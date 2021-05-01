@@ -955,8 +955,6 @@ export default {
         saveProfile() {
             let loader = this.$loading.show();
             let that = this;
-            console.log('tabindex',this.tabIndex);
-            console.log('billing',this.SecondaryAddress);
             let AltAddressList = [];
             for (let index = 0; index < this.SecondaryAddress.length; index++) {
                 const address = this.SecondaryAddress[index];
