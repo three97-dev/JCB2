@@ -265,7 +265,30 @@
                                   </div>
                                 </div>
                                 <div class="col-md-5">
-                                  <div class="form-group">
+
+                                  <div class="detail-address mt-2" v-if="hideIfSecondaryAddressNotExist">
+                                    <label class="input-label" style="float: left; width: unset;"
+                                      >Set as default Address;
+                                    </label>
+                                    <div class="select-div">
+                                      <select
+                                        id="defaultAddres"
+                                        v-model="default_address"
+                                        class="form-control"
+                                      >
+                                        <option :selected="default_address == 0" v-on:click="default_address = 0" :value="0" >Primary Address</option>
+                                        <option
+                                          :selected="default_address == address.id"
+                                          v-for="(address, index) in defaultAddressData"
+                                          :value="address.id"
+                                          :key="'default-addr-' + index"
+                                          >{{ address.billing_name }}</option
+                                        >
+                                      </select>
+                                      <span for="defaultAddres" class="mif-chevron-thin-down"></span>
+                                    </div>
+                                  </div>
+                                  <div class="form-group mt-4">
                                     <label class="input-label" style="float: left; width: unset;"
                                       >Search Radius from My Location
                                     </label>

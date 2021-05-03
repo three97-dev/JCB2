@@ -19,10 +19,16 @@
             <li class="site-menu-item">
                 <a href="javascript:;" v-on:click="openBidsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_bids_filter}"></span></a>
             </li>
+             <li class="site-menu-item">
+                <a href="javascript:;" v-on:click="openLocationFilter()" > <span class="mif-location" v-bind:class="{'text-selected': open_location_filter}"></span> </a>
+            </li>
         </ul>
         <ul class="site-menu" v-if="$route.name=='schedulings'">
             <li class="site-menu-item">
                 <a href="javascript:;" v-on:click="openSchedulingsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_schedulings_filter}"></span></a>
+            </li>
+             <li class="site-menu-item">
+                <a href="javascript:;" v-on:click="openLocationFilter()" > <span class="mif-location" v-bind:class="{'text-selected': open_location_filter}"></span> </a>
             </li>
         </ul>
         <ul class="site-menu" v-if="$route.name=='payments'">

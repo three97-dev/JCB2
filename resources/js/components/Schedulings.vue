@@ -381,6 +381,19 @@ var commonService = new CommonService();
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
             });
+            EventBus.$on('update-radius-filter', function(filter_param) {              
+                thiz.filter_param = filter_param;
+                thiz.filter_string = thiz.filter_param['filter_string'];
+                this.split_array = thiz.filter_string.split(':');
+                if(this.split_array[1].trim() =='secondary'){
+                    thiz.filter_string = 'Distance from My Location: Alt Address';
+                }else{
+                     thiz.filter_string = 'Distance from My Location:Primary Address';
+                }
+                delete thiz.filter_param['filter_string'];
+                thiz.refreshPage(1);
+            });
+
         },
         beforeDestroy () {
             EventBus.$off('update-schedulings-filter');
