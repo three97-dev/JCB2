@@ -121,19 +121,23 @@
                                     <label class="input-label" style="float: left; width: unset;"
                                       >Set as default Address;
                                     </label>
-                                    <select
-                                      v-model="default_address"
-                                      class="form-control"
-                                    >
-                                      <option :selected="default_address == 0" v-on:click="default_address = 0" :value="0" >Primary Address</option>
-                                      <option
-                                        :selected="default_address == address.id"
-                                        v-for="(address, index) in default_address_data"
-                                        :value="address.id"
-                                        :key="'default-addr-' + index"
-                                        >{{ address.billing_name }}</option
+                                    <div class="select-div">
+                                      <select
+                                        id="defaultAddres"
+                                        v-model="default_address"
+                                        class="form-control"
                                       >
-                                    </select>
+                                        <option :selected="default_address == 0" v-on:click="default_address = 0" :value="0" >Primary Address</option>
+                                        <option
+                                          :selected="default_address == address.id"
+                                          v-for="(address, index) in defaultAddressData"
+                                          :value="address.id"
+                                          :key="'default-addr-' + index"
+                                          >{{ address.billing_name }}</option
+                                        >
+                                      </select>
+                                      <span for="defaultAddres" class="mif-chevron-thin-down"></span>
+                                    </div>
                                   </div>
                                   <div class="form-group mt-4">
                                     <label class="input-label" style="float: left; width: unset;"
@@ -566,7 +570,7 @@ export default {
       cardType: "generic",
       cardImageLoc: "/img/card-logos/CreditCardLogos_",
       SecondaryAddress: [],
-      default_address_data: [],
+      defaultAddressData: [],
       shippingAddress: { shipping_name: "", street: "", city: "", state: "", code: "", shipping_suite: "", primary_radius: "" },
       tabIndex: 0
       // address :{},
@@ -655,7 +659,7 @@ export default {
         } 
     },
     newTab() {
-      console.log(this.default_address_data);
+      console.log(this.defaultAddressData,'defaultAddressData');
       if (this.SecondaryAddress.length < 9) {
         this.tabCounter = this.SecondaryAddress.length;
         let alt_address_name = `Alt Address ${++this.tabCounter}`;
@@ -682,9 +686,11 @@ export default {
     //     this.tab_id = selectedTab.tab.name;
     // },
     getProfilePicture() {
+      let that = this;
       this.axios.get(`/api/getProfile`, commonService.get_api_header()).then(response => {
         let user = response.data.user;
         this.profile_pic = user.photo;
+        that.defaultAddressData = user.SecondaryAddress;
       });
       return !this.profile_pic ? commonService.get_auth_avatar() : "img/profiles/" + this.profile_pic;
     },
@@ -726,12 +732,13 @@ export default {
         let that = this;
         this.axios.get(`/api/getProfile`, commonService.get_api_header()).then(response => {
           loader.hide();
+          console.log(this.defaultAddressData,'this.defaultAddressData');
           let user = response.data.user;
           this.imgDataUrl = user.photo;
           this.username = user.username;
           this.companyName = user.companyName;
           this.default_address = user.default_address;
-          that.default_address_data = user.SecondaryAddress;
+          that.defaultAddressData = user.SecondaryAddress;
           that.SecondaryAddress = user.SecondaryAddress;
           that.shippingAddress = user.shippingAddress;
           if (this.imgDataUrl) {
@@ -1137,6 +1144,7 @@ export default {
         .then(function(response) {
           loader.hide();
           that.SecondaryAddress = response.data.data;
+          that.defaultAddressData = response.data.data;
           that.error2 = "";
           that.error3 = "";
           if (response.data.error2) return (that.error2 = response.data.error2);

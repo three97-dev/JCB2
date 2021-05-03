@@ -16601,7 +16601,11 @@ body {
   color: #269A8E;
 }
 
-#SiteNavbar .address_form select {
+#SiteNavbar .address_form .select-div {
+  position: relative;
+}
+
+#SiteNavbar .address_form .select-div select {
   margin-bottom: 0;
   color: #30ABE8;
   border-bottom: 2px solid #c2efd7 !important;
@@ -16611,6 +16615,32 @@ body {
   width: 90%;
   font-size: 18px;
   font-weight: 500;
+  /*Hides the default arrows for Selects*/
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+#SiteNavbar .address_form .select-div select:after {
+  content: "<>";
+  font: 17px "Consolas", monospace;
+  color: #333;
+  transform: rotate(90deg);
+  right: 11px;
+  /*Adjust for position however you want*/
+  top: 18px;
+  padding: 0 0 2px;
+  border-bottom: 1px solid #999;
+  /*left line */
+  position: absolute;
+  pointer-events: none;
+}
+
+#SiteNavbar .address_form .select-div span {
+  position: absolute;
+  bottom: 10px;
+  right: 40px;
+  font-size: 17px;
 }
 
 #SiteNavbar .tabs .card-header {
