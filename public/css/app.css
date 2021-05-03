@@ -16613,6 +16613,23 @@ body {
   font-weight: 500;
 }
 
+#SiteNavbar .tabs .card-header {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+#SiteNavbar .card-header-tabs .nav-item {
+  line-height: 30px;
+}
+
+#SiteNavbar .card-header-tabs .nav-item a {
+  font-size: 14px;
+}
+
+#SiteNavbar .tab-pane .custom-close-btn {
+  color: #fff;
+}
+
 @media only screen and (max-width: 992px) {
   #PageContent {
     margin-left: 0 !important;

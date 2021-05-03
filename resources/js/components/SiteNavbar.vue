@@ -128,7 +128,7 @@
                                       <option :selected="default_address == 0" v-on:click="default_address = 0" :value="0" >Primary Address</option>
                                       <option
                                         :selected="default_address == address.id"
-                                        v-for="(address, index) in SecondaryAddress"
+                                        v-for="(address, index) in default_address_data"
                                         :value="address.id"
                                         :key="'default-addr-' + index"
                                         >{{ address.billing_name }}</option
@@ -171,8 +171,12 @@
                             :title="addressData.billing_name"
                             active
                           >
+                            <b-button size="sm" variant="primary" class="float-right custom-close-btn" @click="closeTab(index)">
+                              <span class="mif-bin"></span>
+                            </b-button>
                             <!-- Tab contents {{ i }} -->
                             <div class="address_form">
+                              
                               <div class="row">
                                 <div class="col-md-7">
                                   <div class="row">
@@ -278,9 +282,6 @@
                                 </div>
                               </div>
                             </div>
-                            <b-button size="sm" variant="danger" class="float-right" @click="closeTab(index)">
-                              Close tab
-                            </b-button>
                           </b-tab>
 
                           <!-- New Tab Button (Using tabs-end slot) -->
@@ -289,7 +290,7 @@
                                                     
                                                 </div> -->
                           <template v-slot:tabs-end>
-                            <b-nav-item role="presentation" class="new-address1" @click.prevent="newTab" href="#"
+                            <b-nav-item  v-if="SecondaryAddress.length < 9" role="presentation" class="new-address1" @click.prevent="newTab" href="#"
                               ><b>+ New Address</b></b-nav-item
                             >
                           </template>
@@ -565,6 +566,7 @@ export default {
       cardType: "generic",
       cardImageLoc: "/img/card-logos/CreditCardLogos_",
       SecondaryAddress: [],
+      default_address_data: [],
       shippingAddress: { shipping_name: "", street: "", city: "", state: "", code: "", shipping_suite: "", primary_radius: "" },
       tabIndex: 0
       // address :{},
@@ -645,6 +647,7 @@ export default {
                     loader.hide();
                 });
             }else{
+                loader.hide();
                 let AltAddress = this.SecondaryAddress;
                 AltAddress.splice(x, 1);
                 this.SecondaryAddress = AltAddress;
@@ -652,6 +655,7 @@ export default {
         } 
     },
     newTab() {
+      console.log(this.default_address_data);
       if (this.SecondaryAddress.length < 9) {
         this.tabCounter = this.SecondaryAddress.length;
         let alt_address_name = `Alt Address ${++this.tabCounter}`;
@@ -727,24 +731,12 @@ export default {
           this.username = user.username;
           this.companyName = user.companyName;
           this.default_address = user.default_address;
-          console.log(this.default_address,'user.default_address');
-          // console.log(user.SecondaryAddress,'user.SecondaryAddress');
+          that.default_address_data = user.SecondaryAddress;
           that.SecondaryAddress = user.SecondaryAddress;
           that.shippingAddress = user.shippingAddress;
           if (this.imgDataUrl) {
             that.showClickToAdd = false;
           }
-          // this.tabCounter = user.SecondaryAddress.length;
-          // for (let index = 0; index < user.SecondaryAddress.length; index++) {
-          //     const element = user.SecondaryAddress[index];
-          //     that.tabs.push(index+1);
-
-          //     // user_address.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
-
-          //     that.SecondaryAddress.push({billing_name:element.billing_name,secondary_street: '', secondary_city: '', secondary_state: '', secondary_code: '', billing_suite: '',secondary_radius:'',tab_id:element.tab_id,id:''});
-
-          // }
-          // that.SecondaryAddress = user_address;
           if (that.SecondaryAddress) {
             this.ShowSecondaryAddress = true;
             this.ShowIfSecondaryAddressNotExist = false;
