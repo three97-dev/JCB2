@@ -94,8 +94,9 @@
               <div class="position-relative">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="svg-inline--fa fa-caret-down fa-w-10 fa-2x"><path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z" class=""></path></svg>
                  <select name="" v-model="radius_filter.radius_distance">
-                    <option :selected="radius_filter.radius_distance =='primary'" value="primary">Primary Address</option>
-                    <option :selected="radius_filter.radius_distance =='secondary'" value="secondary" v-if="hidesecondaryaddress">Alt Address</option>
+                    <option :selected="radius_filter.radius_distance == '0'" value="0">Primary Address</option>
+                    <option  v-for="(address, i) in secondary_address" v-bind:key="i" :value="address.id" :selected="radius_filter.radius_distance == address.id">{{address.billing_name}}</option>
+                    <!-- <option :selected="radius_filter.radius_distance =='secondary'" value="secondary" v-if="hidesecondaryaddress">Alt Address</option> -->
                 </select> 
               </div>
 
@@ -279,6 +280,7 @@ var commonService = new CommonService();
                 radius_filter:{
                     radius_distance :'',                 
                 },
+                secondary_address:[],
                 payment_filter: {
                     status: '',
                     Reference_Number: '',
@@ -362,6 +364,7 @@ var commonService = new CommonService();
                     .then(response => {               
                         let user = response.data.user;
                         that.billingAddress = user.billingAddress;
+                        that.secondary_address = user.SecondaryAddress
                         // console.log('yess',user.default_address);
                         // if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
                         //     this.hidesecondaryaddress = true;

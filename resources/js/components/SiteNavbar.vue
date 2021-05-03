@@ -117,7 +117,7 @@
                                 </div>
 
                                 <div class="col-md-5">
-                                  <div class="detail-address mb-3" v-if="hideIfSecondaryAddressNotExist">
+                                  <div class="detail-address mt-2" v-if="hideIfSecondaryAddressNotExist">
                                     <label class="input-label" style="float: left; width: unset;"
                                       >Set as default Address;
                                     </label>
@@ -135,7 +135,7 @@
                                       >
                                     </select>
                                   </div>
-                                  <div class="form-group">
+                                  <div class="form-group mt-4">
                                     <label class="input-label" style="float: left; width: unset;"
                                       >Search Radius from My Location
                                     </label>

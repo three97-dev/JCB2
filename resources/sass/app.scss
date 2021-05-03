@@ -1175,6 +1175,19 @@ body {
         color: #269A8E;
     }
 }
+#SiteNavbar {
+    .address_form select {
+        margin-bottom: 0;
+        color: #30ABE8;
+        border-bottom: 2px solid #c2efd7 !important;
+        border: 0;
+        letter-spacing: 0.16px;
+        outline: none;
+        width: 90%;
+        font-size: 18px;
+        font-weight: 500;
+    }
+}
 
 @media only screen and (max-width: 992px) {
     #PageContent {

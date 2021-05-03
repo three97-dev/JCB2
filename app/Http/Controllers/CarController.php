@@ -16,6 +16,7 @@ use App\Models\Company;
 use GuzzleHttp\Client;
 use LikeBinds;
 use Psr\Cache;
+use App\Models\Address;
 
 
 
@@ -146,18 +147,23 @@ class CarController extends Controller
                 if ($request->distance) {
                     $distance = $request->distance;
                 }             
-                else if($request->radius_distance == 'primary'){
-                    $distance = Auth::user()->primary_radius;
-                   
-                }else if($request->radius_distance == 'secondary'){
-                    $distance = Auth::user()->secondary_radius;
-                    
-                }
-                else{
-                    if (Auth::user()->default_address == 'primary' &&  Auth::user()->primary_radius!='') {
+                else if($request->radius_distance != ''){
+                    if($request->radius_distance == 'primary' || $request->radius_distance == '0'){
                         $distance = Auth::user()->primary_radius;
-                    }else if(Auth::user()->default_address == 'secondary' && Auth::user()->secondary_radius !=''){
-                        $distance = Auth::user()->secondary_radius;
+                    }else{
+                        $altAddress = Address::find($request->radius_distance);
+                        if($altAddress && $altAddress->secondary_radius != ''){
+                            $distance = $altAddress->secondary_radius;
+                        }
+                    }
+                }else{
+                    if (Auth::user()->default_address != '' && (Auth::user()->default_address == 'primary' || Auth::user()->default_address == '0')) {
+                        $distance = Auth::user()->primary_radius;
+                    }else{
+                        $altAddress = Address::find(Auth::user()->default_address);
+                        if($altAddress && $altAddress->secondary_radius != ''){
+                            $distance = $altAddress->secondary_radius;
+                        }
                     }
                 }               
 
