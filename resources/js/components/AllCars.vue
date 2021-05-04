@@ -216,7 +216,6 @@ var commonService = new CommonService();
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
             });
-            console.log('created');
         },
         beforeDestroy () {
             EventBus.$off('update-car-filter')

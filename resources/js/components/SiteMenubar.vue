@@ -99,11 +99,11 @@
                <label for="" class="filter-label">{{filter_labels.radius_distance}}</label>
                <ul class="mt-3">
                    <li class="d-flex mb-3">
-                        <input type="radio" id="primary" :checked="radius_filter.radius_distance == '0'" value="0" v-model="radius_filter.radius_distance">
+                        <input type="radio" id="primary" :checked="radius_filter.radius_distance == '0' || radius_filter.radius_distance == 'primary'" value="0" v-model="radius_filter.radius_distance">
                         <label for="primary" class="ml-3">Primary Address</label>
                    </li>
                    <li class="d-flex mb-3" v-for="(address, i) in secondary_address" v-bind:key="i">
-                        <input type="radio" :id="'alt-address-'+address.id" :value="address.id" :selected="radius_filter.radius_distance == address.id" v-model="radius_filter.radius_distance">
+                        <input type="radio" :id="'alt-address-'+address.id" :value="address.id" :checked="radius_filter.radius_distance == address.id" v-model="radius_filter.radius_distance">
                         <label :for="'alt-address-'+address.id" class="ml-3">{{address.billing_name}}</label>
                    </li>
                </ul>
@@ -294,7 +294,7 @@ var commonService = new CommonService();
                     Model: ''
                 },
                 radius_filter:{
-                    radius_distance :'',                 
+                    radius_distance :'0',                 
                 },
                 secondary_address:[],
                 payment_filter: {
@@ -379,13 +379,14 @@ var commonService = new CommonService();
                     .get(`/api/getProfile`, commonService.get_api_header())
                     .then(response => {               
                         let user = response.data.user;
+                        localStorage.setItem('default_address', user.default_address)
+                        that.radius_filter.radius_distance = user.default_address;
                         that.billingAddress = user.billingAddress;
                         that.secondary_address = user.SecondaryAddress
                         // console.log('yess',user.default_address);
                         // if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
                         //     this.hidesecondaryaddress = true;
                         // }
-                        this.radius_filter.radius_distance = user.default_address;
                          
                     });   
             },
@@ -449,10 +450,9 @@ var commonService = new CommonService();
                     this.open_location_filter = false;
                 }
             },
-            openLocationFilter() { 
-                                
+            openLocationFilter() {           
                 this.open_location_filter = !this.open_location_filter;
-
+                this.radius_filter.radius_distance = localStorage.getItem('default_address')
                 if (this.open_location_filter) {
                     this.open_filter_save_step = false;
                     this.open_saved_filter = false;

@@ -16610,7 +16610,7 @@ input.radio-checkbox[type=radio] {
   -webkit-appearance: none !important;
      -moz-appearance: none !important;
           appearance: none !important;
-  border: 1px solid #d3d3d3 !important;
+  border: 2px solid #939393 !important;
   width: 20px !important;
   height: 20px !important;
   content: none !important;
@@ -16642,7 +16642,7 @@ input.radio-checkbox[type=radio]:checked::before {
   -webkit-appearance: none !important;
      -moz-appearance: none !important;
           appearance: none !important;
-  border: 1px solid #d3d3d3 !important;
+  border: 2px solid #939393 !important;
   width: 20px !important;
   height: 20px !important;
   content: none !important;

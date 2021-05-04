@@ -1177,6 +1177,7 @@ export default {
           that.SecondaryAddress = response.data.data;
           that.defaultAddressData = response.data.data;
           that.shippingAddress.default_address = response.data.default_address == 'primary' || response.data.default_address == '0' ? 1 : 0;
+          localStorage.setItem('default_address', response.data.default_address)
           for (let index = 0; index < that.SecondaryAddress.length; index++) {
             if(that.SecondaryAddress[index].id == response.data.default_address){
               that.SecondaryAddress[index].default_address = 1;
