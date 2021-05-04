@@ -91,14 +91,24 @@
          <div class="location-filter" v-if="open_location_filter">
             <div class="filter-item">
                <label for="" class="filter-label">{{filter_labels.radius_distance}}</label>
-              <div class="position-relative">
+               <ul class="mt-3">
+                   <li class="d-flex mb-3">
+                        <input type="radio" id="primary" :checked="radius_filter.radius_distance == '0'" value="0" v-model="radius_filter.radius_distance">
+                        <label for="primary" class="ml-3">Primary Address</label>
+                   </li>
+                   <li class="d-flex mb-3" v-for="(address, i) in secondary_address" v-bind:key="i">
+                        <input type="radio" :id="'alt-address-'+address.id" :value="address.id" :selected="radius_filter.radius_distance == address.id" v-model="radius_filter.radius_distance">
+                        <label :for="'alt-address-'+address.id" class="ml-3">{{address.billing_name}}</label>
+                   </li>
+               </ul>
+              <!-- <div class="position-relative">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="svg-inline--fa fa-caret-down fa-w-10 fa-2x"><path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z" class=""></path></svg>
                  <select name="" v-model="radius_filter.radius_distance">
                     <option :selected="radius_filter.radius_distance == '0'" value="0">Primary Address</option>
-                    <option  v-for="(address, i) in secondary_address" v-bind:key="i" :value="address.id" :selected="radius_filter.radius_distance == address.id">{{address.billing_name}}</option>
+                    <option  v-for="(address, i) in secondary_address" v-bind:key="i" :value="address.id" :selected="radius_filter.radius_distance == address.id">{{address.billing_name}}</option> -->
                     <!-- <option :selected="radius_filter.radius_distance =='secondary'" value="secondary" v-if="hidesecondaryaddress">Alt Address</option> -->
-                </select> 
-              </div>
+                <!-- </select> 
+              </div> -->
 
             </div>
            

@@ -122,21 +122,7 @@
                                       >Set as default Address;
                                     </label>
                                     <div class="select-div">
-                                      <select
-                                        id="defaultAddres"
-                                        v-model="default_address"
-                                        class="form-control"
-                                      >
-                                        <option :selected="default_address == 0" v-on:click="default_address = 0" :value="0" >Primary Address</option>
-                                        <option
-                                          :selected="default_address == address.id"
-                                          v-for="(address, index) in defaultAddressData"
-                                          :value="address.id"
-                                          :key="'default-addr-' + index"
-                                          >{{ address.billing_name }}</option
-                                        >
-                                      </select>
-                                      <span for="defaultAddres" class="mif-chevron-thin-down"></span>
+                                      <input @change="handleDefaultAddress('primary')"  class="radio-checkbox" type="radio" id="primary" value="1" v-model="shippingAddress.default_address">
                                     </div>
                                   </div>
                                   <div class="form-group mt-4">
@@ -144,8 +130,9 @@
                                       >Search Radius from My Location
                                     </label>
                                     <input
-                                      type="text"
-                                      placeholder="Maximum 150 Miles"
+                                      type="number"
+                                      min='0'
+                                      placeholder=""
                                       class="input"
                                       v-model="shippingAddress.primary_radius"
                                     />
@@ -265,13 +252,22 @@
                                   </div>
                                 </div>
                                 <div class="col-md-5">
-                                  <div class="form-group">
+                                  <div class="detail-address mt-2" v-if="hideIfSecondaryAddressNotExist">
+                                    <label class="input-label" style="float: left; width: unset;"
+                                      >Set as default Address;
+                                    </label>
+                                    <div class="select-div">
+                                      <input @change="handleDefaultAddress(index)" class="radio-checkbox" type="radio" :id="index" value="1" v-model="addressData.default_address">
+                                    </div>
+                                  </div>
+                                  <div class="form-group mt-2">
                                     <label class="input-label" style="float: left; width: unset;"
                                       >Search Radius from My Location
                                     </label>
                                     <input
-                                      type="text"
-                                      placeholder="Maximum 150 Miles"
+                                      min='0'
+                                      type="number"
+                                      placeholder=""
                                       class="input"
                                       v-model="addressData.secondary_radius"
                                     />
@@ -571,7 +567,7 @@ export default {
       cardImageLoc: "/img/card-logos/CreditCardLogos_",
       SecondaryAddress: [],
       defaultAddressData: [],
-      shippingAddress: { shipping_name: "", street: "", city: "", state: "", code: "", shipping_suite: "", primary_radius: "" },
+      shippingAddress: { shipping_name: "", street: "", city: "", state: "", code: "", shipping_suite: "", primary_radius: "", default_address: 0 },
       tabIndex: 0
       // address :{},
     };
@@ -623,6 +619,7 @@ export default {
         if (ok) {
            let loader = this.$loading.show();
             let id = this.SecondaryAddress[x].id;
+            let default_address = this.SecondaryAddress[x].default_address;
             let that = this;
             if(id != ''){
                 this.axios
@@ -635,6 +632,9 @@ export default {
                 )
                 .then(function(response) {
                     loader.hide();
+                    if(default_address == 1){
+                      that.shippingAddress.default_address = 1;
+                    }
                     let AltAddress = that.SecondaryAddress;
                     AltAddress.splice(x, 1);
                     that.SecondaryAddress = AltAddress;
@@ -651,12 +651,34 @@ export default {
                     loader.hide();
                 });
             }else{
+                if(default_address == 1){
+                  this.shippingAddress.default_address = 1;
+                }
                 loader.hide();
                 let AltAddress = this.SecondaryAddress;
                 AltAddress.splice(x, 1);
                 this.SecondaryAddress = AltAddress;
             }
         } 
+    },
+    handleDefaultAddress(id){
+      let Addresses = this.SecondaryAddress;
+      if(id != 'primary'){
+        this.shippingAddress.default_address = 0;
+        for (let index = 0; index < Addresses.length; index++) {
+          if(index == id){
+            Addresses[index].default_address = 1; 
+          }else{
+            Addresses[index].default_address = 0; 
+          }
+        }
+        Addresses[id].default_address = 1; 
+      }else{
+        for (let index = 0; index < Addresses.length; index++) {
+          Addresses[index].default_address = 0; 
+        }
+      }
+      this.SecondaryAddress = Addresses;
     },
     newTab() {
       console.log(this.defaultAddressData,'defaultAddressData');
@@ -670,8 +692,9 @@ export default {
           secondary_state: "",
           secondary_code: "",
           billing_suite: "",
-          secondary_radius: "",
+          secondary_radius: "250",
           tab_id: this.tabCounter,
+          default_address:0,
           id: ""
         });
       }
@@ -732,7 +755,6 @@ export default {
         let that = this;
         this.axios.get(`/api/getProfile`, commonService.get_api_header()).then(response => {
           loader.hide();
-          console.log(this.defaultAddressData,'this.defaultAddressData');
           let user = response.data.user;
           this.imgDataUrl = user.photo;
           this.username = user.username;
@@ -741,6 +763,14 @@ export default {
           that.defaultAddressData = user.SecondaryAddress;
           that.SecondaryAddress = user.SecondaryAddress;
           that.shippingAddress = user.shippingAddress;
+          that.shippingAddress.default_address = user.default_address == 'primary' || user.default_address == '0' ? 1 : 0;
+          for (let index = 0; index < that.SecondaryAddress.length; index++) {
+            if(that.SecondaryAddress[index].id == user.default_address){
+              that.SecondaryAddress[index].default_address = 1;
+            }else{
+              that.SecondaryAddress[index].default_address = 0;
+            }
+          }
           if (this.imgDataUrl) {
             that.showClickToAdd = false;
           }
@@ -1124,6 +1154,7 @@ export default {
           secondary_code: address.secondary_code,
           billing_suite: address.billing_suite,
           secondary_radius: address.secondary_radius,
+          default_address: address.default_address,
           tab_id: index + 1
         });
       }
@@ -1145,6 +1176,14 @@ export default {
           loader.hide();
           that.SecondaryAddress = response.data.data;
           that.defaultAddressData = response.data.data;
+          that.shippingAddress.default_address = response.data.default_address == 'primary' || response.data.default_address == '0' ? 1 : 0;
+          for (let index = 0; index < that.SecondaryAddress.length; index++) {
+            if(that.SecondaryAddress[index].id == response.data.default_address){
+              that.SecondaryAddress[index].default_address = 1;
+            }else{
+              that.SecondaryAddress[index].default_address = 0;
+            }
+          }
           that.error2 = "";
           that.error3 = "";
           if (response.data.error2) return (that.error2 = response.data.error2);

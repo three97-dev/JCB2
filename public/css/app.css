@@ -16601,6 +16601,75 @@ body {
   color: #269A8E;
 }
 
+.detail-address {
+  display: grid;
+}
+
+input.radio-checkbox[type=radio] {
+  padding: 0 !important;
+  -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+          appearance: none !important;
+  border: 1px solid #d3d3d3 !important;
+  width: 20px !important;
+  height: 20px !important;
+  content: none !important;
+  outline: none !important;
+  margin: 0 !important;
+}
+
+input.radio-checkbox[type=radio]:checked {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  outline: none;
+  padding: 0;
+  content: none;
+  border: none;
+}
+
+input.radio-checkbox[type=radio]:checked::before {
+  position: absolute;
+  color: green !important;
+  content: "\A0\2713\A0" !important;
+  font-weight: bolder;
+  font-size: 14px;
+  top: 1px;
+}
+
+.location-filter .filter-item ul li input[type=radio] {
+  padding: 0 !important;
+  -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+          appearance: none !important;
+  border: 1px solid #d3d3d3 !important;
+  width: 20px !important;
+  height: 20px !important;
+  content: none !important;
+  outline: none !important;
+  margin: 0 !important;
+  position: relative;
+}
+
+.location-filter .filter-item ul li input[type=radio]:checked {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  outline: none;
+  padding: 0;
+  content: none;
+  border: none;
+}
+
+.location-filter .filter-item ul li input[type=radio]:checked::before {
+  position: absolute;
+  color: green !important;
+  content: "\A0\2713\A0" !important;
+  font-weight: bolder;
+  font-size: 14px;
+  top: 1px;
+}
+
 #SiteNavbar .address_form .select-div {
   position: relative;
 }

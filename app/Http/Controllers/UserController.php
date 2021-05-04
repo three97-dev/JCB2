@@ -207,7 +207,10 @@ class UserController extends Controller
         $user = User::where('email', Auth::user()->email)->first();
         $user->name = $request->username;
         $user->photo = $request->photo;
-        $user->default_address = $request->default_address;
+        if($request->shippingAddress['default_address'] == 1){
+            $user->default_address = 0;
+            $defaultAddress = 0;
+        }
         $user->shipping_name = $request->shippingAddress['shipping_name'];
         $user->shipping_suite = $request->shippingAddress['shipping_suite'];
         $user->primary_radius = $request->shippingAddress['primary_radius'];
@@ -237,7 +240,6 @@ class UserController extends Controller
         if(isset($request->SecondaryAddress) && !empty($request->SecondaryAddress)){
             // Address::where('user_id',Auth::user()->id)->delete();
             foreach($request->SecondaryAddress as $secondary){
-                // $get_address = Address::where('user_id', $user->id)->where('tab_id', $secondary['tab_id'])->first();
                 $address = array(
                     'user_id' => Auth::user()->id,
                     'tab_id' => $secondary['tab_id'],
@@ -252,12 +254,14 @@ class UserController extends Controller
                 );
                 if(isset($secondary['id']) != ''){
                     Address::where('id', $secondary['id'])->update($address);
+                    $id = $secondary['id'];
                 }else{
-                    Address::insert($address);
+                    $id = Address::insertGetId($address);
                 }
-                //Address::where('tab_id', $secondary['tab_id'])->update($address); 
-               
-               
+                if($secondary['default_address'] == 1){
+                    $defaultAddress = $id;
+                    User::where('email', Auth::user()->email)->update(['default_address'=>$id]);
+                }
             }
         }
 
@@ -269,7 +273,7 @@ class UserController extends Controller
         }else{
             $addressData = [];
         }
-        return json_encode(['res'=>"success", 'data'=>$addressData]);
+        return json_encode(['res'=>"success", 'data'=>$addressData, 'default_address'=>$defaultAddress]);
     }
   
     public function uploadPhoto(Request $request) {
@@ -281,6 +285,10 @@ class UserController extends Controller
     public function deleteAddress(Request $request) {
         $id = $request->id;
         if (!$id) return ['error' => 'Address id required'];
+        $user = User::where('email', Auth::user()->email)->first();
+        if($user && $user->default_address == $id){
+            User::where('email', Auth::user()->email)->update(['default_address'=>0]);
+        }
         Address::where('id',$id)->delete();
         return json_encode(['res'=>"success"]);
     }
