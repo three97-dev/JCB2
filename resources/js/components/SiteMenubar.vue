@@ -99,11 +99,11 @@
                <label for="" class="filter-label">{{filter_labels.radius_distance}}</label>
                <ul class="mt-3">
                    <li class="d-flex mb-3">
-                        <input type="radio" id="primary" :checked="radius_filter.radius_distance == '0' || radius_filter.radius_distance == 'primary'" value="0" v-model="radius_filter.radius_distance">
+                        <input @change="onChangeAddress('Primary Address')" type="radio" id="primary" :checked="radius_filter.radius_distance == '0' || radius_filter.radius_distance == 'primary'" value="0" v-model="radius_filter.radius_distance">
                         <label for="primary" class="ml-3">Primary Address</label>
                    </li>
                    <li class="d-flex mb-3" v-for="(address, i) in secondary_address" v-bind:key="i">
-                        <input type="radio" :id="'alt-address-'+address.id" :value="address.id" :checked="radius_filter.radius_distance == address.id" v-model="radius_filter.radius_distance">
+                        <input type="radio" :id="'alt-address-'+address.id" :value="address.id" :checked="radius_filter.radius_distance == address.id" v-model="radius_filter.radius_distance" @change="onChangeAddress(address.billing_name)">
                         <label :for="'alt-address-'+address.id" class="ml-3">{{address.billing_name}}</label>
                    </li>
                </ul>
@@ -304,6 +304,7 @@ var commonService = new CommonService();
                     Make: '',
                     Model: ''
                 },
+                default_address:'',
                 filter_labels: {
                     distance: 'Distance from My Location',
                     Miles: 'Mileage Maximum',
@@ -373,6 +374,9 @@ var commonService = new CommonService();
             
         },
         methods: {
+            onChangeAddress(address){
+                localStorage.setItem('_address', address);
+            },
             setselecteddropdownValue(){
                 let that = this;
                 this.axios
@@ -380,9 +384,16 @@ var commonService = new CommonService();
                     .then(response => {               
                         let user = response.data.user;
                         localStorage.setItem('default_address', user.default_address)
+                        that.default_address = user.default_address;
                         that.radius_filter.radius_distance = user.default_address;
                         that.billingAddress = user.billingAddress;
-                        that.secondary_address = user.SecondaryAddress
+                        that.secondary_address = user.SecondaryAddress;
+                        if(user.default_address == 0 || user.default_address == 'primary'){
+                            localStorage.setItem('_address', "Primary Address");
+                        }else{
+                            let dataAddress = user.SecondaryAddress.find(element => element.id == user.default_address);
+                            localStorage.setItem('_address', dataAddress.billing_name);
+                        }
                         // console.log('yess',user.default_address);
                         // if(that.billingAddress.billing_name || that.billingAddress.billing_suite || that.billingAddress.city || that.billingAddress.state || that.billingAddress.code || that.billingAddress.street){ 
                         //     this.hidesecondaryaddress = true;
@@ -391,6 +402,7 @@ var commonService = new CommonService();
                     });   
             },
             resetFitlerParams() {
+                localStorage.removeItem('default_address')
                 this.car_filter =  {
                     distance: '',
                     Miles: '',
@@ -450,14 +462,14 @@ var commonService = new CommonService();
                     this.open_location_filter = false;
                 }
             },
-            openLocationFilter() {           
+            openLocationFilter() {  
                 this.open_location_filter = !this.open_location_filter;
-                this.radius_filter.radius_distance = localStorage.getItem('default_address')
+                this.radius_filter.radius_distance = localStorage.getItem('default_address') ? localStorage.getItem('default_address') : this.default_address;
                 if (this.open_location_filter) {
                     this.open_filter_save_step = false;
                     this.open_saved_filter = false;
                     this.open_cars_filter = false;
-                }
+                }    
             },
             checkPopupOpen() {
                 this.$emit('checkPopupOpen', this.openPopup);
@@ -564,8 +576,11 @@ var commonService = new CommonService();
             },
             applyLocationFilter() {
                 const params = this.get_filter_param(this.radius_filter);
+                localStorage.setItem('default_address', params.radius_distance)
                 params['filter_string'] = this.getFilterString(params);
                 EventBus.$emit('update-radius-filter', params);
+                EventBus.$emit('update-radius-filter-bids', params);
+                EventBus.$emit('update-radius-filter-scheduling', params);
                 this.open_location_filter = false;
 
             },

@@ -192,6 +192,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
+            localStorage.removeItem('default_address')
             EventBus.$on('update-car-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
@@ -204,14 +205,14 @@ var commonService = new CommonService();
                 thiz.filter_param = {};
                 thiz.refreshPage(1);
             });
-            EventBus.$on('update-radius-filter', function(filter_param) {              
+            EventBus.$on('update-radius-filter', function(filter_param) {  
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
-                this.split_array = thiz.filter_string.split(':');
-                if(this.split_array[1].trim() =='secondary'){
-                    thiz.filter_string = 'Distance from My Location: Alt Address';
+                this.split_array = thiz.filter_string.split(':');        
+                if(this.split_array[1].trim() == 0 || this.split_array[1].trim() == 'primary'){
+                    thiz.filter_string = 'Distance from My Location: Primary Address';
                 }else{
-                     thiz.filter_string = 'Distance from My Location:Primary Address';
+                     thiz.filter_string = `Distance from My Location: ${localStorage.getItem('_address')}`;
                 }
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);

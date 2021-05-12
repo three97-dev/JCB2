@@ -191,6 +191,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
+            localStorage.removeItem('default_address')
             // this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-bid-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
@@ -198,14 +199,14 @@ var commonService = new CommonService();
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
             });
-            EventBus.$on('update-radius-filter', function(filter_param) {              
+            EventBus.$on('update-radius-filter-bids', function(filter_param) {              
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
                 this.split_array = thiz.filter_string.split(':');
-                if(this.split_array[1].trim() =='secondary'){
-                    thiz.filter_string = 'Distance from My Location: Alt Address';
+                if(this.split_array[1].trim() == '0' || this.split_array[1].trim() == 'primary'){
+                    thiz.filter_string = 'Distance from My Location: Primary Address';
                 }else{
-                     thiz.filter_string = 'Distance from My Location:Primary Address';
+                     thiz.filter_string = `Distance from My Location: ${localStorage.getItem('_address')}`;
                 }
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
@@ -214,6 +215,7 @@ var commonService = new CommonService();
         },
         beforeDestroy () {
             EventBus.$off('update-bid-filter');
+            EventBus.$off('update-radius-filter-bids')
         },
         mounted() {
             this.refreshPage(1);

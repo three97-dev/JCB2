@@ -297,6 +297,7 @@ var commonService = new CommonService();
         components:{
             VueTimepicker: () => import ('vue2-timepicker')
         },
+        
         data() {
             return {
                 cars: [],
@@ -374,6 +375,7 @@ var commonService = new CommonService();
         },
         created() {
             const thiz = this;
+            localStorage.removeItem('default_address')
             // this.records_per_page = this.countPerPageArray[0];
             EventBus.$on('update-schedulings-filter', function(filter_param) {
                 thiz.filter_param = filter_param;
@@ -381,14 +383,14 @@ var commonService = new CommonService();
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
             });
-            EventBus.$on('update-radius-filter', function(filter_param) {              
+            EventBus.$on('update-radius-filter-scheduling', function(filter_param) {             
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
                 this.split_array = thiz.filter_string.split(':');
-                if(this.split_array[1].trim() =='secondary'){
-                    thiz.filter_string = 'Distance from My Location: Alt Address';
+                if(this.split_array[1].trim() == '0' || this.split_array[1].trim() == 'primary'){
+                    thiz.filter_string = 'Distance from My Location: Primary Address';
                 }else{
-                     thiz.filter_string = 'Distance from My Location:Primary Address';
+                     thiz.filter_string = `Distance from My Location: ${localStorage.getItem('_address')}`;
                 }
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
@@ -397,6 +399,7 @@ var commonService = new CommonService();
         },
         beforeDestroy () {
             EventBus.$off('update-schedulings-filter');
+            EventBus.$off('update-radius-filter-scheduling')
         },
         mounted() {
             this.refreshPage(1);
@@ -485,7 +488,6 @@ var commonService = new CommonService();
                     if(car.is_checked) pickup_count++;
                 })
                 this.pickup_count = pickup_count;
-                console.log(pickup_count);
             },
             showDetail(car) {
                 setTimeout(() => {
@@ -519,7 +521,6 @@ var commonService = new CommonService();
                         var dTArr = dateTime.split('T');
                         this.date = dTArr[0];
                         var time = dTArr[1];
-                        console.log(dTArr);
                         if(time && time != "") {
                             var time_arr = time.split(':');
                             this.time = time_arr[0] + ":" + time_arr[1];
@@ -560,7 +561,6 @@ var commonService = new CommonService();
                 this.axios
                     .post(`/api/car/schedules/` + this.sel_car.id, {Scheduled_Time: this.date+"T"+this.time+this.defaultTimezoneString, Scheduled_Note: this.sel_car.Scheduled_Note}, commonService.get_api_header())
                     .then(response => {
-                        console.log(response)
                         loader.hide();
                         this.submit_pickup = true;
                         this.sel_car.Scheduled_Time = this.date+"T"+this.time+this.defaultTimezoneString;
@@ -590,7 +590,6 @@ var commonService = new CommonService();
                 this.axios
                     .post(`/api/car/pick/` + this.sel_car.id, {Scheduled_Time: scheduled_time, Scheduled_Note: this.sel_car.Scheduled_Note}, commonService.get_api_header())
                     .then(response => {
-                        console.log(response)
                         loader.hide();
 
                         if(this.pickup_date) {
