@@ -375,9 +375,7 @@ var commonService = new CommonService();
             
         },
         mounted(){
-        
-          this.radius_filter.radius_distance = sessionStorage.getItem('default_address') ? sessionStorage.getItem('default_address') : this.default_address;
-
+         
         },
         methods: {
            
@@ -386,16 +384,17 @@ var commonService = new CommonService();
                 sessionStorage.setItem('_address', address);
             },
             setselecteddropdownValue(){
+               
                 let that = this;
                 this.axios
                     .get(`/api/getProfile`, commonService.get_api_header())
                     .then(response => {               
                         let user = response.data.user;
                         that.radius_filter.radius_distance = sessionStorage.getItem('default_address') ? sessionStorage.getItem('default_address') : user.default_address;
-
-                     
-
+                      
                         sessionStorage.setItem('default_address', that.radius_filter.radius_distance);
+                         
+                        
                         that.default_address = that.radius_filter.radius_distance;
                         that.radius_filter.radius_distance = that.radius_filter.radius_distance;
 
@@ -405,13 +404,15 @@ var commonService = new CommonService();
 
                         that.billingAddress = user.billingAddress;
                         that.secondary_address = user.SecondaryAddress;
-                          if(that.default_address == 0 || that.default_address == 'primary'){
+                        if(that.radius_filter.radius_distance == 0 || that.radius_filter.radius_distance == 'primary'){
                             sessionStorage.setItem('_address', "Primary Address");
                         }else{
-                            let dataAddress = user.SecondaryAddress.find(element => element.id == that.default_address);
+                            let dataAddress = user.SecondaryAddress.find(element => element.id == that.radius_filter.radius_distance);
                             sessionStorage.setItem('_address', dataAddress.billing_name);
                         }
-
+                       
+                        EventBus.$emit('update-filter-text', sessionStorage.getItem('_address'));
+                        
                         // if(user.default_address == 0 || user.default_address == 'primary'){
                         //     localStorage.setItem('_address', "Primary Address");
                         // }else{

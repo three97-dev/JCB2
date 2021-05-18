@@ -205,9 +205,15 @@ var commonService = new CommonService();
                 thiz.filter_param = {};
                 thiz.refreshPage(1);
             });
+            EventBus.$on('update-filter-text', function(filter_param) {
+              thiz.filter_string =`Distance from My Location: ${filter_param}`; 
+                // thiz.refreshPage(1);
+            });
+            
             EventBus.$on('update-radius-filter', function(filter_param) {  
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
+                console.log('ff',thiz.filter_string);
                 this.split_array = thiz.filter_string.split(':');        
                 if(this.split_array[1].trim() == 0 || this.split_array[1].trim() == 'primary'){
                     thiz.filter_string = 'Distance from My Location: Primary Address';
@@ -216,7 +222,11 @@ var commonService = new CommonService();
                 }
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
+                 console.log('gggggg',sessionStorage.getItem('_address'));
+                //    this.filter_string =`Distance from My Location: ${sessionStorage.getItem('_address')}`; 
             });
+            
+               
         },
         beforeDestroy () {
             //  console.log('cars_destroy');
@@ -227,6 +237,12 @@ var commonService = new CommonService();
 
         },
         mounted() {
+            
+            if(sessionStorage.getItem('_address') !='' && sessionStorage.getItem('_address') !=null){
+                this.filter_string =`Distance from My Location: ${sessionStorage.getItem('_address')}`;
+            }else{
+                 this.filter_string ='';
+            }
             this.refreshPage(1);
         },
         computed: {
@@ -276,7 +292,8 @@ var commonService = new CommonService();
                     this.cars.push({index})
                 }
 
-                let url = '/api/cars?page_type=cars&page=' + this.page;
+
+                let url = '/api/cars?page_type=cars&page=' + this.page+'&radius_distance='+sessionStorage.getItem('default_address');
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
                         url += '&' + key + '=' + this.filter_param[key];
@@ -295,6 +312,7 @@ var commonService = new CommonService();
                 .get(url, commonService.get_api_header())
                 .then(response => {
                     loader.hide();
+                    
                     var res_data = response.data;
                     this.cars = res_data.data.sort((a, b) =>  (a[sort_field] - b[sort_field]) * arrow );
                     // this.cars = res_data.data;
@@ -306,6 +324,7 @@ var commonService = new CommonService();
                     for (let index = start_page; index <= end_page; index++) {
                         this.valid_pages.push(index);
                     }
+                   
                 })
                 .catch((error) => {
                     loader.hide();
@@ -317,6 +336,7 @@ var commonService = new CommonService();
                         alert('Api request error');
                     }
                 });
+                  
             },
             likeCar(car) {
                 let loader = this.$loading.show();
@@ -380,6 +400,7 @@ var commonService = new CommonService();
                 this.bid_price = (car.Buyers_Quote)? parseFloat(car.Buyers_Quote).toFixed(2) : '0';
                 this.submit_bid = false;
                 this.changeStatus();
+                 
             },
             changeStatus() {
                 var caption, btn_str;
@@ -401,6 +422,7 @@ var commonService = new CommonService();
                 }
 
                 this.bid_submit_button_string = {caption: caption, btn_str: btn_str};
+               
             },
             submitBid() {
                 if (!this.bid_price) return alert('Please type the bid price');

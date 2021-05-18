@@ -383,7 +383,10 @@ var commonService = new CommonService();
                 delete thiz.filter_param['filter_string'];
                 thiz.refreshPage(1);
             });
-
+            EventBus.$on('update-filter-text', function(filter_param) {
+              thiz.filter_string =`Distance from My Location: ${filter_param}`; 
+                // thiz.refreshPage(1);
+            });
             EventBus.$on('update-radius-filter-scheduling', function(filter_param) {             
                 thiz.filter_param = filter_param;
                 thiz.filter_string = thiz.filter_param['filter_string'];
@@ -403,6 +406,12 @@ var commonService = new CommonService();
             EventBus.$off('update-radius-filter-scheduling')
         },
         mounted() {
+            if(sessionStorage.getItem('_address') !='' && sessionStorage.getItem('_address') !=null){
+                this.filter_string =`Distance from My Location: ${sessionStorage.getItem('_address')}`;
+            }else{
+                 this.filter_string ='';
+            }
+        //    this.filter_string =`Distance from My Location: ${sessionStorage.getItem('_address') ? sessionStorage.getItem('_address') : ''}`;
             this.refreshPage(1);
         },
         methods: {
@@ -429,7 +438,7 @@ var commonService = new CommonService();
                     this.cars.push({index})
                 }
 
-                let url = '/api/cars?page_type=schedulings&page=' + this.page+'&records_per_page='+this.records_per_page;
+                let url = '/api/cars?page_type=schedulings&page=' + this.page+'&records_per_page='+this.records_per_page+'&radius_distance='+sessionStorage.getItem('default_address');
                 for (const key in this.filter_param) {
                     if (this.filter_param[key]) {
                         url += '&' + key + '=' + this.filter_param[key];

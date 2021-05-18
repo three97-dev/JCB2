@@ -4,6 +4,7 @@ export default class CommonService {
     }
 
     logout() {
+        sessionStorage.clear();
         localStorage.clear();
     }
 
