@@ -426,7 +426,7 @@ var commonService = new CommonService();
                     });   
             },
             resetFitlerParams() {
-                // console.log('reset');
+              
                 // localStorage.removeItem('default_address')
                 this.car_filter =  {
                     distance: '',

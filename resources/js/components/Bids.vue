@@ -217,7 +217,7 @@ var commonService = new CommonService();
         beforeDestroy () {
             console.log('bid_destroy');
             EventBus.$off('update-bid-filter');
-              EventBus.$off('update-radius-filter-bids')
+            EventBus.$off('update-radius-filter-bids')
         },
         mounted() {
             this.refreshPage(1);

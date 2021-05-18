@@ -219,7 +219,7 @@ var commonService = new CommonService();
             });
         },
         beforeDestroy () {
-             console.log('cars_destroy');
+            //  console.log('cars_destroy');
             EventBus.$off('update-car-filter')
 
             EventBus.$off('update-car-filter-like')
