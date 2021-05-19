@@ -35,6 +35,9 @@
             <li class="site-menu-item">
                 <a href="javascript:;" v-on:click="openPaymentsFilter()"><span class="mif-filter" v-bind:class="{'text-selected': open_payments_filter}"></span></a>
             </li>
+            <li class="site-menu-item">
+                <a href="javascript:;" v-on:click="openLocationFilter()" > <span class="mif-location" v-bind:class="{'text-selected': open_location_filter}"></span> </a>
+            </li>
         </ul>
     </div>
     <div class="site-menubar-filter">
@@ -607,6 +610,7 @@ var commonService = new CommonService();
                 
                 EventBus.$emit('update-radius-filter', params);
                 EventBus.$emit('update-radius-filter-bids', params);
+                EventBus.$emit('update-radius-filter-payment', params);
                 EventBus.$emit('update-radius-filter-scheduling', params);
                 this.open_location_filter = false;
 

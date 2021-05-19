@@ -90,7 +90,7 @@ class ZohoSerivce {
         $records = $responseHandler->getData();
         return $records[0];
     }
-    public function getSecondaryAddressDetails($parent_account_zoho_crmID =''){
+    /*public function getSecondaryAddressDetails($parent_account_zoho_crmID =''){
         $moduleAPIName = "Accounts";
         $recordOperations2 = new RecordOperations();
         $paramInstance2 = new ParameterMap();
@@ -100,7 +100,7 @@ class ZohoSerivce {
         if (!$responseHandler2) return null;
         $records = $responseHandler2->getData();
         return $records[0];
-    }
+    }*/
 
     public function getDealInfo($car_id) {
         $moduleAPIName = "Deals";

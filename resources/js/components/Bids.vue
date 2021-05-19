@@ -219,7 +219,6 @@ var commonService = new CommonService();
 
         },
         beforeDestroy () {
-            console.log('bid_destroy');
             EventBus.$off('update-bid-filter');
             EventBus.$off('update-radius-filter-bids')
         },
@@ -256,6 +255,7 @@ var commonService = new CommonService();
             changeItemCount() {
                 this.refreshPage();
             },
+
             refreshPage(page) {
                  if (!page) page = this.page;
                 if (page < 1 || page > parseInt(this.total/this.records_per_page) + 1) return;
